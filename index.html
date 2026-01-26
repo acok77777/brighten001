@@ -1,424 +1,171 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>힘내요 오늘</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
-        
-        .title-box {
-            background: white;
-            padding: 20px 30px;
-            border-radius: 15px;
-            text-align: center;
-            margin: 30px 0 20px 0;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-        }
-        
-        .title-box h1 {
-            color: #764ba2;
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
-        
-        .subtitle {
-            color: #666;
-            font-size: 16px;
-            margin: 20px 0;
-        }
-        
-        .gems-container {
-            display: flex;
-            gap: 30px;
-            margin: 40px 0;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        .gem {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            animation: float 3s ease-in-out infinite;
-        }
-        
-        .gem:nth-child(2) {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            animation-delay: 1s;
-        }
-        
-        .gem:nth-child(3) {
-            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-            animation-delay: 2s;
-        }
-        
-        .gem:hover {
-            transform: scale(1.1) rotate(5deg);
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        .message-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.6);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        
-        .message-paper {
-            background: linear-gradient(to bottom, #fff9e6 0%, #fffef7 100%);
-            width: 90%;
-            max-width: 400px;
-            padding: 40px 30px;
-            border-radius: 20px;
-            box-shadow: 0 15px 50px rgba(0,0,0,0.4);
-            position: relative;
-            border: 3px solid #f4e4c1;
-            animation: paperAppear 0.5s ease;
-        }
-        
-        @keyframes paperAppear {
-            from {
-                opacity: 0;
-                transform: scale(0.8) rotate(-5deg);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1) rotate(0deg);
-            }
-        }
-        
-        .message-text {
-            font-size: 20px;
-            line-height: 1.8;
-            color: #333;
-            text-align: center;
-            margin: 20px 0;
-            font-weight: 500;
-        }
-        
-        .buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 30px;
-            justify-content: center;
-        }
-        
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 25px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: bold;
-        }
-        
-        .btn-save {
-            background: #764ba2;
-            color: white;
-        }
-        
-        .btn-close {
-            background: #ddd;
-            color: #333;
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-        
-        .saved-messages {
-            background: white;
-            width: 90%;
-            max-width: 500px;
-            padding: 20px;
-            border-radius: 15px;
-            margin-top: 20px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        
-        .saved-messages h3 {
-            color: #764ba2;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        
-        .saved-item {
-            background: #f8f8f8;
-            padding: 12px;
-            margin: 8px 0;
-            border-radius: 8px;
-            border-left: 4px solid #764ba2;
-            font-size: 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .delete-btn {
-            background: #ff6b6b;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        
-        .alarm-section {
-            background: white;
-            width: 90%;
-            max-width: 500px;
-            padding: 20px;
-            border-radius: 15px;
-            margin-top: 20px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            text-align: center;
-        }
-        
-        .alarm-section h3 {
-            color: #764ba2;
-            margin-bottom: 15px;
-        }
-        
-        .alarm-btn {
-            background: #43e97b;
-            color: white;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 25px;
-            font-size: 16px;
-            cursor: pointer;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-        
-        .alarm-info {
-            color: #666;
-            font-size: 13px;
-            margin-top: 10px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>오늘의 응원</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Malgun Gothic", sans-serif;
+  min-height: 100vh;
+  background: url("bg.png") no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 20px;
+}
+
+.title-box {
+  background: rgba(255,255,255,0.9);
+  padding: 18px 24px;
+  border-radius: 16px;
+  margin-top: 30px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+.title-box h1 {
+  font-size: 20px;
+  color: #555;
+}
+
+.subtitle {
+  margin: 25px 0;
+  font-size: 15px;
+  color: #333;
+}
+
+.gem-area {
+  margin-top: 40px;
+}
+
+.gem {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle at top, #ffffff, #c7a4ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 42px;
+  cursor: pointer;
+  box-shadow: 0 12px 25px rgba(0,0,0,0.35);
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+/* 메시지 팝업 */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.paper {
+  width: 90%;
+  max-width: 360px;
+  background: #fffdf6;
+  border-radius: 20px;
+  padding: 36px 28px;
+  text-align: center;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+  animation: pop 0.4s ease;
+}
+
+@keyframes pop {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.message {
+  font-size: 18px;
+  line-height: 1.7;
+  color: #333;
+}
+
+.close-btn {
+  margin-top: 30px;
+  padding: 12px 26px;
+  border-radius: 25px;
+  border: none;
+  background: #c7a4ff;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+</style>
 </head>
+
 <body>
-    <div class="title-box">
-        <h1>토닥토닥 당신의 하루를 응원해요 ♡</h1>
-    </div>
-    
-    <p class="subtitle">오늘의 선물을 클릭해 보세요</p>
-    
-    <div class="gems-container">
-        <div class="gem" onclick="showMessage()">💎</div>
-        <div class="gem" onclick="showMessage()">💎</div>
-        <div class="gem" onclick="showMessage()">💎</div>
-    </div>
-    
-    <div class="alarm-section">
-        <h3>매일 아침 응원 받기</h3>
-        <button class="alarm-btn" onclick="requestNotification()">알림 받기 🔔</button>
-        <p class="alarm-info">매일 오전 9시에 따뜻한 메시지를 보내드려요</p>
-    </div>
-    
-    <div class="saved-messages" id="savedMessages">
-        <h3>저장한 메시지 ⭐</h3>
-        <div id="savedList"></div>
-    </div>
-    
-    <div class="message-modal" id="messageModal">
-        <div class="message-paper">
-            <div class="message-text" id="messageText"></div>
-            <div class="buttons">
-                <button class="btn btn-save" onclick="saveMessage()">저장하기 ⭐</button>
-                <button class="btn btn-close" onclick="closeMessage()">닫기</button>
-            </div>
-        </div>
-    </div>
-    
-    <script>
-        const messages = [
-            "오늘도 당신은 충분히 잘하고 있어요",
-            "힘들 땐 잠시 쉬어가도 괜찮아요",
-            "당신의 노력을 누구보다 당신이 알고 있어요",
-            "천천히 가도 괜찮아요, 멈추지만 않으면 돼요",
-            "지금 이 순간도 당신은 최선을 다하고 있어요",
-            "완벽하지 않아도 괜찮아요",
-            "실패는 성공의 과정일 뿐이에요",
-            "오늘 하루도 버텨낸 당신이 대단해요",
-            "작은 발걸음도 앞으로 나아가는 거예요",
-            "당신은 생각보다 강한 사람이에요",
-            "힘들어도 견뎌낸 당신, 정말 멋져요",
-            "지금의 어려움은 언젠가 지나갈 거예요",
-            "당신은 혼자가 아니에요",
-            "쉬어가는 것도 용기예요",
-            "당신의 속도로 가면 돼요",
-            "오늘 하루를 살아낸 것만으로도 충분해요",
-            "당신은 할 수 있어요",
-            "포기하지 않은 당신이 자랑스러워요",
-            "지금까지 잘 버텨왔잖아요",
-            "내일은 오늘보다 나을 거예요",
-            "당신의 노력은 헛되지 않아요",
-            "지금 이 순간도 당신은 성장하고 있어요",
-            "힘들 땐 도움을 요청해도 괜찮아요",
-            "당신은 충분히 가치 있는 사람이에요",
-            "작은 성취도 축하할 가치가 있어요",
-            "당신만의 속도로 가는 게 가장 중요해요",
-            "오늘을 견뎌낸 당신, 응원해요",
-            "완벽을 추구하지 않아도 돼요",
-            "당신의 존재 자체가 소중해요",
-            "지금 이대로도 충분히 훌륭해요",
-            "힘들 땐 잠시 멈춰도 괜찮아요",
-            "당신은 더 나은 내일을 만들어가고 있어요",
-            "실수해도 괜찮아요, 그게 배움이에요",
-            "당신의 노력을 인정해주세요",
-            "지금까지 해온 것만으로도 대단해요",
-            "당신은 충분히 용감해요",
-            "작은 진전도 의미 있어요",
-            "오늘 하루도 무사히 보낸 것이 축복이에요",
-            "당신의 페이스대로 가면 돼요",
-            "힘들어도 이겨낼 수 있어요",
-            "당신은 생각보다 많은 걸 해냈어요",
-            "지금의 고민도 언젠가 추억이 될 거예요",
-            "당신의 감정은 모두 소중해요",
-            "쉬는 것도 전진이에요",
-            "당신은 충분히 잘하고 있어요",
-            "완벽하지 않아도 사랑받을 자격이 있어요",
-            "오늘 하루를 버텨낸 당신, 파이팅!",
-            "작은 변화도 큰 발걸음이에요",
-            "당신의 노력은 반드시 빛을 발할 거예요",
-            "지금 이 순간도 당신은 소중해요"
-        ];
-        
-        let currentMessage = '';
-        let savedMessagesList = JSON.parse(localStorage.getItem('savedMessages')) || [];
-        
-        function showMessage() {
-            const randomIndex = Math.floor(Math.random() * messages.length);
-            currentMessage = messages[randomIndex];
-            document.getElementById('messageText').textContent = currentMessage;
-            document.getElementById('messageModal').style.display = 'flex';
-        }
-        
-        function closeMessage() {
-            document.getElementById('messageModal').style.display = 'none';
-        }
-        
-        function saveMessage() {
-            if (!savedMessagesList.includes(currentMessage)) {
-                savedMessagesList.push(currentMessage);
-                localStorage.setItem('savedMessages', JSON.stringify(savedMessagesList));
-                displaySavedMessages();
-                alert('메시지가 저장되었어요! ⭐');
-            } else {
-                alert('이미 저장된 메시지예요!');
-            }
-        }
-        
-        function displaySavedMessages() {
-            const savedList = document.getElementById('savedList');
-            if (savedMessagesList.length === 0) {
-                savedList.innerHTML = '<p style="text-align:center; color:#999;">아직 저장한 메시지가 없어요</p>';
-                return;
-            }
-            
-            savedList.innerHTML = savedMessagesList.map((msg, index) => `
-                <div class="saved-item">
-                    <span>${msg}</span>
-                    <button class="delete-btn" onclick="deleteMessage(${index})">삭제</button>
-                </div>
-            `).join('');
-        }
-        
-        function deleteMessage(index) {
-            if (confirm('이 메시지를 삭제할까요?')) {
-                savedMessagesList.splice(index, 1);
-                localStorage.setItem('savedMessages', JSON.stringify(savedMessagesList));
-                displaySavedMessages();
-            }
-        }
-        
-        function requestNotification() {
-            if ('Notification' in window) {
-                Notification.requestPermission().then(permission => {
-                    if (permission === 'granted') {
-                        alert('알림이 설정되었어요! 매일 오전 9시에 응원 메시지를 보내드릴게요 💌');
-                        scheduleNotification();
-                    } else {
-                        alert('알림 권한을 허용해주세요!');
-                    }
-                });
-            } else {
-                alert('이 브라우저는 알림을 지원하지 않아요 😢\nPWA로 설치하면 알림을 받을 수 있어요!');
-            }
-        }
-        
-        function scheduleNotification() {
-            // 매일 오전 9시 알림 예약 (실제로는 Service Worker 필요)
-            const now = new Date();
-            const scheduledTime = new Date();
-            scheduledTime.setHours(9, 0, 0, 0);
-            
-            if (now > scheduledTime) {
-                scheduledTime.setDate(scheduledTime.getDate() + 1);
-            }
-            
-            const timeUntilNotification = scheduledTime - now;
-            
-            setTimeout(() => {
-                const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-                new Notification('힘내요 오늘 💌', {
-                    body: randomMessage,
-                    icon: '💎'
-                });
-                
-                // 다음 날 알림 설정
-                setInterval(() => {
-                    const msg = messages[Math.floor(Math.random() * messages.length)];
-                    new Notification('힘내요 오늘 💌', {
-                        body: msg,
-                        icon: '💎'
-                    });
-                }, 24 * 60 * 60 * 1000); // 24시간마다
-            }, timeUntilNotification);
-        }
-        
-        // 페이지 로드 시 저장된 메시지 표시
-        displaySavedMessages();
-    </script>
+
+<div class="title-box">
+  <h1>토닥토닥, 오늘의 선물 💜</h1>
+</div>
+
+<p class="subtitle">보석을 눌러 오늘의 메시지를 받아보세요</p>
+
+<div class="gem-area" id="gemArea">
+  <div class="gem" onclick="openGift()">💎</div>
+</div>
+
+<!-- 메시지 -->
+<div class="modal" id="modal">
+  <div class="paper">
+    <div class="message" id="messageText"></div>
+    <button class="close-btn" onclick="closeModal()">닫기</button>
+  </div>
+</div>
+
+<script>
+const messages = [
+  "오늘 하루를 버텨낸 당신은 정말 대단해요.",
+  "지금 이대로도 충분히 잘하고 있어요.",
+  "조금 느려도 괜찮아요, 당신의 속도가 맞아요.",
+  "오늘의 당신을 꼭 안아주고 싶어요.",
+  "지금의 노력은 반드시 빛이 될 거예요.",
+  "오늘도 여기까지 온 것만으로 충분해요.",
+  "당신은 생각보다 훨씬 강한 사람이에요.",
+  "힘들 땐 잠시 쉬어도 괜찮아요.",
+  "오늘 하루도 잘 살아냈어요."
+];
+
+// 한 세션에 한 번만 클릭
+function openGift() {
+  if (sessionStorage.getItem("clicked")) return;
+
+  sessionStorage.setItem("clicked", "true");
+
+  // 보석 제거
+  document.getElementById("gemArea").innerHTML = "";
+
+  // 랜덤 메시지
+  const msg = messages[Math.floor(Math.random() * messages.length)];
+  document.getElementById("messageText").textContent = msg;
+
+  document.getElementById("modal").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("modal").style.display = "none";
+}
+</script>
+
 </body>
 </html>

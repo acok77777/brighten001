@@ -12,8 +12,17 @@
 
 body{
   font-family:'Poor Story','Malgun Gothic','맑은 고딕',sans-serif;
-  background:url("background.png") no-repeat center center fixed;
-  background-size:cover;
+
+  /* 🌸 핑크 스트라이프 배경 (파일 없음) */
+  background:
+    repeating-linear-gradient(
+      45deg,
+      #ffe4ec,
+      #ffe4ec 20px,
+      #ffd1e8 20px,
+      #ffd1e8 40px
+    );
+
   min-height:100svh;
   display:flex;
   flex-direction:column;
@@ -162,13 +171,13 @@ body{
 <body>
 
 <div class="title-box">
-  <h1>💗 당신의 하루를 응원해요 💗</h1>
+  <h1>당신의 하루를 응원해요 💗</h1>
 </div>
 
 <p class="subtitle">오늘의 선물을 클릭해 보세요</p>
 
 <div class="gems-container" id="gemsContainer">
-  <!-- 랜덤 음식 2개가 JS로 들어옴 -->
+  <!-- 랜덤 음식 2개 -->
 </div>
 
 <div class="alarm-section">
@@ -188,14 +197,12 @@ body{
 </div>
 
 <script>
-/* 응원 메시지 */
 const messages=[
   "오늘도 충분히 잘하고 있어요",
   "당신은 소중한 사람이에요",
   "천천히 가도 괜찮아요"
 ];
 
-/* 음식 이모지 목록 */
 const foods=[
   "🍰","🧁","🍪","🍩","🍫","🍬","🍭",
   "🍮","🍦","🍨","🥧","🧇","🥞","🍯"
@@ -204,7 +211,7 @@ const foods=[
 let gemClicked=false;
 let currentMessage="";
 
-/* 랜덤으로 음식 2개 뽑기 */
+/* 랜덤 음식 2개 */
 function renderRandomFoods(){
   const shuffled=[...foods].sort(()=>0.5-Math.random());
   const selected=shuffled.slice(0,2);
@@ -219,7 +226,6 @@ function renderRandomFoods(){
   });
 }
 
-/* 메시지 표시 */
 function showMessage(){
   if(gemClicked){
     alert("오늘의 선물은 하나만 열 수 있어요 💕");
@@ -244,7 +250,6 @@ function requestNotification(){
   alert("PWA로 설치하면 실제 알림이 가능해요 💌");
 }
 
-/* 페이지 열릴 때 실행 */
 renderRandomFoods();
 </script>
 

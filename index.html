@@ -74,17 +74,14 @@ body{
   align-items:center;
   justify-content:center;
 }
+
 .food-name{
   font-size:13px;
   color:#555;
   margin-top:2px;
 }
-.food.clicked{
-  opacity:.4;
-  filter:grayscale(1);
-}
 
-/* ===== 알림 ===== */
+/* ===== 알림 영역 ===== */
 .alarm-section{
   background:#fff;
   border:3px solid #ffb6d9;
@@ -96,31 +93,45 @@ body{
   margin-top:6px;
   text-align:center;
 }
-.alarm-section h3{font-size:24px;color:#ff69b4;}
-.alarm-btn{
-  background:#ffb6d9;
-  border:none;
-  border-radius:28px;
-  padding:14px 32px;
-  font-size:20px;
-  font-weight:bold;
-  margin:8px 0;
+
+.alarm-section h3{
+  font-size:24px;
+  color:#ff69b4;
+  margin-bottom:10px;
 }
 
-/* ===== 저장 배너 ===== */
-.saved-banner{
+/* 공통 타원 버튼 */
+.oval-btn{
+  display:inline-block;
+  background:#ffd9eb;
+  border:none;
+  border-radius:40px;
+  padding:14px 36px;
+  font-size:20px;
+  font-family:'Poor Story',cursive;
+  cursor:pointer;
+  margin:6px 0;
+}
+
+/* 알림 버튼 전용 */
+.alarm-btn{
+  color:#1e88e5; /* 파란색 */
+}
+
+/* 알림 설명 문구 */
+.alarm-desc{
+  margin-top:6px;
+  font-size:15px;
+  color:#000;
+  font-family:'Poor Story',cursive;
+}
+
+/* ===== 저장 버튼 ===== */
+.saved-btn{
   margin:18px 0 26px;
+  color:#ff69b4;
   background:#fff;
   border:3px solid #ffb6d9;
-  border-radius:20px;
-  padding:14px;
-  width:100%;
-  max-width:440px;
-  text-align:center;
-  font-size:22px;
-  color:#ff69b4;
-  cursor:pointer;
-  box-shadow:0 6px 18px rgba(255,182,217,.45);
 }
 
 /* ===== 모달 공통 ===== */
@@ -151,18 +162,20 @@ body{
   cursor:pointer;
 }
 
-/* ===== 응원 메시지 ===== */
+/* 응원 메시지 */
 .message-text{
   font-size:20px;
   line-height:1.7;
   text-align:center;
   margin:20px 0;
 }
+
 .buttons{
   display:flex;
   justify-content:center;
   gap:12px;
 }
+
 .btn{
   padding:12px 24px;
   border:none;
@@ -174,7 +187,7 @@ body{
 .btn-save{background:#ff69b4;color:#fff;}
 .btn-close{background:#ddd;}
 
-/* ===== 저장 목록 ===== */
+/* 저장 목록 */
 .saved-item{
   background:#fff0f6;
   border-left:6px solid #ff69b4;
@@ -184,6 +197,7 @@ body{
   font-size:15px;
 }
 .saved-date{font-weight:bold;margin-bottom:4px;}
+
 .delete-btn{
   background:#ff6b6b;
   color:#fff;
@@ -223,15 +237,17 @@ body{
 
 <div class="gems-container" id="gems"></div>
 
+<!-- 알림 -->
 <div class="alarm-section">
   <h3>매일 아침 응원 받기</h3>
-  <button class="alarm-btn">알림 받기 🔔</button>
+  <button class="oval-btn alarm-btn">알림 받기 🔔</button>
+  <div class="alarm-desc">매일 오전 9시에 따뜻한 메시지를 보내드려요</div>
 </div>
 
-<!-- 저장 배너 -->
-<div class="saved-banner" onclick="openSaved()">저장한 메시지 ⭐</div>
+<!-- 저장 버튼 -->
+<button class="oval-btn saved-btn" onclick="openSaved()">저장한 메시지 ⭐</button>
 
-<!-- ===== 응원 메시지 팝업 ===== -->
+<!-- 응원 메시지 팝업 -->
 <div class="modal" id="messageModal">
   <div class="modal-box">
     <div class="close-x" onclick="closeMessage()">✕</div>
@@ -243,7 +259,7 @@ body{
   </div>
 </div>
 
-<!-- ===== 저장 목록 팝업 ===== -->
+<!-- 저장 목록 팝업 -->
 <div class="modal" id="savedModal">
   <div class="modal-box">
     <div class="close-x" onclick="closeSaved()">✕</div>
@@ -276,7 +292,7 @@ let saved=JSON.parse(localStorage.getItem("savedMessages"))||[];
 let page=0, perPage=3;
 let currentMessage="";
 
-/* 음식 2개 */
+/* 음식 */
 function renderFoods(){
   const pick=[...foods].sort(()=>.5-Math.random()).slice(0,2);
   const g=document.getElementById("gems");
@@ -284,8 +300,7 @@ function renderFoods(){
   pick.forEach(f=>{
     const box=document.createElement("div");
     box.className="food";
-    box.onclick=()=>openMessage(f);
-
+    box.onclick=openMessage;
     box.innerHTML=`
       <div class="gem">${f.emoji}</div>
       <div class="food-name">${f.name}</div>
@@ -294,7 +309,7 @@ function renderFoods(){
   });
 }
 
-/* 응원 메시지 팝업 */
+/* 응원 팝업 */
 function openMessage(){
   currentMessage=messages[Math.floor(Math.random()*messages.length)];
   document.getElementById("messageText").textContent=currentMessage;

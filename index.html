@@ -49,28 +49,42 @@ body{
 .subtitle{
   font-size:21px;
   font-weight:bold;
-  margin:6px 0 4px;
+  margin:6px 0 6px;
 }
 
-/* 음식 */
+/* ===== 음식 ===== */
 .gems-container{
   display:flex;
   gap:22px;
-  margin:12px 0;
+  margin:10px 0 14px;
 }
+
+.food{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  cursor:pointer;
+}
+
 .gem{
-  width:120px;height:120px;
-  font-size:86px;
+  width:110px;
+  height:110px;
+  font-size:80px;
   display:flex;
   align-items:center;
   justify-content:center;
-  cursor:pointer;
-  transition:transform .15s;
 }
-.gem:active{transform:scale(.95);}
-.gem.clicked{opacity:.4;filter:grayscale(1);}
+.food-name{
+  font-size:13px;
+  color:#555;
+  margin-top:2px;
+}
+.food.clicked{
+  opacity:.4;
+  filter:grayscale(1);
+}
 
-/* 알림 */
+/* ===== 알림 ===== */
 .alarm-section{
   background:#fff;
   border:3px solid #ffb6d9;
@@ -93,21 +107,23 @@ body{
   margin:8px 0;
 }
 
-/* ===== 저장 제목 (클릭 보장) ===== */
-.saved-title{
-  margin:18px 0 28px;
+/* ===== 저장 배너 ===== */
+.saved-banner{
+  margin:18px 0 26px;
+  background:#fff;
+  border:3px solid #ffb6d9;
+  border-radius:20px;
+  padding:14px;
+  width:100%;
+  max-width:440px;
+  text-align:center;
   font-size:22px;
   color:#ff69b4;
   cursor:pointer;
-  text-align:center;
-  position:relative;
-  z-index:10;
-}
-.saved-title:active{
-  transform:scale(.96);
+  box-shadow:0 6px 18px rgba(255,182,217,.45);
 }
 
-/* ===== 메시지 모달 ===== */
+/* ===== 모달 공통 ===== */
 .modal{
   display:none;
   position:fixed;
@@ -117,6 +133,7 @@ body{
   align-items:center;
   z-index:1000;
 }
+
 .modal-box{
   background:#fff;
   width:92%;
@@ -125,6 +142,7 @@ body{
   padding:20px;
   position:relative;
 }
+
 .close-x{
   position:absolute;
   top:12px;
@@ -133,7 +151,30 @@ body{
   cursor:pointer;
 }
 
-/* 저장 목록 */
+/* ===== 응원 메시지 ===== */
+.message-text{
+  font-size:20px;
+  line-height:1.7;
+  text-align:center;
+  margin:20px 0;
+}
+.buttons{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+}
+.btn{
+  padding:12px 24px;
+  border:none;
+  border-radius:24px;
+  font-size:15px;
+  font-weight:bold;
+  cursor:pointer;
+}
+.btn-save{background:#ff69b4;color:#fff;}
+.btn-close{background:#ddd;}
+
+/* ===== 저장 목록 ===== */
 .saved-item{
   background:#fff0f6;
   border-left:6px solid #ff69b4;
@@ -142,10 +183,7 @@ body{
   margin-bottom:10px;
   font-size:15px;
 }
-.saved-date{
-  font-weight:bold;
-  margin-bottom:4px;
-}
+.saved-date{font-weight:bold;margin-bottom:4px;}
 .delete-btn{
   background:#ff6b6b;
   color:#fff;
@@ -154,7 +192,6 @@ body{
   padding:6px 12px;
   font-size:13px;
   margin-top:6px;
-  cursor:pointer;
 }
 
 /* 페이지 버튼 */
@@ -176,8 +213,9 @@ body{
 
 <body>
 
+<!-- 타이틀 -->
 <div class="title-lace">
-  <img src="title-box.png" alt="title">
+  <img src="title-box.png">
   <h1>당신의 하루를 응원해요</h1>
 </div>
 
@@ -190,10 +228,22 @@ body{
   <button class="alarm-btn">알림 받기 🔔</button>
 </div>
 
-<!-- ⭐ 반드시 클릭 가능 -->
-<div class="saved-title" onclick="openSaved()">저장한 메시지 ⭐</div>
+<!-- 저장 배너 -->
+<div class="saved-banner" onclick="openSaved()">저장한 메시지 ⭐</div>
 
-<!-- 저장 목록 팝업 -->
+<!-- ===== 응원 메시지 팝업 ===== -->
+<div class="modal" id="messageModal">
+  <div class="modal-box">
+    <div class="close-x" onclick="closeMessage()">✕</div>
+    <div class="message-text" id="messageText"></div>
+    <div class="buttons">
+      <button class="btn btn-save" onclick="saveMessage()">저장하기 ⭐</button>
+      <button class="btn btn-close" onclick="closeMessage()">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 저장 목록 팝업 ===== -->
 <div class="modal" id="savedModal">
   <div class="modal-box">
     <div class="close-x" onclick="closeSaved()">✕</div>
@@ -206,7 +256,15 @@ body{
 </div>
 
 <script>
-const foods=["🍰","🧁","🍪","🍩","🍫","🍬","🍭","🍮","🍦","🍨","🥧","🧇","🥞","🍯"];
+const foods=[
+  {emoji:"🍰",name:"케이크"},
+  {emoji:"🍩",name:"도너츠"},
+  {emoji:"🍦",name:"아이스크림"},
+  {emoji:"🧁",name:"컵케이크"},
+  {emoji:"🍪",name:"쿠키"},
+  {emoji:"🍫",name:"초콜릿"}
+];
+
 const messages=[
   "오늘도 충분히 잘하고 있어요",
   "당신은 소중한 사람이에요",
@@ -216,31 +274,46 @@ const messages=[
 
 let saved=JSON.parse(localStorage.getItem("savedMessages"))||[];
 let page=0, perPage=3;
+let currentMessage="";
 
-/* 음식 */
+/* 음식 2개 */
 function renderFoods(){
   const pick=[...foods].sort(()=>.5-Math.random()).slice(0,2);
   const g=document.getElementById("gems");
   g.innerHTML="";
   pick.forEach(f=>{
-    const d=document.createElement("div");
-    d.className="gem";
-    d.textContent=f;
-    d.onclick=saveMsg;
-    g.appendChild(d);
+    const box=document.createElement("div");
+    box.className="food";
+    box.onclick=()=>openMessage(f);
+
+    box.innerHTML=`
+      <div class="gem">${f.emoji}</div>
+      <div class="food-name">${f.name}</div>
+    `;
+    g.appendChild(box);
   });
 }
 
-/* 저장 */
-function saveMsg(){
-  const d=new Date();
-  const date=`${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,"0")}.${String(d.getDate()).padStart(2,"0")}`;
-  const msg=messages[Math.floor(Math.random()*messages.length)];
-  saved.unshift({date,message:msg});
-  localStorage.setItem("savedMessages",JSON.stringify(saved));
+/* 응원 메시지 팝업 */
+function openMessage(){
+  currentMessage=messages[Math.floor(Math.random()*messages.length)];
+  document.getElementById("messageText").textContent=currentMessage;
+  document.getElementById("messageModal").style.display="flex";
+}
+function closeMessage(){
+  document.getElementById("messageModal").style.display="none";
 }
 
-/* 팝업 */
+/* 저장 */
+function saveMessage(){
+  const d=new Date();
+  const date=`${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,"0")}.${String(d.getDate()).padStart(2,"0")}`;
+  saved.unshift({date,message:currentMessage});
+  localStorage.setItem("savedMessages",JSON.stringify(saved));
+  closeMessage();
+}
+
+/* 저장 목록 */
 function openSaved(){
   page=0;
   renderSaved();
@@ -249,7 +322,6 @@ function openSaved(){
 function closeSaved(){
   document.getElementById("savedModal").style.display="none";
 }
-
 function renderSaved(){
   const list=document.getElementById("savedList");
   const slice=saved.slice(page*perPage,(page+1)*perPage);
@@ -265,7 +337,6 @@ function renderSaved(){
     </div>
   `).join("");
 }
-
 function nextPage(){
   if((page+1)*perPage<saved.length){page++;renderSaved();}
 }

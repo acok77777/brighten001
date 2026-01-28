@@ -27,29 +27,32 @@ body{
   padding:12px;
 }
 
-/* 제목 이미지 박스 */
-.title-img{
-  width:90%;
-  max-width:420px;
-  margin:14px 0 10px;
-}
-.title-img img{
-  width:100%;
-  display:block;
+/* 공통 핑크 박스 */
+.pink-box{
+  background:#fff;
+  border:3px solid #ffb6d9;
+  border-radius:22px;
+  box-shadow:0 6px 18px rgba(255,182,217,0.45);
 }
 
-/* 제목 글자 */
-.title-text{
+/* 제목 */
+.title-box{
+  padding:20px 24px;
+  margin:16px 0 12px;
+}
+.title-box h1{
   font-size:24px;
   color:#000;
-  margin-bottom:8px;
+  text-align:center;
+  font-weight:normal;
 }
 
-/* 안내 */
+/* 안내 문구 */
 .subtitle{
   font-size:21px;
   font-weight:bold;
-  margin:10px 0;
+  margin:12px 0 8px;
+  color:#000;
 }
 
 /* 음식 */
@@ -73,48 +76,87 @@ body{
   filter:grayscale(1);
 }
 
-/* 저장 요약 박스 */
-.saved-summary{
+/* 알림 */
+.alarm-section{
   width:100%;
   max-width:440px;
-  background:#fff;
-  border:3px solid #ffb6d9;
-  border-radius:22px;
-  padding:18px;
+  padding:22px;
+  margin-top:12px;
   text-align:center;
-  margin-bottom:20px;
-  cursor:pointer;
 }
-.saved-summary h3{
+.alarm-section h3{
+  font-size:24px;
   color:#ff69b4;
-  font-size:22px;
+}
+.alarm-btn{
+  background:#ffb6d9;
+  border:none;
+  border-radius:28px;
+  padding:14px 32px;
+  font-size:20px;
+  font-weight:bold;
+  margin:10px 0;
 }
 
-/* ===== 저장 목록 모달 ===== */
-.saved-modal{
+/* 모달 */
+.message-modal{
   display:none;
   position:fixed;
   inset:0;
   background:rgba(0,0,0,0.6);
-  z-index:2000;
+  justify-content:center;
+  align-items:center;
+  z-index:1000;
 }
 
-.saved-modal-content{
+.message-paper{
   background:#fff;
-  width:92%;
-  max-width:420px;
-  margin:40px auto;
+  border:3px solid #ffd1e8;
   border-radius:24px;
-  padding:20px;
-  position:relative;
+  padding:30px 22px;
+  width:92%;
+  max-width:380px;
+  text-align:center;
 }
 
-.close-x{
-  position:absolute;
-  top:14px;
-  left:14px;
-  font-size:22px;
+.message-text{
+  font-size:19px;
+  line-height:1.8;
+}
+
+/* 버튼 */
+.buttons{
+  display:flex;
+  gap:14px;
+  justify-content:center;
+  margin-top:22px;
+}
+
+.btn{
+  padding:14px 26px;
+  border:none;
+  border-radius:26px;
+  font-size:16px;
+  font-weight:bold;
   cursor:pointer;
+}
+
+.btn-save{background:#ff69b4;color:#fff;}
+.btn-close{background:#ddd;}
+
+/* ⭐ 저장한 메시지 박스 */
+.saved-box{
+  width:100%;
+  max-width:440px;
+  margin:20px 0 30px;
+  padding:18px;
+}
+
+.saved-box h3{
+  text-align:center;
+  color:#ff69b4;
+  margin-bottom:14px;
+  font-size:22px;
 }
 
 .saved-item{
@@ -122,7 +164,8 @@ body{
   border-left:6px solid #ff69b4;
   border-radius:14px;
   padding:12px;
-  margin-bottom:12px;
+  margin-bottom:10px;
+  font-size:15px;
 }
 
 .saved-date{
@@ -134,146 +177,128 @@ body{
   background:#ff6b6b;
   color:#fff;
   border:none;
-  border-radius:12px;
+  border-radius:14px;
   padding:6px 12px;
   font-size:13px;
+  cursor:pointer;
   margin-top:6px;
-  cursor:pointer;
-}
-
-/* 페이지 버튼 */
-.page-controls{
-  display:flex;
-  justify-content:space-between;
-  margin-top:10px;
-}
-.page-controls button{
-  background:#ffb6d9;
-  border:none;
-  border-radius:16px;
-  padding:8px 16px;
-  font-weight:bold;
-  cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<div class="title-img">
-  <img src="title-box.png" alt="title">
+<div class="title-box pink-box">
+  <h1>당신의 하루를 응원해요</h1>
 </div>
-
-<div class="title-text">당신의 하루를 응원해요</div>
 
 <p class="subtitle">오늘의 선물을 클릭해 보세요</p>
 
 <div class="gems-container" id="gemsContainer"></div>
 
-<!-- 저장 요약 -->
-<div class="saved-summary" onclick="openSavedModal()">
-  <h3>저장한 메시지 ⭐</h3>
+<div class="alarm-section pink-box">
+  <h3>매일 아침 응원 받기</h3>
+  <button class="alarm-btn">알림 받기 🔔</button>
 </div>
 
-<!-- 저장 목록 모달 -->
-<div class="saved-modal" id="savedModal">
-  <div class="saved-modal-content">
-    <div class="close-x" onclick="closeSavedModal()">✕</div>
-    <div id="savedList"></div>
+<!-- ⭐ 저장한 메시지 영역 -->
+<div class="saved-box pink-box">
+  <h3>저장한 메시지 ⭐</h3>
+  <div id="savedList"></div>
+</div>
 
-    <div class="page-controls">
-      <button onclick="prevPage()">◀ 이전</button>
-      <button onclick="nextPage()">다음 ▶</button>
+<!-- 모달 -->
+<div class="message-modal" id="messageModal">
+  <div class="message-paper">
+    <div class="message-text" id="messageText"></div>
+    <div class="buttons">
+      <button class="btn btn-save" onclick="saveMessage()">저장하기 ⭐</button>
+      <button class="btn btn-close" onclick="closeMessage()">닫기</button>
     </div>
   </div>
 </div>
 
 <script>
+const messages=[
+  "오늘도 충분히 잘하고 있어요",
+  "당신은 소중한 사람이에요",
+  "천천히 가도 괜찮아요"
+];
+
 const foods=["🍰","🧁","🍪","🍩","🍫","🍬","🍭","🍮","🍦","🍨","🥧","🧇","🥞","🍯"];
+
 let gemClicked=false;
+let currentMessage="";
 
-let savedMessages=JSON.parse(localStorage.getItem("savedMessages"))||[];
-let currentPage=0;
-const perPage=5;
+let savedMessages = JSON.parse(localStorage.getItem("savedMessages")) || [];
 
+/* 음식 2개 */
 function renderFoods(){
-  const pick=[...foods].sort(()=>0.5-Math.random()).slice(0,2);
+  const picked=[...foods].sort(()=>0.5-Math.random()).slice(0,2);
   const box=document.getElementById("gemsContainer");
   box.innerHTML="";
-  pick.forEach(f=>{
+  picked.forEach(food=>{
     const d=document.createElement("div");
     d.className="gem";
-    d.textContent=f;
-    d.onclick=()=>saveMessage();
+    d.textContent=food;
+    d.onclick=showMessage;
     box.appendChild(d);
   });
 }
 
-function saveMessage(){
+function showMessage(){
   if(gemClicked) return;
   gemClicked=true;
+  document.querySelectorAll(".gem").forEach(g=>g.classList.add("clicked"));
+  currentMessage=messages[Math.floor(Math.random()*messages.length)];
+  document.getElementById("messageText").textContent=currentMessage;
+  document.getElementById("messageModal").style.display="flex";
+}
 
+function closeMessage(){
+  document.getElementById("messageModal").style.display="none";
+}
+
+/* ⭐ 저장 */
+function saveMessage(){
   const d=new Date();
   const date=`${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,"0")}.${String(d.getDate()).padStart(2,"0")}`;
 
-  savedMessages.unshift({
-    date,
-    message:"당신은 더 나은 내일을 만들어가고 있어요"
+  savedMessages.push({
+    date: date,
+    message: "당신은 더 나은 내일을 만들어가고 있어요"
   });
 
-  localStorage.setItem("savedMessages",JSON.stringify(savedMessages));
-  renderFoods();
+  localStorage.setItem("savedMessages", JSON.stringify(savedMessages));
+  renderSavedMessages();
+  closeMessage();
 }
 
-function openSavedModal(){
-  currentPage=0;
-  renderSavedList();
-  document.getElementById("savedModal").style.display="block";
-}
-
-function closeSavedModal(){
-  document.getElementById("savedModal").style.display="none";
-}
-
-function renderSavedList(){
+/* ⭐ 저장 목록 출력 */
+function renderSavedMessages(){
   const list=document.getElementById("savedList");
-  const start=currentPage*perPage;
-  const items=savedMessages.slice(start,start+perPage);
-
-  if(items.length===0){
-    list.innerHTML="<p style='text-align:center;color:#999;'>저장된 메시지가 없어요</p>";
+  if(savedMessages.length===0){
+    list.innerHTML="<p style='text-align:center;color:#999;'>아직 저장된 메시지가 없어요</p>";
     return;
   }
 
-  list.innerHTML=items.map((it,i)=>`
+  list.innerHTML=savedMessages.map((item,idx)=>`
     <div class="saved-item">
-      <div class="saved-date">${it.date}</div>
-      <div>${it.message}</div>
-      <button class="delete-btn" onclick="deleteMessage(${start+i})">삭제</button>
+      <div class="saved-date">${item.date}</div>
+      <div>${item.message}</div>
+      <button class="delete-btn" onclick="deleteMessage(${idx})">삭제</button>
     </div>
   `).join("");
 }
 
-function deleteMessage(idx){
-  savedMessages.splice(idx,1);
-  localStorage.setItem("savedMessages",JSON.stringify(savedMessages));
-  renderSavedList();
-}
-
-function prevPage(){
-  if(currentPage>0){
-    currentPage--;
-    renderSavedList();
-  }
-}
-function nextPage(){
-  if((currentPage+1)*perPage<savedMessages.length){
-    currentPage++;
-    renderSavedList();
-  }
+function deleteMessage(index){
+  savedMessages.splice(index,1);
+  localStorage.setItem("savedMessages", JSON.stringify(savedMessages));
+  renderSavedMessages();
 }
 
 renderFoods();
+renderSavedMessages();
 </script>
 
 </body>

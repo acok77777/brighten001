@@ -14,61 +14,62 @@ body{
   font-family:'Poor Story','Malgun Gothic','맑은 고딕',sans-serif;
   background:url("background.png") no-repeat center center fixed;
   background-size:cover;
-  min-height:100vh;
+  min-height:100svh;
   display:flex;
   flex-direction:column;
   align-items:center;
-  padding:20px;
+  padding:14px;
 }
 
 /* 제목 박스 */
 .title-box{
   background:#fff;
-  padding:30px 40px;
-  border-radius:22px;
-  margin:30px 0 20px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.25);
-  border:3px solid #ffb6d9;
+  padding:16px 20px;
+  border-radius:18px;
+  margin:14px 0 10px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.25);
+  border:2px solid #ffb6d9;
 }
 
 .title-box h1{
-  font-size:22px; /* 제목 크기 */
-  color:#000;     /* 제목 검정색 */
+  font-size:22px;
+  color:#000;
   font-weight:normal;
+  text-align:center;
 }
 
-/* 서브 문구 */
+/* 안내 문구 */
 .subtitle{
-  font-size:24px; /* 오늘의 선물 문구 */
+  font-size:18px;
   font-weight:bold;
-  margin:20px 0;
+  margin:10px 0 6px;
   color:#000;
 }
 
-/* 보석 */
+/* 음식 컨테이너 */
 .gems-container{
   display:flex;
-  gap:30px;
-  margin:40px 0;
+  gap:20px;
+  margin:18px 0;
   justify-content:center;
 }
 
+/* 음식 */
 .gem{
-  width:150px;
-  height:150px;
-  font-size:105px;
+  width:110px;
+  height:110px;
+  font-size:78px;
   cursor:pointer;
   animation:float 3s ease-in-out infinite;
-  filter:drop-shadow(0 10px 25px rgba(255,192,203,0.6));
+  filter:drop-shadow(0 8px 18px rgba(255,192,203,0.6));
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
-
-.gem:nth-child(1)::before{content:'🍰';}
-.gem:nth-child(2)::before{content:'🍪';}
-.gem:nth-child(3)::before{content:'🧁';}
 
 @keyframes float{
   0%,100%{transform:translateY(0);}
-  50%{transform:translateY(-10px);}
+  50%{transform:translateY(-8px);}
 }
 
 .gem.clicked{
@@ -81,34 +82,34 @@ body{
 /* 알림 섹션 */
 .alarm-section{
   background:#fff;
-  width:90%;
-  max-width:520px;
-  padding:30px; /* 박스 크게 */
-  border-radius:20px;
-  margin-top:20px;
-  box-shadow:0 12px 30px rgba(0,0,0,0.25);
+  width:100%;
+  max-width:420px;
+  padding:18px;
+  border-radius:18px;
+  margin-top:10px;
+  box-shadow:0 8px 22px rgba(0,0,0,0.25);
   text-align:center;
 }
 
 .alarm-section h3{
-  font-size:30px;
+  font-size:22px;
   color:#ff69b4;
-  margin-bottom:15px;
+  margin-bottom:8px;
 }
 
 .alarm-btn{
   background:linear-gradient(135deg,#87ceeb,#b0e0ff);
   border:none;
-  border-radius:30px;
-  padding:16px 40px; /* 버튼 크게 */
-  font-size:20px;    /* 버튼 글씨 크게 */
+  border-radius:26px;
+  padding:12px 28px;
+  font-size:18px;
   font-weight:bold;
   cursor:pointer;
-  margin:15px 0;
+  margin:8px 0;
 }
 
 .alarm-info{
-  font-size:18px; /* 오전 9시 문구 */
+  font-size:15px;
   font-weight:bold;
   color:#000;
 }
@@ -126,30 +127,30 @@ body{
 
 .message-paper{
   background:#fffef7;
-  padding:40px 30px;
-  border-radius:20px;
+  padding:26px 20px;
+  border-radius:18px;
   width:90%;
-  max-width:400px;
+  max-width:360px;
   text-align:center;
 }
 
 .message-text{
-  font-size:20px;
-  line-height:1.8;
+  font-size:18px;
+  line-height:1.7;
 }
 
 .buttons{
   display:flex;
   gap:10px;
   justify-content:center;
-  margin-top:25px;
+  margin-top:18px;
 }
 
 .btn{
-  padding:12px 24px;
+  padding:10px 20px;
   border:none;
-  border-radius:25px;
-  font-size:15px;
+  border-radius:22px;
+  font-size:14px;
   font-weight:bold;
 }
 
@@ -166,10 +167,8 @@ body{
 
 <p class="subtitle">오늘의 선물을 클릭해 보세요</p>
 
-<div class="gems-container">
-  <div class="gem" onclick="showMessage(this)"></div>
-  <div class="gem" onclick="showMessage(this)"></div>
-  <div class="gem" onclick="showMessage(this)"></div>
+<div class="gems-container" id="gemsContainer">
+  <!-- 랜덤 음식 2개가 JS로 들어옴 -->
 </div>
 
 <div class="alarm-section">
@@ -189,26 +188,64 @@ body{
 </div>
 
 <script>
-const messages=["오늘도 충분히 잘하고 있어요","당신은 소중해요","천천히 가도 괜찮아요"];
-let gemClicked=false,currentMessage="";
+/* 응원 메시지 */
+const messages=[
+  "오늘도 충분히 잘하고 있어요",
+  "당신은 소중한 사람이에요",
+  "천천히 가도 괜찮아요"
+];
 
+/* 음식 이모지 목록 */
+const foods=[
+  "🍰","🧁","🍪","🍩","🍫","🍬","🍭",
+  "🍮","🍦","🍨","🥧","🧇","🥞","🍯"
+];
+
+let gemClicked=false;
+let currentMessage="";
+
+/* 랜덤으로 음식 2개 뽑기 */
+function renderRandomFoods(){
+  const shuffled=[...foods].sort(()=>0.5-Math.random());
+  const selected=shuffled.slice(0,2);
+  const container=document.getElementById("gemsContainer");
+  container.innerHTML="";
+  selected.forEach(food=>{
+    const div=document.createElement("div");
+    div.className="gem";
+    div.textContent=food;
+    div.onclick=showMessage;
+    container.appendChild(div);
+  });
+}
+
+/* 메시지 표시 */
 function showMessage(){
-  if(gemClicked){alert("오늘의 선물은 하나만 열 수 있어요 💕");return;}
+  if(gemClicked){
+    alert("오늘의 선물은 하나만 열 수 있어요 💕");
+    return;
+  }
   gemClicked=true;
   document.querySelectorAll('.gem').forEach(g=>g.classList.add('clicked'));
   currentMessage=messages[Math.floor(Math.random()*messages.length)];
   document.getElementById("messageText").textContent=currentMessage;
   document.getElementById("messageModal").style.display="flex";
 }
+
 function closeMessage(){
   document.getElementById("messageModal").style.display="none";
 }
+
 function saveMessage(){
   alert("저장했어요 ⭐");
 }
+
 function requestNotification(){
-  alert("PWA 설치 시 실제 알림 구현 가능해요 💌");
+  alert("PWA로 설치하면 실제 알림이 가능해요 💌");
 }
+
+/* 페이지 열릴 때 실행 */
+renderRandomFoods();
 </script>
 
 </body>

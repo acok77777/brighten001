@@ -49,7 +49,7 @@ body{
 
 /* 안내 문구 */
 .subtitle{
-  font-size:21px; /* ⬅ 3사이즈 크게 */
+  font-size:21px;
   font-weight:bold;
   margin:12px 0 8px;
   color:#000;
@@ -87,7 +87,6 @@ body{
 .alarm-section h3{
   font-size:24px;
   color:#ff69b4;
-  margin-bottom:10px;
 }
 .alarm-btn{
   background:#ffb6d9;
@@ -125,23 +124,6 @@ body{
   line-height:1.8;
 }
 
-/* 저장 완료 박스 ⭐ */
-.save-result{
-  display:none;
-  background:#fff0f6;
-  border:2px dashed #ff69b4;
-  border-radius:18px;
-  padding:16px;
-  margin-top:18px;
-  font-size:16px;
-  color:#000;
-}
-
-.save-date{
-  font-weight:bold;
-  margin-bottom:8px;
-}
-
 /* 버튼 */
 .buttons{
   display:flex;
@@ -159,12 +141,47 @@ body{
   cursor:pointer;
 }
 
-.btn-save{
-  background:#ff69b4;
-  color:#fff;
+.btn-save{background:#ff69b4;color:#fff;}
+.btn-close{background:#ddd;}
+
+/* ⭐ 저장한 메시지 박스 */
+.saved-box{
+  width:100%;
+  max-width:440px;
+  margin:20px 0 30px;
+  padding:18px;
 }
-.btn-close{
-  background:#ddd;
+
+.saved-box h3{
+  text-align:center;
+  color:#ff69b4;
+  margin-bottom:14px;
+  font-size:22px;
+}
+
+.saved-item{
+  background:#fff0f6;
+  border-left:6px solid #ff69b4;
+  border-radius:14px;
+  padding:12px;
+  margin-bottom:10px;
+  font-size:15px;
+}
+
+.saved-date{
+  font-weight:bold;
+  margin-bottom:4px;
+}
+
+.delete-btn{
+  background:#ff6b6b;
+  color:#fff;
+  border:none;
+  border-radius:14px;
+  padding:6px 12px;
+  font-size:13px;
+  cursor:pointer;
+  margin-top:6px;
 }
 </style>
 </head>
@@ -184,17 +201,16 @@ body{
   <button class="alarm-btn">알림 받기 🔔</button>
 </div>
 
+<!-- ⭐ 저장한 메시지 영역 -->
+<div class="saved-box pink-box">
+  <h3>저장한 메시지 ⭐</h3>
+  <div id="savedList"></div>
+</div>
+
 <!-- 모달 -->
 <div class="message-modal" id="messageModal">
   <div class="message-paper">
     <div class="message-text" id="messageText"></div>
-
-    <!-- ⭐ 저장 결과 박스 -->
-    <div class="save-result" id="saveResult">
-      <div class="save-date" id="saveDate"></div>
-      <div id="saveMessageText"></div>
-    </div>
-
     <div class="buttons">
       <button class="btn btn-save" onclick="saveMessage()">저장하기 ⭐</button>
       <button class="btn btn-close" onclick="closeMessage()">닫기</button>
@@ -214,6 +230,9 @@ const foods=["🍰","🧁","🍪","🍩","🍫","🍬","🍭","🍮","🍦","�
 let gemClicked=false;
 let currentMessage="";
 
+let savedMessages = JSON.parse(localStorage.getItem("savedMessages")) || [];
+
+/* 음식 2개 */
 function renderFoods(){
   const picked=[...foods].sort(()=>0.5-Math.random()).slice(0,2);
   const box=document.getElementById("gemsContainer");
@@ -233,7 +252,6 @@ function showMessage(){
   document.querySelectorAll(".gem").forEach(g=>g.classList.add("clicked"));
   currentMessage=messages[Math.floor(Math.random()*messages.length)];
   document.getElementById("messageText").textContent=currentMessage;
-  document.getElementById("saveResult").style.display="none";
   document.getElementById("messageModal").style.display="flex";
 }
 
@@ -241,16 +259,46 @@ function closeMessage(){
   document.getElementById("messageModal").style.display="none";
 }
 
-/* ⭐ 저장 시 날짜 + 고정 문구 */
+/* ⭐ 저장 */
 function saveMessage(){
   const d=new Date();
   const date=`${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,"0")}.${String(d.getDate()).padStart(2,"0")}`;
-  document.getElementById("saveDate").textContent=date;
-  document.getElementById("saveMessageText").textContent="당신은 더 나은 내일을 만들어가고 있어요";
-  document.getElementById("saveResult").style.display="block";
+
+  savedMessages.push({
+    date: date,
+    message: "당신은 더 나은 내일을 만들어가고 있어요"
+  });
+
+  localStorage.setItem("savedMessages", JSON.stringify(savedMessages));
+  renderSavedMessages();
+  closeMessage();
+}
+
+/* ⭐ 저장 목록 출력 */
+function renderSavedMessages(){
+  const list=document.getElementById("savedList");
+  if(savedMessages.length===0){
+    list.innerHTML="<p style='text-align:center;color:#999;'>아직 저장된 메시지가 없어요</p>";
+    return;
+  }
+
+  list.innerHTML=savedMessages.map((item,idx)=>`
+    <div class="saved-item">
+      <div class="saved-date">${item.date}</div>
+      <div>${item.message}</div>
+      <button class="delete-btn" onclick="deleteMessage(${idx})">삭제</button>
+    </div>
+  `).join("");
+}
+
+function deleteMessage(index){
+  savedMessages.splice(index,1);
+  localStorage.setItem("savedMessages", JSON.stringify(savedMessages));
+  renderSavedMessages();
 }
 
 renderFoods();
+renderSavedMessages();
 </script>
 
 </body>

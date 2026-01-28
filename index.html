@@ -27,23 +27,20 @@ body{
   padding:12px;
 }
 
-/* 공통 핑크 박스 */
-.pink-box{
-  background:#fff;
-  border:3px solid #ffb6d9;
-  border-radius:22px;
-  box-shadow:0 6px 18px rgba(255,182,217,0.45);
+/* 🌸 Freepik 레이스 제목 박스 */
+.title-box{
+  width:100%;
+  max-width:440px;
+  margin:16px 0 12px;
+  padding:26px 30px;
+  background:url("https://img.freepik.com/free-vector/blue-lace-frame_53876-87823.jpg")
+             no-repeat center / contain;
+  text-align:center;
 }
 
-/* 제목 */
-.title-box{
-  padding:20px 24px;
-  margin:16px 0 12px;
-}
 .title-box h1{
   font-size:24px;
   color:#000;
-  text-align:center;
   font-weight:normal;
 }
 
@@ -76,6 +73,14 @@ body{
   filter:grayscale(1);
 }
 
+/* 공통 핑크 박스 */
+.pink-box{
+  background:#fff;
+  border:3px solid #ffb6d9;
+  border-radius:22px;
+  box-shadow:0 6px 18px rgba(255,182,217,0.45);
+}
+
 /* 알림 */
 .alarm-section{
   width:100%;
@@ -98,53 +103,7 @@ body{
   margin:10px 0;
 }
 
-/* 모달 */
-.message-modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.6);
-  justify-content:center;
-  align-items:center;
-  z-index:1000;
-}
-
-.message-paper{
-  background:#fff;
-  border:3px solid #ffd1e8;
-  border-radius:24px;
-  padding:30px 22px;
-  width:92%;
-  max-width:380px;
-  text-align:center;
-}
-
-.message-text{
-  font-size:19px;
-  line-height:1.8;
-}
-
-/* 버튼 */
-.buttons{
-  display:flex;
-  gap:14px;
-  justify-content:center;
-  margin-top:22px;
-}
-
-.btn{
-  padding:14px 26px;
-  border:none;
-  border-radius:26px;
-  font-size:16px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.btn-save{background:#ff69b4;color:#fff;}
-.btn-close{background:#ddd;}
-
-/* ⭐ 저장한 메시지 박스 */
+/* 저장 박스 */
 .saved-box{
   width:100%;
   max-width:440px;
@@ -183,12 +142,57 @@ body{
   cursor:pointer;
   margin-top:6px;
 }
+
+/* 모달 */
+.message-modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.6);
+  justify-content:center;
+  align-items:center;
+  z-index:1000;
+}
+
+.message-paper{
+  background:#fff;
+  border:3px solid #ffd1e8;
+  border-radius:24px;
+  padding:30px 22px;
+  width:92%;
+  max-width:380px;
+  text-align:center;
+}
+
+.message-text{
+  font-size:19px;
+  line-height:1.8;
+}
+
+.buttons{
+  display:flex;
+  gap:14px;
+  justify-content:center;
+  margin-top:22px;
+}
+
+.btn{
+  padding:14px 26px;
+  border:none;
+  border-radius:26px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.btn-save{background:#ff69b4;color:#fff;}
+.btn-close{background:#ddd;}
 </style>
 </head>
 
 <body>
 
-<div class="title-box pink-box">
+<div class="title-box">
   <h1>당신의 하루를 응원해요</h1>
 </div>
 
@@ -201,13 +205,11 @@ body{
   <button class="alarm-btn">알림 받기 🔔</button>
 </div>
 
-<!-- ⭐ 저장한 메시지 영역 -->
 <div class="saved-box pink-box">
   <h3>저장한 메시지 ⭐</h3>
   <div id="savedList"></div>
 </div>
 
-<!-- 모달 -->
 <div class="message-modal" id="messageModal">
   <div class="message-paper">
     <div class="message-text" id="messageText"></div>
@@ -229,10 +231,8 @@ const foods=["🍰","🧁","🍪","🍩","🍫","🍬","🍭","🍮","🍦","�
 
 let gemClicked=false;
 let currentMessage="";
-
 let savedMessages = JSON.parse(localStorage.getItem("savedMessages")) || [];
 
-/* 음식 2개 */
 function renderFoods(){
   const picked=[...foods].sort(()=>0.5-Math.random()).slice(0,2);
   const box=document.getElementById("gemsContainer");
@@ -259,29 +259,21 @@ function closeMessage(){
   document.getElementById("messageModal").style.display="none";
 }
 
-/* ⭐ 저장 */
 function saveMessage(){
   const d=new Date();
   const date=`${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,"0")}.${String(d.getDate()).padStart(2,"0")}`;
-
-  savedMessages.push({
-    date: date,
-    message: "당신은 더 나은 내일을 만들어가고 있어요"
-  });
-
-  localStorage.setItem("savedMessages", JSON.stringify(savedMessages));
+  savedMessages.push({date:date,message:"당신은 더 나은 내일을 만들어가고 있어요"});
+  localStorage.setItem("savedMessages",JSON.stringify(savedMessages));
   renderSavedMessages();
   closeMessage();
 }
 
-/* ⭐ 저장 목록 출력 */
 function renderSavedMessages(){
   const list=document.getElementById("savedList");
   if(savedMessages.length===0){
     list.innerHTML="<p style='text-align:center;color:#999;'>아직 저장된 메시지가 없어요</p>";
     return;
   }
-
   list.innerHTML=savedMessages.map((item,idx)=>`
     <div class="saved-item">
       <div class="saved-date">${item.date}</div>
@@ -291,9 +283,9 @@ function renderSavedMessages(){
   `).join("");
 }
 
-function deleteMessage(index){
-  savedMessages.splice(index,1);
-  localStorage.setItem("savedMessages", JSON.stringify(savedMessages));
+function deleteMessage(i){
+  savedMessages.splice(i,1);
+  localStorage.setItem("savedMessages",JSON.stringify(savedMessages));
   renderSavedMessages();
 }
 

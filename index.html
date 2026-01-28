@@ -55,8 +55,8 @@ body{
 /* ===== 음식 ===== */
 .gems-container{
   display:flex;
-  gap:22px;
-  margin:10px 0 14px;
+  gap:24px;
+  margin:12px 0 16px;
 }
 
 .food{
@@ -64,6 +64,21 @@ body{
   flex-direction:column;
   align-items:center;
   cursor:pointer;
+  animation: float 3s ease-in-out infinite;
+}
+
+.food:nth-child(2){animation-delay:1.2s;}
+
+@keyframes float{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-10px);}
+}
+
+.food.used{
+  opacity:.4;
+  filter:grayscale(1);
+  cursor:not-allowed;
+  animation:none;
 }
 
 .gem{
@@ -103,22 +118,23 @@ body{
 /* 공통 타원 버튼 */
 .oval-btn{
   display:inline-block;
-  background:#ffd9eb;
-  border:none;
+  background:#e3f2fd;
+  border:2px solid #90caf9;
   border-radius:40px;
   padding:14px 36px;
-  font-size:20px;
-  font-family:'Poor Story',cursive;
+  font-size:18px;
   cursor:pointer;
   margin:6px 0;
 }
 
-/* 알림 버튼 전용 */
+/* 알림 버튼 (돋움) */
 .alarm-btn{
-  color:#1e88e5; /* 파란색 */
+  font-family:Dotum,'돋움',sans-serif;
+  color:#1565c0;
+  font-weight:bold;
 }
 
-/* 알림 설명 문구 */
+/* 알림 설명 */
 .alarm-desc{
   margin-top:6px;
   font-size:15px;
@@ -126,12 +142,11 @@ body{
   font-family:'Poor Story',cursive;
 }
 
-/* ===== 저장 버튼 ===== */
+/* 저장 버튼 */
 .saved-btn{
   margin:18px 0 26px;
-  color:#ff69b4;
-  background:#fff;
-  border:3px solid #ffb6d9;
+  color:#1565c0;
+  font-family:'Poor Story',cursive;
 }
 
 /* ===== 모달 공통 ===== */
@@ -184,50 +199,13 @@ body{
   font-weight:bold;
   cursor:pointer;
 }
-.btn-save{background:#ff69b4;color:#fff;}
+.btn-save{background:#90caf9;color:#0d47a1;}
 .btn-close{background:#ddd;}
-
-/* 저장 목록 */
-.saved-item{
-  background:#fff0f6;
-  border-left:6px solid #ff69b4;
-  border-radius:14px;
-  padding:12px;
-  margin-bottom:10px;
-  font-size:15px;
-}
-.saved-date{font-weight:bold;margin-bottom:4px;}
-
-.delete-btn{
-  background:#ff6b6b;
-  color:#fff;
-  border:none;
-  border-radius:14px;
-  padding:6px 12px;
-  font-size:13px;
-  margin-top:6px;
-}
-
-/* 페이지 버튼 */
-.page-btns{
-  display:flex;
-  justify-content:space-between;
-  margin-top:10px;
-}
-.page-btn{
-  background:#ffd1e8;
-  border:none;
-  border-radius:16px;
-  padding:6px 14px;
-  font-weight:bold;
-  cursor:pointer;
-}
 </style>
 </head>
 
 <body>
 
-<!-- 타이틀 -->
 <div class="title-lace">
   <img src="title-box.png">
   <h1>당신의 하루를 응원해요</h1>
@@ -237,14 +215,12 @@ body{
 
 <div class="gems-container" id="gems"></div>
 
-<!-- 알림 -->
 <div class="alarm-section">
   <h3>매일 아침 응원 받기</h3>
   <button class="oval-btn alarm-btn">알림 받기 🔔</button>
   <div class="alarm-desc">매일 오전 9시에 따뜻한 메시지를 보내드려요</div>
 </div>
 
-<!-- 저장 버튼 -->
 <button class="oval-btn saved-btn" onclick="openSaved()">저장한 메시지 ⭐</button>
 
 <!-- 응원 메시지 팝업 -->
@@ -259,40 +235,29 @@ body{
   </div>
 </div>
 
-<!-- 저장 목록 팝업 -->
-<div class="modal" id="savedModal">
-  <div class="modal-box">
-    <div class="close-x" onclick="closeSaved()">✕</div>
-    <div id="savedList"></div>
-    <div class="page-btns">
-      <button class="page-btn" onclick="prevPage()">◀ 이전</button>
-      <button class="page-btn" onclick="nextPage()">다음 ▶</button>
-    </div>
-  </div>
-</div>
-
 <script>
 const foods=[
-  {emoji:"🍰",name:"케이크"},
-  {emoji:"🍩",name:"도너츠"},
-  {emoji:"🍦",name:"아이스크림"},
-  {emoji:"🧁",name:"컵케이크"},
-  {emoji:"🍪",name:"쿠키"},
-  {emoji:"🍫",name:"초콜릿"}
+ {e:"🍰",n:"케이크"},{e:"🧁",n:"컵케이크"},{e:"🍪",n:"쿠키"},
+ {e:"🍩",n:"도넛"},{e:"🍫",n:"초콜릿"},{e:"🍓",n:"딸기"},
+ {e:"🍒",n:"체리"},{e:"🍎",n:"사과"},{e:"🍑",n:"복숭아"},
+ {e:"🍊",n:"귤"},{e:"🍋",n:"레몬"},{e:"🍍",n:"파인애플"},
+ {e:"🍌",n:"바나나"},{e:"🍇",n:"포도"},{e:"🫐",n:"블루베리"},
+ {e:"🍉",n:"수박"},{e:"🍬",n:"사탕"},{e:"🍭",n:"막대사탕"},
+ {e:"🍮",n:"푸딩"},{e:"🍦",n:"아이스크림"},
+ {e:"🥧",n:"파이"},{e:"🧇",n:"와플"},
+ {e:"🥞",n:"팬케이크"},{e:"🍯",n:"꿀"}
 ];
 
 const messages=[
-  "오늘도 충분히 잘하고 있어요",
-  "당신은 소중한 사람이에요",
-  "천천히 가도 괜찮아요",
-  "당신은 더 나은 내일을 만들어가고 있어요"
+ "오늘도 충분히 잘하고 있어요",
+ "당신은 소중한 사람이에요",
+ "천천히 가도 괜찮아요",
+ "당신은 더 나은 내일을 만들어가고 있어요"
 ];
 
-let saved=JSON.parse(localStorage.getItem("savedMessages"))||[];
-let page=0, perPage=3;
+let used=false;
 let currentMessage="";
 
-/* 음식 */
 function renderFoods(){
   const pick=[...foods].sort(()=>.5-Math.random()).slice(0,2);
   const g=document.getElementById("gems");
@@ -300,68 +265,32 @@ function renderFoods(){
   pick.forEach(f=>{
     const box=document.createElement("div");
     box.className="food";
-    box.onclick=openMessage;
     box.innerHTML=`
-      <div class="gem">${f.emoji}</div>
-      <div class="food-name">${f.name}</div>
+      <div class="gem">${f.e}</div>
+      <div class="food-name">${f.n}</div>
     `;
+    box.onclick=()=>{
+      if(used) return;
+      used=true;
+      document.querySelectorAll(".food").forEach(el=>el.classList.add("used"));
+      openMessage();
+    };
     g.appendChild(box);
   });
 }
 
-/* 응원 팝업 */
 function openMessage(){
   currentMessage=messages[Math.floor(Math.random()*messages.length)];
   document.getElementById("messageText").textContent=currentMessage;
   document.getElementById("messageModal").style.display="flex";
 }
+
 function closeMessage(){
   document.getElementById("messageModal").style.display="none";
 }
 
-/* 저장 */
 function saveMessage(){
-  const d=new Date();
-  const date=`${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,"0")}.${String(d.getDate()).padStart(2,"0")}`;
-  saved.unshift({date,message:currentMessage});
-  localStorage.setItem("savedMessages",JSON.stringify(saved));
   closeMessage();
-}
-
-/* 저장 목록 */
-function openSaved(){
-  page=0;
-  renderSaved();
-  document.getElementById("savedModal").style.display="flex";
-}
-function closeSaved(){
-  document.getElementById("savedModal").style.display="none";
-}
-function renderSaved(){
-  const list=document.getElementById("savedList");
-  const slice=saved.slice(page*perPage,(page+1)*perPage);
-  if(slice.length===0){
-    list.innerHTML="<p style='text-align:center;color:#999'>아직 없어요</p>";
-    return;
-  }
-  list.innerHTML=slice.map((s,i)=>`
-    <div class="saved-item">
-      <div class="saved-date">${s.date}</div>
-      <div>${s.message}</div>
-      <button class="delete-btn" onclick="del(${page*perPage+i})">삭제</button>
-    </div>
-  `).join("");
-}
-function nextPage(){
-  if((page+1)*perPage<saved.length){page++;renderSaved();}
-}
-function prevPage(){
-  if(page>0){page--;renderSaved();}
-}
-function del(i){
-  saved.splice(i,1);
-  localStorage.setItem("savedMessages",JSON.stringify(saved));
-  renderSaved();
 }
 
 renderFoods();

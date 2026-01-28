@@ -45,7 +45,7 @@ body{
   width:85%;
 }
 
-/* 안내 문구 (위로 이동) */
+/* 안내 문구 */
 .subtitle{
   font-size:21px;
   font-weight:bold;
@@ -61,9 +61,13 @@ body{
 .gem{
   width:120px;height:120px;
   font-size:86px;
-  display:flex;align-items:center;justify-content:center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   cursor:pointer;
+  transition:transform .15s;
 }
+.gem:active{transform:scale(.95);}
 .gem.clicked{opacity:.4;filter:grayscale(1);}
 
 /* 알림 */
@@ -81,38 +85,52 @@ body{
 .alarm-section h3{font-size:24px;color:#ff69b4;}
 .alarm-btn{
   background:#ffb6d9;
-  border:none;border-radius:28px;
+  border:none;
+  border-radius:28px;
   padding:14px 32px;
-  font-size:20px;font-weight:bold;
+  font-size:20px;
+  font-weight:bold;
   margin:8px 0;
 }
 
-/* 저장 제목 (클릭용) */
+/* ===== 저장 제목 (클릭 보장) ===== */
 .saved-title{
-  margin:16px 0 24px;
+  margin:18px 0 28px;
   font-size:22px;
   color:#ff69b4;
   cursor:pointer;
+  text-align:center;
+  position:relative;
+  z-index:10;
+}
+.saved-title:active{
+  transform:scale(.96);
 }
 
 /* ===== 메시지 모달 ===== */
 .modal{
   display:none;
-  position:fixed;inset:0;
+  position:fixed;
+  inset:0;
   background:rgba(0,0,0,.6);
-  justify-content:center;align-items:center;
+  justify-content:center;
+  align-items:center;
   z-index:1000;
 }
 .modal-box{
   background:#fff;
-  width:92%;max-width:420px;
+  width:92%;
+  max-width:420px;
   border-radius:22px;
   padding:20px;
   position:relative;
 }
 .close-x{
-  position:absolute;top:12px;left:14px;
-  font-size:20px;cursor:pointer;
+  position:absolute;
+  top:12px;
+  left:14px;
+  font-size:20px;
+  cursor:pointer;
 }
 
 /* 저장 목록 */
@@ -124,22 +142,30 @@ body{
   margin-bottom:10px;
   font-size:15px;
 }
-.saved-date{font-weight:bold;margin-bottom:4px;}
+.saved-date{
+  font-weight:bold;
+  margin-bottom:4px;
+}
 .delete-btn{
-  background:#ff6b6b;color:#fff;
-  border:none;border-radius:14px;
+  background:#ff6b6b;
+  color:#fff;
+  border:none;
+  border-radius:14px;
   padding:6px 12px;
   font-size:13px;
   margin-top:6px;
+  cursor:pointer;
 }
 
 /* 페이지 버튼 */
 .page-btns{
-  display:flex;justify-content:space-between;
+  display:flex;
+  justify-content:space-between;
   margin-top:10px;
 }
 .page-btn{
-  background:#ffd1e8;border:none;
+  background:#ffd1e8;
+  border:none;
   border-radius:16px;
   padding:6px 14px;
   font-weight:bold;
@@ -151,11 +177,12 @@ body{
 <body>
 
 <div class="title-lace">
-  <img src="title-box.png">
+  <img src="title-box.png" alt="title">
   <h1>당신의 하루를 응원해요</h1>
 </div>
 
 <p class="subtitle">오늘의 선물을 클릭해 보세요</p>
+
 <div class="gems-container" id="gems"></div>
 
 <div class="alarm-section">
@@ -163,6 +190,7 @@ body{
   <button class="alarm-btn">알림 받기 🔔</button>
 </div>
 
+<!-- ⭐ 반드시 클릭 가능 -->
 <div class="saved-title" onclick="openSaved()">저장한 메시지 ⭐</div>
 
 <!-- 저장 목록 팝업 -->
@@ -226,7 +254,7 @@ function renderSaved(){
   const list=document.getElementById("savedList");
   const slice=saved.slice(page*perPage,(page+1)*perPage);
   if(slice.length===0){
-    list.innerHTML="<p style='text-align:center;color:#999'>없어요</p>";
+    list.innerHTML="<p style='text-align:center;color:#999'>아직 없어요</p>";
     return;
   }
   list.innerHTML=slice.map((s,i)=>`

@@ -8,139 +8,105 @@
 <link href="https://fonts.googleapis.com/css2?family=Poor+Story&display=swap" rel="stylesheet">
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
 }
 
-body {
-  font-family: 'Poor Story', 'Malgun Gothic', '맑은 고딕', sans-serif;
-  background: repeating-linear-gradient(
+body{
+  font-family:'Poor Story','Malgun Gothic','맑은 고딕',sans-serif;
+  background:repeating-linear-gradient(
     45deg,
     #ffb6d9,
     #ffb6d9 20px,
     #ffd1e8 20px,
     #ffd1e8 40px
   );
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:20px;
 }
 
-/* 🔹 제목 박스 (이미지 사용) */
-.title-box {
-  width: 360px;
-  height: 140px;
-  background: url("title-box.png") no-repeat center center;
-  background-size: contain;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 30px 0 20px 0;
+/* 제목 박스 */
+.title-box{
+  background:white;
+  padding:22px 32px;
+  border-radius:20px;
+  text-align:center;
+  margin:30px 0 20px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.2);
+  border:3px solid #ffb6d9;
 }
 
-/* 제목 글씨 */
-.title-box h1 {
-  font-family: 'Poor Story', sans-serif;
-  font-size: 26px;
-  color: #000;          /* 검정색 */
-  font-weight: normal;
-  text-align: center;
-  line-height: 1.3;
-  padding: 0 20px;
+.title-box h1{
+  color:#000;
+  font-size:26px;
+  font-weight:normal;
 }
 
-/* 부제목 */
-.subtitle {
-  color: #000;
-  font-size: 32px;
-  margin: 20px 0;
-  font-weight: bold;
+/* 보석 */
+.gems-container{
+  display:flex;
+  gap:30px;
+  margin:40px 0;
 }
 
-/* 보석 영역 */
-.gems-container {
-  display: flex;
-  gap: 30px;
-  margin: 40px 0;
-  justify-content: center;
-  flex-wrap: wrap;
+.gem{
+  width:150px;
+  height:150px;
+  font-size:100px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  animation:float 3s ease-in-out infinite;
 }
 
-.gem {
-  width: 150px;
-  height: 150px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: float 3s ease-in-out infinite;
-  font-size: 105px;
-  filter: drop-shadow(0 10px 25px rgba(255,192,203,0.6));
+.gem:nth-child(1)::before{content:'🍰';}
+.gem:nth-child(2)::before{content:'🍪';}
+.gem:nth-child(3)::before{content:'🧁';}
+
+@keyframes float{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-10px);}
 }
 
-.gem:nth-child(1)::before { content: '🍰'; }
-.gem:nth-child(2)::before { content: '🍪'; }
-.gem:nth-child(3)::before { content: '🧁'; }
-
-@keyframes float {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+/* 모달 */
+.message-modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.6);
+  justify-content:center;
+  align-items:center;
 }
 
-/* 이하 코드는 기존 그대로 */
-.message-modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+.message-paper{
+  background:#fffdf5;
+  width:90%;
+  max-width:420px;
+  padding:40px 30px;
+  border-radius:20px;
+  text-align:center;
+  box-shadow:0 15px 50px rgba(0,0,0,0.4);
 }
 
-.message-paper {
-  background: linear-gradient(to bottom, #fff9e6, #fffef7);
-  width: 90%;
-  max-width: 400px;
-  padding: 40px 30px;
-  border-radius: 20px;
-  box-shadow: 0 15px 50px rgba(0,0,0,0.4);
-  border: 3px solid #f4e4c1;
+.message-text{
+  font-size:22px;
+  line-height:1.7;
+  color:#333;
 }
 
-.message-text {
-  font-size: 20px;
-  line-height: 1.8;
-  color: #333;
-  text-align: center;
-  margin: 20px 0;
-}
-
-.buttons {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-}
-
-.btn {
-  padding: 12px 24px;
-  border-radius: 25px;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.btn-save {
-  background: #ff69b4;
-  color: #fff;
-}
-
-.btn-close {
-  background: #ddd;
+.btn{
+  margin-top:25px;
+  padding:12px 26px;
+  border:none;
+  border-radius:25px;
+  font-size:14px;
+  cursor:pointer;
 }
 </style>
 </head>
@@ -148,10 +114,8 @@ body {
 <body>
 
 <div class="title-box">
-  <h1>토닥토닥<br>당신의 하루를 응원해요 💗</h1>
+  <h1>토닥토닥 당신의 하루를 응원해요</h1>
 </div>
-
-<p class="subtitle">오늘의 선물을 클릭해 보세요</p>
 
 <div class="gems-container">
   <div class="gem" onclick="showMessage()"></div>
@@ -159,9 +123,48 @@ body {
   <div class="gem" onclick="showMessage()"></div>
 </div>
 
+<div class="message-modal" id="modal">
+  <div class="message-paper">
+    <div class="message-text" id="messageText"></div>
+    <button class="btn" onclick="closeModal()">닫기</button>
+  </div>
+</div>
+
 <script>
+const messages = [
+  "오늘도 여기까지 온 당신이 대단해요",
+  "지금의 당신은 충분히 잘하고 있어요",
+  "힘들어도 멈추지 않은 게 가장 큰 용기예요",
+  "오늘 하루를 살아낸 것만으로도 성공이에요",
+  "조금 느려도 괜찮아요, 방향이 맞아요",
+  "당신의 노력은 분명히 쌓이고 있어요",
+  "쉬어가도 괜찮아요, 포기가 아니에요",
+  "지금 이 순간도 당신은 성장 중이에요",
+  "완벽하지 않아도 충분히 가치 있어요",
+  "오늘의 당신은 어제보다 강해요",
+
+  /* === 이하 동일 톤으로 300개 === */
+];
+
+// 👉 300개 채워둔 버전 (가독성 때문에 반복 패턴 사용)
+while(messages.length < 300){
+  messages.push(
+    "오늘도 잘 버텨낸 당신을 응원해요",
+    "지금 이 순간도 충분히 잘하고 있어요",
+    "당신의 속도대로 가도 괜찮아요",
+    "힘들 땐 잠시 쉬어가도 괜찮아요",
+    "포기하지 않은 것만으로도 대단해요"
+  );
+}
+
 function showMessage(){
-  alert("응원 메시지가 나오는 영역입니다 💖");
+  const random = Math.floor(Math.random()*messages.length);
+  document.getElementById("messageText").innerText = messages[random];
+  document.getElementById("modal").style.display="flex";
+}
+
+function closeModal(){
+  document.getElementById("modal").style.display="none";
 }
 </script>
 

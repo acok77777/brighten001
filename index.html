@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -198,14 +199,10 @@ body{
 
 <div class="gems-container" id="gems"></div>
 
-<!-- 나의 도전 -->
+<!-- ✅ 첫번째 + 두번째 배너 (같은 박스) -->
 <div class="box-section">
-  <button class="oval-btn" onclick="openChallenge()">나의 도전 💪</button>
-</div>
-
-<!-- 나의 하루 한문장 (⬅ 위치 이동됨) -->
-<div class="box-section">
-  <button class="oval-btn" onclick="openOneLine()">나의 하루 한문장 ✏️</button>
+  <button class="oval-btn" onclick="openOneLine()">스스로 응원 한마디 ✏️</button>
+  <button class="oval-btn" onclick="openChallenge()">나의 할일 & 목표 💪</button>
 </div>
 
 <!-- 받은 메시지 선물 -->
@@ -237,7 +234,7 @@ body{
 <div class="modal" id="oneLineModal">
   <div class="modal-box">
     <div class="close-x" onclick="closeModal('oneLineModal')">✕</div>
-    <input class="text-input" id="oneLineInput" placeholder="오늘의 한문장">
+    <input class="text-input" id="oneLineInput" placeholder="오늘 나에게 해주고 싶은 말">
     <button class="oval-btn" onclick="saveOneLine()">저장</button>
     <div id="oneLineList"></div>
     <div class="page-buttons">
@@ -251,7 +248,7 @@ body{
 <div class="modal" id="challengeModal">
   <div class="modal-box">
     <div class="close-x" onclick="closeModal('challengeModal')">✕</div>
-    <input class="text-input" id="challengeInput" placeholder="오늘의 도전">
+    <input class="text-input" id="challengeInput" placeholder="오늘의 할 일 / 목표">
     <button class="oval-btn" onclick="saveChallenge()">저장</button>
     <div id="challengeList"></div>
     <div class="page-buttons">
@@ -393,7 +390,7 @@ function renderChallenge(){
         <button class="btn-del" onclick="delChallenge(${chPage*PAGE+i})">삭제</button>
       </div>
       <div class="saved-date">${m.date}</div>
-    </div>`).join("")||"아직 도전이 없어요 🙂";
+    </div>`).join("")||"아직 할 일이 없어요 🙂";
 }
 function prevChallenge(){if(chPage>0){chPage--;renderChallenge();}}
 function nextChallenge(){
@@ -406,3 +403,4 @@ renderFoods();
 
 </body>
 </html>
+```

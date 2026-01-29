@@ -133,22 +133,9 @@ body{
   border-bottom:1px dashed #ccc;
   padding:10px 0;
 }
-.saved-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
 .saved-date{
   font-size:13px;
   font-weight:bold;
-}
-.btn-delete{
-  background:#ffe4ec;
-  border:none;
-  border-radius:12px;
-  font-size:11px;
-  padding:4px 8px;
-  cursor:pointer;
 }
 
 /* 입력 */
@@ -200,11 +187,15 @@ body{
   </div>
 </div>
 
-<!-- 선물 기록 -->
+<!-- 선물 -->
 <div class="modal" id="giftModal">
   <div class="modal-box">
     <div class="close-x" onclick="closeModal('giftModal')">✕</div>
     <div id="giftList"></div>
+    <div class="page-buttons">
+      <button class="oval-btn" onclick="prevGift()">⬅ 이전</button>
+      <button class="oval-btn" onclick="nextGift()">다음 ➡</button>
+    </div>
   </div>
 </div>
 
@@ -215,16 +206,24 @@ body{
     <input class="text-input" id="oneLineInput" placeholder="오늘의 한문장">
     <button class="oval-btn" onclick="saveOneLine()">저장</button>
     <div id="oneLineList"></div>
+    <div class="page-buttons">
+      <button class="oval-btn" onclick="prevLine()">⬅ 이전</button>
+      <button class="oval-btn" onclick="nextLine()">다음 ➡</button>
+    </div>
   </div>
 </div>
 
-<!-- 나의 도전 -->
+<!-- 도전 -->
 <div class="modal" id="challengeModal">
   <div class="modal-box">
     <div class="close-x" onclick="closeModal('challengeModal')">✕</div>
     <input class="text-input" id="challengeInput" placeholder="오늘의 도전">
     <button class="oval-btn" onclick="saveChallenge()">저장</button>
     <div id="challengeList"></div>
+    <div class="page-buttons">
+      <button class="oval-btn" onclick="prevChallenge()">⬅ 이전</button>
+      <button class="oval-btn" onclick="nextChallenge()">다음 ➡</button>
+    </div>
   </div>
 </div>
 
@@ -238,10 +237,16 @@ const messages=[
  "오늘도 충분히 잘하고 있어"
 ];
 
+const PAGE=5;
+let giftPage=0,linePage=0,chPage=0;
+
+function openModal(id){document.getElementById(id).style.display="flex";}
+function closeModal(id){document.getElementById(id).style.display="none";}
+
+/* 선물 */
 function renderFoods(){
   gems.innerHTML="";
-  const pick=[...foods].sort(()=>0.5-Math.random()).slice(0,2);
-  pick.forEach(e=>{
+  [...foods].sort(()=>0.5-Math.random()).slice(0,2).forEach(e=>{
     const d=document.createElement("div");
     d.className="food";
     d.innerHTML=`<div class="gem">${e}</div>`;
@@ -249,7 +254,9 @@ function renderFoods(){
       const msg=messages[Math.floor(Math.random()*messages.length)];
       messageText.textContent=msg;
       openModal("messageModal");
-      saveGift(msg);
+      const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+      list.unshift({text:msg,date:new Date().toLocaleString("ko-KR")});
+      localStorage.setItem("giftMsgs",JSON.stringify(list));
       d.classList.add("used");
       d.onclick=null;
     };
@@ -257,62 +264,72 @@ function renderFoods(){
   });
 }
 
-function openModal(id){document.getElementById(id).style.display="flex";}
-function closeModal(id){document.getElementById(id).style.display="none";}
-
-/* 선물 */
-function saveGift(text){
-  const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
-  list.unshift({text, date:new Date().toLocaleString("ko-KR")});
-  localStorage.setItem("giftMsgs",JSON.stringify(list));
-}
-function openGift(){
-  const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
-  giftList.innerHTML=list.map(m=>`
+/* 선물 기록 */
+function openGift(){giftPage=0;renderGift();openModal("giftModal");}
+function renderGift(){
+  const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+  const s=l.slice(giftPage*PAGE,(giftPage+1)*PAGE);
+  giftList.innerHTML=s.map(m=>`
     <div class="saved-item">
       <div class="saved-date">${m.date}</div>
       <div>${m.text}</div>
-    </div>`).join("");
-  openModal("giftModal");
+    </div>`).join("")||"기록이 없어요 🙂";
+}
+function prevGift(){if(giftPage>0){giftPage--;renderGift();}}
+function nextGift(){
+  const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+  if((giftPage+1)*PAGE<l.length){giftPage++;renderGift();}
 }
 
 /* 한문장 */
+function openOneLine(){linePage=0;renderOneLine();openModal("oneLineModal");}
 function saveOneLine(){
-  const t=oneLineInput.value.trim(); if(!t)return;
+  if(!oneLineInput.value.trim())return;
   const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
-  l.unshift({text:t,date:new Date().toLocaleString("ko-KR")});
+  l.unshift({text:oneLineInput.value,date:new Date().toLocaleString("ko-KR")});
   localStorage.setItem("oneLines",JSON.stringify(l));
   oneLineInput.value="";
   renderOneLine();
 }
 function renderOneLine(){
   const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
-  oneLineList.innerHTML=l.map(m=>`
+  const s=l.slice(linePage*PAGE,(linePage+1)*PAGE);
+  oneLineList.innerHTML=s.map(m=>`
     <div class="saved-item">
       <div class="saved-date">${m.date}</div>
       <div>${m.text}</div>
-    </div>`).join("");
+    </div>`).join("")||"아직 기록이 없어요 🙂";
 }
-function openOneLine(){renderOneLine();openModal("oneLineModal");}
+function prevLine(){if(linePage>0){linePage--;renderOneLine();}}
+function nextLine(){
+  const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
+  if((linePage+1)*PAGE<l.length){linePage++;renderOneLine();}
+}
 
 /* 도전 */
+function openChallenge(){chPage=0;renderChallenge();openModal("challengeModal");}
 function saveChallenge(){
-  const t=challengeInput.value.trim(); if(!t)return;
+  if(!challengeInput.value.trim())return;
   const l=JSON.parse(localStorage.getItem("challenges")||"[]");
-  l.unshift({text:t,date:new Date().toLocaleString("ko-KR")});
+  l.unshift({text:challengeInput.value,date:new Date().toLocaleString("ko-KR")});
   localStorage.setItem("challenges",JSON.stringify(l));
   challengeInput.value="";
   renderChallenge();
 }
 function renderChallenge(){
   const l=JSON.parse(localStorage.getItem("challenges")||"[]");
-  challengeList.innerHTML=l.map(m=>`
+  const s=l.slice(chPage*PAGE,(chPage+1)*PAGE);
+  challengeList.innerHTML=s.map(m=>`
     <div class="saved-item">
       <div class="saved-date">${m.date}</div>
       <div>${m.text}</div>
-    </div>`).join("");
+    </div>`).join("")||"아직 도전이 없어요 🙂";
 }
-function openChallenge(){renderChallenge();openModal("challengeModal");}
+function prevChallenge(){if(chPage>0){chPage--;renderChallenge();}}
+function nextChallenge(){
+  const l=JSON.parse(localStorage.getItem("challenges")||"[]");
+  if((chPage+1)*PAGE<l.length){chPage++;renderChallenge();}
+}
 
 renderFoods();
 </script>

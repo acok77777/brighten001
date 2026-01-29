@@ -117,7 +117,7 @@ body{
   width:92%;
   max-width:420px;
   border-radius:22px;
-  padding:24px;
+  padding:20px;
   position:relative;
 }
 .close-x{
@@ -127,17 +127,11 @@ body{
   font-size:18px;
   cursor:pointer;
 }
-.message-text{
-  font-size:22px;
-  text-align:center;
-  line-height:1.4;
-  margin:24px 0;
-}
 
 /* 기록 */
 .saved-item{
   border-bottom:1px dashed #ccc;
-  padding:8px 0;
+  padding:10px 0;
 }
 .saved-row{
   display:flex;
@@ -145,25 +139,20 @@ body{
   align-items:center;
 }
 .saved-date{
-  font-size:12px;
+  font-size:13px;
   font-weight:bold;
 }
 .btn-delete{
   background:#ffe4ec;
   border:none;
-  border-radius:10px;
+  border-radius:12px;
   font-size:11px;
-  padding:2px 8px;
+  padding:4px 8px;
   cursor:pointer;
 }
-.page-buttons{
-  display:flex;
-  justify-content:space-between;
-  margin-top:10px;
-}
 
-/* 한문장 */
-.one-line-input{
+/* 입력 */
+.challenge-input{
   width:100%;
   padding:12px;
   border-radius:14px;
@@ -171,6 +160,13 @@ body{
   font-size:16px;
   font-family:'Poor Story';
   margin-bottom:10px;
+}
+
+/* 페이지 */
+.page-buttons{
+  display:flex;
+  justify-content:space-between;
+  margin-top:12px;
 }
 </style>
 </head>
@@ -187,28 +183,18 @@ body{
 <div class="gems-container" id="gems"></div>
 
 <div class="box-section">
-  <button class="oval-btn">알림 받기 🔔</button>
-  <div class="bold-desc">매일 오전 ７시 따뜻한 메시지를 받아보세요</div>
+  <button class="oval-btn" onclick="openChallenge()">나의 도전 💪</button>
+  <div class="bold-desc">오늘 나의 목표를 적고 체크해보세요</div>
 </div>
 
 <div class="box-section">
-  <button class="oval-btn" onclick="openGift()">매일 받은 메시지 선물 ⭐</button>
-  <button class="oval-btn" onclick="openOneLine()">나의 하루 한문장 ✏️</button>
+  <button class="oval-btn" onclick="openGiftLog()">매일 받은 메시지 선물 ⭐</button>
 </div>
 
-<!-- 응원 메시지 팝업 -->
-<div class="modal" id="messageModal">
-  <div class="modal-box">
-    <div class="close-x" onclick="closeMessage()">✕</div>
-    <div class="message-text" id="messageText"></div>
-    <button class="oval-btn" onclick="closeMessage()">확인</button>
-  </div>
-</div>
-
-<!-- 메시지 선물 -->
+<!-- 🎁 메시지 선물 기록 -->
 <div class="modal" id="giftModal">
   <div class="modal-box">
-    <div class="close-x" onclick="closeGift()">✕</div>
+    <div class="close-x" onclick="closeGiftLog()">✕</div>
     <div id="giftList"></div>
     <div class="page-buttons">
       <button class="oval-btn" onclick="prevGift()">⬅ 이전</button>
@@ -217,67 +203,62 @@ body{
   </div>
 </div>
 
-<!-- 한문장 -->
-<div class="modal" id="oneLineModal">
+<!-- 💪 나의 도전 -->
+<div class="modal" id="challengeModal">
   <div class="modal-box">
-    <div class="close-x" onclick="closeOneLine()">✕</div>
-    <div class="bold-desc" style="margin-bottom:8px;">오늘 나의 하루 한문장</div>
-    <input class="one-line-input" id="oneLineText" placeholder="한 문장을 적어주세요">
-    <button class="oval-btn" onclick="saveOneLine()">저장하기</button>
-    <div id="oneLineList"></div>
+    <div class="close-x" onclick="closeChallenge()">✕</div>
+    <div class="subtitle">오늘 나의 도전을 적어보세요</div>
+    <input class="challenge-input" id="challengeText" placeholder="오늘의 도전">
+    <button class="oval-btn" onclick="saveChallenge()">저장하기</button>
+    <div id="challengeList"></div>
     <div class="page-buttons">
-      <button class="oval-btn" onclick="prevLine()">⬅ 이전</button>
-      <button class="oval-btn" onclick="nextLine()">다음 ➡</button>
+      <button class="oval-btn" onclick="prevChallenge()">⬅ 이전</button>
+      <button class="oval-btn" onclick="nextChallenge()">다음 ➡</button>
     </div>
   </div>
 </div>
 
 <script>
+/* ===== 선물 ===== */
 const foods=["🍰","🧁","🍪","🍩","🍫","🥐","🥞","🧇"];
 const messages=[
- "오늘은 위기를 기회로, 화이팅",
- "오늘은 별처럼 반짝일 거야",
- "뭐든 해 보는 거야",
- "해낼 수 있다고 믿어",
- "오늘의 작은 용기가 내일을 만든다",
- "지금 이 순간도 충분히 잘하고 있어",
- "천천히 가도 괜찮아",
- "너의 속도로 가면 돼",
- "오늘도 너를 응원해",
- "괜찮아, 다시 시작하면 돼",
- "지금 이 선택이 너를 키워",
- "오늘 하루도 의미 있어",
- "네 안에 답이 있어",
- "포기하지 않는 네가 멋져",
- "오늘은 어제보다 더 강해",
- "잘 버텼어, 그걸로 충분해",
- "오늘의 너를 믿어",
- "조금씩 나아지고 있어",
- "너는 생각보다 강해",
- "오늘도 한 걸음 전진"
+  "오늘은 위기를 기회로, 화이팅",
+  "오늘은 별처럼 반짝일 거야",
+  "뭐든 해 보는 거야",
+  "해낼 수 있다고 믿어",
+  "지금 이 순간도 충분해",
+  "오늘도 너답게",
+  "작은 한 걸음이면 돼",
+  "포기하지 않는 내가 멋져",
+  "오늘의 나는 어제보다 강해",
+  "조금 느려도 괜찮아",
+  "마음 먹은 게 이미 반은 성공",
+  "오늘은 나를 믿자",
+  "될 때까지 해보는 거야",
+  "지금 이대로도 잘하고 있어",
+  "오늘의 선택이 내일을 바꿔",
+  "지금 시작해도 늦지 않아",
+  "오늘은 나에게 박수",
+  "용기 낸 나, 최고야",
+  "오늘도 해내는 중",
+  "분명히 잘 될 거야"
 ];
 
-const PAGE=5;
-let giftPage=0;
-let linePage=0;
-let currentPopupMsg="";
+let usedEmojis=JSON.parse(localStorage.getItem("usedEmojis")||"[]");
 
-/* 선물 */
 function renderFoods(){
   gems.innerHTML="";
   foods.sort(()=>.5-Math.random()).slice(0,2).forEach(e=>{
     const d=document.createElement("div");
     d.className="food";
     d.innerHTML=`<div class="gem">${e}</div>`;
+    if(usedEmojis.includes(e)) d.classList.add("used");
     d.onclick=()=>{
       if(d.classList.contains("used")) return;
       d.classList.add("used");
-
+      usedEmojis.push(e);
+      localStorage.setItem("usedEmojis",JSON.stringify(usedEmojis));
       const msg=messages[Math.floor(Math.random()*messages.length)];
-      currentPopupMsg=msg;
-      messageText.textContent=msg;
-      messageModal.style.display="flex";
-
       const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
       list.unshift({emoji:e,text:msg,date:new Date().toLocaleString("ko-KR")});
       localStorage.setItem("giftMsgs",JSON.stringify(list));
@@ -286,85 +267,63 @@ function renderFoods(){
   });
 }
 
-function closeMessage(){
-  messageModal.style.display="none";
-}
-
-/* 메시지 선물 */
-function openGift(){
-  giftPage=0;
-  renderGift();
-  giftModal.style.display="flex";
-}
-function closeGift(){ giftModal.style.display="none"; }
-
+/* ===== 메시지 선물 ===== */
+let giftPage=0, GIFT_SIZE=5;
+function openGiftLog(){ giftPage=0; renderGift(); giftModal.style.display="flex"; }
+function closeGiftLog(){ giftModal.style.display="none"; }
 function renderGift(){
   const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
-  const slice=list.slice(giftPage*PAGE,(giftPage+1)*PAGE);
+  const slice=list.slice(giftPage*GIFT_SIZE,(giftPage+1)*GIFT_SIZE);
   giftList.innerHTML=slice.length?slice.map((m,i)=>`
     <div class="saved-item">
       <div class="saved-row">
         <div class="saved-date">${m.date}</div>
-        <button class="btn-delete" onclick="deleteGift(${giftPage*PAGE+i})">삭제</button>
+        <button class="btn-delete" onclick="deleteGift(${giftPage*GIFT_SIZE+i})">삭제</button>
       </div>
       <div>${m.emoji} ${m.text}</div>
-    </div>
-  `).join(""):"기록이 없어요 🙂";
+    </div>`).join(""):"기록이 없어요 🙂";
 }
 function prevGift(){ if(giftPage>0){giftPage--;renderGift();} }
 function nextGift(){
-  const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
-  if((giftPage+1)*PAGE<list.length){giftPage++;renderGift();}
+  const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+  if((giftPage+1)*GIFT_SIZE<l.length){giftPage++;renderGift();}
 }
 function deleteGift(i){
-  const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
-  list.splice(i,1);
-  localStorage.setItem("giftMsgs",JSON.stringify(list));
-  renderGift();
+  const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+  l.splice(i,1); localStorage.setItem("giftMsgs",JSON.stringify(l)); renderGift();
 }
 
-/* 한문장 */
-function openOneLine(){
-  linePage=0;
-  oneLineText.value="";
-  renderLine();
-  oneLineModal.style.display="flex";
+/* ===== 나의 도전 ===== */
+let chPage=0, CH_SIZE=5;
+function openChallenge(){ chPage=0; renderChallenge(); challengeModal.style.display="flex"; }
+function closeChallenge(){ challengeModal.style.display="none"; }
+function saveChallenge(){
+  const t=challengeText.value.trim(); if(!t) return;
+  const l=JSON.parse(localStorage.getItem("challenges")||"[]");
+  l.unshift({text:t,date:new Date().toLocaleString("ko-KR")});
+  localStorage.setItem("challenges",JSON.stringify(l));
+  challengeText.value=""; renderChallenge();
 }
-function closeOneLine(){ oneLineModal.style.display="none"; }
-
-function saveOneLine(){
-  const text=oneLineText.value.trim();
-  if(!text) return;
-  const list=JSON.parse(localStorage.getItem("oneLineMsgs")||"[]");
-  list.unshift({text,date:new Date().toLocaleString("ko-KR")});
-  localStorage.setItem("oneLineMsgs",JSON.stringify(list));
-  oneLineText.value="";
-  renderLine();
-}
-
-function renderLine(){
-  const list=JSON.parse(localStorage.getItem("oneLineMsgs")||"[]");
-  const slice=list.slice(linePage*PAGE,(linePage+1)*PAGE);
-  oneLineList.innerHTML=slice.length?slice.map((m,i)=>`
+function renderChallenge(){
+  const l=JSON.parse(localStorage.getItem("challenges")||"[]");
+  const s=l.slice(chPage*CH_SIZE,(chPage+1)*CH_SIZE);
+  challengeList.innerHTML=s.length?s.map((m,i)=>`
     <div class="saved-item">
       <div class="saved-row">
         <div class="saved-date">${m.date}</div>
-        <button class="btn-delete" onclick="deleteLine(${linePage*PAGE+i})">삭제</button>
+        <button class="btn-delete" onclick="deleteChallenge(${chPage*CH_SIZE+i})">삭제</button>
       </div>
       <div>${m.text}</div>
-    </div>
-  `).join(""):"기록이 없어요 🙂";
+    </div>`).join(""):"아직 도전이 없어요 🙂";
 }
-function prevLine(){ if(linePage>0){linePage--;renderLine();} }
-function nextLine(){
-  const list=JSON.parse(localStorage.getItem("oneLineMsgs")||"[]");
-  if((linePage+1)*PAGE<list.length){linePage++;renderLine();}
+function prevChallenge(){ if(chPage>0){chPage--;renderChallenge();} }
+function nextChallenge(){
+  const l=JSON.parse(localStorage.getItem("challenges")||"[]");
+  if((chPage+1)*CH_SIZE<l.length){chPage++;renderChallenge();}
 }
-function deleteLine(i){
-  const list=JSON.parse(localStorage.getItem("oneLineMsgs")||"[]");
-  list.splice(i,1);
-  localStorage.setItem("oneLineMsgs",JSON.stringify(list));
-  renderLine();
+function deleteChallenge(i){
+  const l=JSON.parse(localStorage.getItem("challenges")||"[]");
+  l.splice(i,1); localStorage.setItem("challenges",JSON.stringify(l)); renderChallenge();
 }
 
 renderFoods();

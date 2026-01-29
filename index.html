@@ -80,7 +80,6 @@ body{
   align-items:center;
   justify-content:center;
 }
-.food-name{font-size:13px;color:#555;}
 
 /* 공통 박스 */
 .box-section{
@@ -161,6 +160,21 @@ body{
 }
 .btn-save{background:#90caf9;}
 .btn-close{background:#ddd;}
+.btn-delete{
+  background:#ffcdd2;
+  color:#b71c1c;
+  font-size:13px;
+  padding:6px 12px;
+}
+.saved-item{
+  border-bottom:1px dashed #ccc;
+  padding:10px 0;
+}
+.saved-date{
+  font-size:13px;
+  color:#777;
+  margin-bottom:4px;
+}
 </style>
 </head>
 
@@ -175,13 +189,11 @@ body{
 
 <div class="gems-container" id="gems"></div>
 
-<!-- 알림 -->
 <div class="box-section">
   <button class="oval-btn">알림 받기 🔔</button>
   <div class="box-desc">매일 오전 ７시 따뜻한 메세지를 받아보세요</div>
 </div>
 
-<!-- 저장한 메시지 -->
 <div class="box-section">
   <button class="oval-btn" onclick="openSaved()">저장한 메시지 ⭐</button>
 </div>
@@ -211,7 +223,7 @@ body{
 </div>
 
 <script>
-const foods=[{e:"🍰"},{e:"🧁"},{e:"🍪"},{e:"🍩"},{e:"🍫"},{e:"🍓"}];
+const foods=["🍰","🧁","🍪","🍩","🍫","🍓"];
 const messages=[
  "오늘도 충분히 잘하고 있어요",
  "당신은 소중한 사람이에요",
@@ -225,19 +237,18 @@ let page=0;
 
 function renderFoods(){
   const pick=[...foods].sort(()=>.5-Math.random()).slice(0,2);
-  const g=document.getElementById("gems");
-  g.innerHTML="";
-  pick.forEach(f=>{
+  gems.innerHTML="";
+  pick.forEach(e=>{
     const d=document.createElement("div");
     d.className="food";
-    d.innerHTML=`<div class="gem">${f.e}</div>`;
+    d.innerHTML=`<div class="gem">${e}</div>`;
     d.onclick=()=>{
       if(used) return;
       used=true;
       document.querySelectorAll(".food").forEach(el=>el.classList.add("used"));
       openMessage();
     };
-    g.appendChild(d);
+    gems.appendChild(d);
   });
 }
 
@@ -246,12 +257,13 @@ function openMessage(){
   messageText.textContent=currentMessage;
   messageModal.style.display="flex";
 }
-
 function closeMessage(){messageModal.style.display="none";}
 
 function saveMessage(){
   const saved=JSON.parse(localStorage.getItem("savedMsgs")||"[]");
-  saved.unshift(currentMessage);
+  const now=new Date();
+  const date=now.toLocaleString("ko-KR");
+  saved.unshift({text:currentMessage,date});
   localStorage.setItem("savedMsgs",JSON.stringify(saved));
   closeMessage();
 }
@@ -266,10 +278,23 @@ function closeSaved(){savedModal.style.display="none";}
 function renderSaved(){
   const saved=JSON.parse(localStorage.getItem("savedMsgs")||"[]");
   const start=page*5;
-  const list=saved.slice(start,start+5)
-    .map(m=>`<p style="margin:8px 0;">${m}</p>`).join("");
-  savedList.innerHTML=list||"저장된 메시지가 없어요 🙂";
+  const slice=saved.slice(start,start+5);
+  savedList.innerHTML=slice.length?slice.map((m,i)=>`
+    <div class="saved-item">
+      <div class="saved-date">${m.date}</div>
+      <div>${m.text}</div>
+      <button class="btn-delete" onclick="deleteMsg(${start+i})">삭제</button>
+    </div>
+  `).join(""):"저장된 메시지가 없어요 🙂";
 }
+
+function deleteMsg(idx){
+  const saved=JSON.parse(localStorage.getItem("savedMsgs")||"[]");
+  saved.splice(idx,1);
+  localStorage.setItem("savedMsgs",JSON.stringify(saved));
+  renderSaved();
+}
+
 function prevPage(){if(page>0){page--;renderSaved();}}
 function nextPage(){
   const saved=JSON.parse(localStorage.getItem("savedMsgs")||"[]");

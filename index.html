@@ -194,10 +194,14 @@ body{
   <button class="oval-btn" onclick="openGift()">매일 받은 메시지 선물 ⭐</button>
 </div>
 
-<!-- 메시지 모달 -->
+<!-- ⭐ 메시지 모달 (여기에 제목 추가됨!) -->
 <div class="modal" id="messageModal">
   <div class="modal-box">
     <div class="close-x" onclick="closeModal('messageModal')">✕</div>
+
+    <!-- 추가된 부분 -->
+    <h2 style="text-align:center; font-size:20px; margin-bottom:12px;">☆ 힘내요 오늘 ☆</h2>
+
     <div id="messageText" style="font-size:22px;text-align:center;"></div>
   </div>
 </div>
@@ -243,7 +247,7 @@ body{
 </div>
 
 <script>
-/* 🔥 이모티콘 + 이름 */
+/* 이모티콘 + 이름 */
 const foodsData=[
   {emoji:"🍰",name:"케이크"},
   {emoji:"🍩",name:"도넛"},
@@ -255,7 +259,7 @@ const foodsData=[
   {emoji:"🧇",name:"와플"}
 ];
 
-/* 🔥 랜덤 메시지 */
+/* 랜덤 메시지 */
 const messages=[
  "오늘은 위기를 기회로 만드는 날 💪",
  "너무 잘하고 있어, 계속 가보자 ✨",
@@ -267,16 +271,16 @@ const messages=[
 ];
 
 const PAGE=5;
-let giftPage=0,linePage=0,chPage=0;
+let giftPage=0, linePage=0, chPage=0;
 
 function openModal(id){document.getElementById(id).style.display="flex";}
 function closeModal(id){document.getElementById(id).style.display="none";}
 
-/* 🔥 선물 2개 랜덤 표시 */
+/* 선물 두 개 랜덤 표시 */
 function renderFoods(){
   gems.innerHTML="";
   [...foodsData].sort(()=>0.5-Math.random()).slice(0,2).forEach(obj=>{
-    
+
     const d=document.createElement("div");
     d.className="food";
 
@@ -288,8 +292,9 @@ function renderFoods(){
     d.onclick=()=>{
       if(d.classList.contains("used")) return;
 
-      const msg = messages[Math.floor(Math.random()*messages.length)];
+      const msg=messages[Math.floor(Math.random()*messages.length)];
       messageText.textContent = msg;
+
       openModal("messageModal");
 
       const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
@@ -320,11 +325,11 @@ function renderGift(){
 
 function prevGift(){if(giftPage>0){giftPage--;renderGift();}}
 function nextGift(){
-  const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+  const l=JSON.parse(localLocalStorage.getItem("giftMsgs")||"[]");
   if((giftPage+1)*PAGE<l.length){giftPage++;renderGift();}
 }
 
-/* 🔥 한문장 */
+/* 한 문장 */
 function openOneLine(){linePage=0;renderOneLine();openModal("oneLineModal");}
 
 function saveOneLine(){
@@ -366,14 +371,19 @@ function nextLine(){
   if((linePage+1)*PAGE<l.length){linePage++;renderOneLine();}
 }
 
-/* 🔥 도전 */
+/* 도전 */
 function openChallenge(){chPage=0;renderChallenge();openModal("challengeModal");}
 
 function saveChallenge(){
   if(!challengeInput.value.trim()) return;
 
   const l=JSON.parse(localStorage.getItem("challenges")||"[]");
-  l.unshift({text:challengeInput.value,done:false,date:new Date().toLocaleString("ko-KR")});
+  l.unshift({
+    text:challengeInput.value,
+    done:false,
+    date:new Date().toLocaleString("ko-KR")
+  });
+
   localStorage.setItem("challenges",JSON.stringify(l));
 
   challengeInput.value="";
@@ -401,7 +411,7 @@ function renderChallenge(){
   challengeList.innerHTML=s.map((m,i)=>`
     <div class="saved-item">
       <div class="saved-row">
-        <div class="check-wrap">
+        <div class='check-wrap'>
           <input type="checkbox" ${m.done?"checked":""} onclick="toggleCheck(${chPage*PAGE+i})">
           <div class="${m.done?"checked":""}">${m.text}</div>
         </div>
@@ -418,6 +428,7 @@ function nextChallenge(){
   if((chPage+1)*PAGE<l.length){chPage++;renderChallenge();}
 }
 
+/* 초기 렌더 */
 renderFoods();
 </script>
 

@@ -117,7 +117,7 @@ body{
   width:92%;
   max-width:420px;
   border-radius:22px;
-  padding:20px;
+  padding:24px;
   position:relative;
 }
 .close-x{
@@ -126,6 +126,12 @@ body{
   right:14px;
   font-size:18px;
   cursor:pointer;
+}
+.message-text{
+  font-size:22px;
+  text-align:center;
+  line-height:1.4;
+  margin:24px 0;
 }
 
 /* 기록 */
@@ -141,7 +147,6 @@ body{
 .saved-date{
   font-size:12px;
   font-weight:bold;
-  color:#555;
 }
 .btn-delete{
   background:#ffe4ec;
@@ -151,8 +156,6 @@ body{
   padding:2px 8px;
   cursor:pointer;
 }
-
-/* 페이지 */
 .page-buttons{
   display:flex;
   justify-content:space-between;
@@ -193,7 +196,16 @@ body{
   <button class="oval-btn" onclick="openOneLine()">나의 하루 한문장 ✏️</button>
 </div>
 
-<!-- 🎁 메시지 선물 -->
+<!-- 응원 메시지 팝업 -->
+<div class="modal" id="messageModal">
+  <div class="modal-box">
+    <div class="close-x" onclick="closeMessage()">✕</div>
+    <div class="message-text" id="messageText"></div>
+    <button class="oval-btn" onclick="closeMessage()">확인</button>
+  </div>
+</div>
+
+<!-- 메시지 선물 -->
 <div class="modal" id="giftModal">
   <div class="modal-box">
     <div class="close-x" onclick="closeGift()">✕</div>
@@ -205,7 +217,7 @@ body{
   </div>
 </div>
 
-<!-- ✏️ 한문장 -->
+<!-- 한문장 -->
 <div class="modal" id="oneLineModal">
   <div class="modal-box">
     <div class="close-x" onclick="closeOneLine()">✕</div>
@@ -223,15 +235,32 @@ body{
 <script>
 const foods=["🍰","🧁","🍪","🍩","🍫","🥐","🥞","🧇"];
 const messages=[
-  "오늘도 충분히 잘하고 있어요",
-  "당신은 소중한 사람이에요",
-  "천천히 가도 괜찮아요",
-  "당신은 더 나은 내일을 만들어가고 있어요"
+ "오늘은 위기를 기회로, 화이팅",
+ "오늘은 별처럼 반짝일 거야",
+ "뭐든 해 보는 거야",
+ "해낼 수 있다고 믿어",
+ "오늘의 작은 용기가 내일을 만든다",
+ "지금 이 순간도 충분히 잘하고 있어",
+ "천천히 가도 괜찮아",
+ "너의 속도로 가면 돼",
+ "오늘도 너를 응원해",
+ "괜찮아, 다시 시작하면 돼",
+ "지금 이 선택이 너를 키워",
+ "오늘 하루도 의미 있어",
+ "네 안에 답이 있어",
+ "포기하지 않는 네가 멋져",
+ "오늘은 어제보다 더 강해",
+ "잘 버텼어, 그걸로 충분해",
+ "오늘의 너를 믿어",
+ "조금씩 나아지고 있어",
+ "너는 생각보다 강해",
+ "오늘도 한 걸음 전진"
 ];
 
 const PAGE=5;
 let giftPage=0;
 let linePage=0;
+let currentPopupMsg="";
 
 /* 선물 */
 function renderFoods(){
@@ -245,12 +274,20 @@ function renderFoods(){
       d.classList.add("used");
 
       const msg=messages[Math.floor(Math.random()*messages.length)];
+      currentPopupMsg=msg;
+      messageText.textContent=msg;
+      messageModal.style.display="flex";
+
       const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
       list.unshift({emoji:e,text:msg,date:new Date().toLocaleString("ko-KR")});
       localStorage.setItem("giftMsgs",JSON.stringify(list));
     };
     gems.appendChild(d);
   });
+}
+
+function closeMessage(){
+  messageModal.style.display="none";
 }
 
 /* 메시지 선물 */

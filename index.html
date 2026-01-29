@@ -102,7 +102,7 @@ body{
 
 .bold-desc{font-weight:bold;}
 
-/* 팝업 */
+/* 모달 */
 .modal{
   display:none;
   position:fixed;
@@ -110,16 +110,15 @@ body{
   background:rgba(0,0,0,.6);
   justify-content:center;
   align-items:center;
-  z-index:3000;
+  z-index:9999;
 }
 .modal-box{
   background:#fff;
   width:92%;
   max-width:420px;
   border-radius:22px;
-  padding:24px 20px;
+  padding:20px;
   position:relative;
-  text-align:center;
 }
 .close-x{
   position:absolute;
@@ -128,9 +127,46 @@ body{
   font-size:18px;
   cursor:pointer;
 }
-.message-text{
-  font-size:22px;
-  line-height:1.6;
+
+/* 리스트 */
+.saved-item{
+  border-bottom:1px dashed #ccc;
+  padding:10px 0;
+}
+.saved-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.saved-date{
+  font-size:13px;
+  font-weight:bold;
+}
+.btn-delete{
+  background:#ffe4ec;
+  border:none;
+  border-radius:12px;
+  font-size:11px;
+  padding:4px 8px;
+  cursor:pointer;
+}
+
+/* 입력 */
+.text-input{
+  width:100%;
+  padding:12px;
+  border-radius:14px;
+  border:2px solid #ffb6d9;
+  font-size:16px;
+  font-family:'Poor Story';
+  margin-bottom:10px;
+}
+
+/* 페이지 */
+.page-buttons{
+  display:flex;
+  justify-content:space-between;
+  margin-top:12px;
 }
 </style>
 </head>
@@ -147,82 +183,137 @@ body{
 <div class="gems-container" id="gems"></div>
 
 <div class="box-section">
-  <button class="oval-btn">나의 도전 💪</button>
+  <button class="oval-btn" onclick="openChallenge()">나의 도전 💪</button>
   <div class="bold-desc">오늘 나의 목표를 적고 체크해보세요</div>
 </div>
 
 <div class="box-section">
-  <button class="oval-btn">매일 받은 메시지 선물 ⭐</button>
-  <button class="oval-btn">나의 하루 한문장 ✏️</button>
+  <button class="oval-btn" onclick="openGift()">매일 받은 메시지 선물 ⭐</button>
+  <button class="oval-btn" onclick="openOneLine()">나의 하루 한문장 ✏️</button>
 </div>
 
-<!-- 🎁 응원 메시지 팝업 -->
+<!-- 응원 메시지 -->
 <div class="modal" id="messageModal">
   <div class="modal-box">
-    <div class="close-x" onclick="closeMessage()">✕</div>
-    <div class="message-text" id="messageText"></div>
+    <div class="close-x" onclick="closeModal('messageModal')">✕</div>
+    <div id="messageText" style="font-size:22px;text-align:center;"></div>
+  </div>
+</div>
+
+<!-- 선물 기록 -->
+<div class="modal" id="giftModal">
+  <div class="modal-box">
+    <div class="close-x" onclick="closeModal('giftModal')">✕</div>
+    <div id="giftList"></div>
+  </div>
+</div>
+
+<!-- 한문장 -->
+<div class="modal" id="oneLineModal">
+  <div class="modal-box">
+    <div class="close-x" onclick="closeModal('oneLineModal')">✕</div>
+    <input class="text-input" id="oneLineInput" placeholder="오늘의 한문장">
+    <button class="oval-btn" onclick="saveOneLine()">저장</button>
+    <div id="oneLineList"></div>
+  </div>
+</div>
+
+<!-- 나의 도전 -->
+<div class="modal" id="challengeModal">
+  <div class="modal-box">
+    <div class="close-x" onclick="closeModal('challengeModal')">✕</div>
+    <input class="text-input" id="challengeInput" placeholder="오늘의 도전">
+    <button class="oval-btn" onclick="saveChallenge()">저장</button>
+    <div id="challengeList"></div>
   </div>
 </div>
 
 <script>
-/* ===== 설정 ===== */
 const foods=["🍰","🧁","🍪","🍩","🍫","🥐","🥞","🧇"];
 const messages=[
-  "오늘은 위기를 기회로, 화이팅!",
-  "오늘은 별처럼 반짝일 거야 ✨",
-  "뭐든 해 보는 거야",
-  "해낼 수 있다고 믿어",
-  "지금 이 순간도 충분해",
-  "오늘도 너답게",
-  "작은 한 걸음이면 돼",
-  "포기하지 않는 내가 멋져",
-  "오늘의 나는 어제보다 강해",
-  "조금 느려도 괜찮아",
-  "마음 먹은 게 이미 반은 성공",
-  "오늘은 나를 믿자",
-  "될 때까지 해보는 거야",
-  "지금 이대로도 잘하고 있어",
-  "오늘의 선택이 내일을 바꿔",
-  "지금 시작해도 늦지 않아",
-  "오늘은 나에게 박수 👏",
-  "용기 낸 나, 최고야",
-  "오늘도 해내는 중",
-  "분명히 잘 될 거야"
+ "오늘은 위기를 기회로 화이팅",
+ "오늘은 별처럼 반짝일 거야",
+ "뭐든 해 보는 거야",
+ "해낼 수 있다고 믿어",
+ "오늘도 충분히 잘하고 있어"
 ];
 
-/* ✅ 이번 접속에서만 사용 여부 관리 */
-let usedThisSession = [];
-
-/* ===== 선물 렌더 ===== */
 function renderFoods(){
   gems.innerHTML="";
-  const picks=[...foods].sort(()=>0.5-Math.random()).slice(0,2);
-
-  picks.forEach(e=>{
+  const pick=[...foods].sort(()=>0.5-Math.random()).slice(0,2);
+  pick.forEach(e=>{
     const d=document.createElement("div");
     d.className="food";
     d.innerHTML=`<div class="gem">${e}</div>`;
-
     d.onclick=()=>{
-      if(usedThisSession.includes(e)) return;
-
-      usedThisSession.push(e);
-      d.classList.add("used");
-
       const msg=messages[Math.floor(Math.random()*messages.length)];
-      messageText.textContent = msg;
-      messageModal.style.display="flex";
+      messageText.textContent=msg;
+      openModal("messageModal");
+      saveGift(msg);
+      d.classList.add("used");
+      d.onclick=null;
     };
-
     gems.appendChild(d);
   });
 }
 
-function closeMessage(){
-  messageModal.style.display="none";
+function openModal(id){document.getElementById(id).style.display="flex";}
+function closeModal(id){document.getElementById(id).style.display="none";}
+
+/* 선물 */
+function saveGift(text){
+  const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+  list.unshift({text, date:new Date().toLocaleString("ko-KR")});
+  localStorage.setItem("giftMsgs",JSON.stringify(list));
+}
+function openGift(){
+  const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+  giftList.innerHTML=list.map(m=>`
+    <div class="saved-item">
+      <div class="saved-date">${m.date}</div>
+      <div>${m.text}</div>
+    </div>`).join("");
+  openModal("giftModal");
 }
 
-/* 최초 실행 */
+/* 한문장 */
+function saveOneLine(){
+  const t=oneLineInput.value.trim(); if(!t)return;
+  const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
+  l.unshift({text:t,date:new Date().toLocaleString("ko-KR")});
+  localStorage.setItem("oneLines",JSON.stringify(l));
+  oneLineInput.value="";
+  renderOneLine();
+}
+function renderOneLine(){
+  const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
+  oneLineList.innerHTML=l.map(m=>`
+    <div class="saved-item">
+      <div class="saved-date">${m.date}</div>
+      <div>${m.text}</div>
+    </div>`).join("");
+}
+function openOneLine(){renderOneLine();openModal("oneLineModal");}
+
+/* 도전 */
+function saveChallenge(){
+  const t=challengeInput.value.trim(); if(!t)return;
+  const l=JSON.parse(localStorage.getItem("challenges")||"[]");
+  l.unshift({text:t,date:new Date().toLocaleString("ko-KR")});
+  localStorage.setItem("challenges",JSON.stringify(l));
+  challengeInput.value="";
+  renderChallenge();
+}
+function renderChallenge(){
+  const l=JSON.parse(localStorage.getItem("challenges")||"[]");
+  challengeList.innerHTML=l.map(m=>`
+    <div class="saved-item">
+      <div class="saved-date">${m.date}</div>
+      <div>${m.text}</div>
+    </div>`).join("");
+}
+function openChallenge(){renderChallenge();openModal("challengeModal");}
+
 renderFoods();
 </script>
 

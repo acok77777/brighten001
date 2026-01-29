@@ -115,7 +115,7 @@ body{
   position:relative;
 }
 
-/* ❌ 닫기 버튼 오른쪽 위 */
+/* 닫기 버튼 */
 .close-x{
   position:absolute;
   top:12px;
@@ -141,13 +141,15 @@ body{
   padding:10px 0;
 }
 
-.btn-delete{
-  background:#ffe4ec;
-  border:none;
+/* 한문장 입력 */
+.one-line-input{
+  width:100%;
+  padding:12px;
   border-radius:14px;
-  font-size:12px;
-  padding:4px 10px;
-  cursor:pointer;
+  border:2px solid #ffb6d9;
+  font-size:16px;
+  font-family:'Poor Story';
+  margin-bottom:10px;
 }
 
 /* 페이지 버튼 */
@@ -186,20 +188,39 @@ body{
     <div class="close-x" onclick="closeSaved()">✕</div>
     <div id="savedList"></div>
 
-    <!-- 이전 / 다음 -->
     <div class="page-buttons">
-      <button class="oval-btn" onclick="prevPage()">⬅ 이전</button>
-      <button class="oval-btn" onclick="nextPage()">다음 ➡</button>
+      <button class="oval-btn" onclick="prevGift()">⬅ 이전</button>
+      <button class="oval-btn" onclick="nextGift()">다음 ➡</button>
+    </div>
+  </div>
+</div>
+
+<!-- ✏️ 한문장 팝업 -->
+<div class="modal" id="oneLineModal">
+  <div class="modal-box">
+    <div class="close-x" onclick="closeOneLine()">✕</div>
+
+    <div class="message-text">오늘 나의 하루를 한문장으로</div>
+
+    <input class="one-line-input" id="oneLineText" placeholder="한 문장을 적어주세요">
+    <button class="oval-btn" onclick="saveOneLine()">저장하기</button>
+
+    <div id="oneLineList"></div>
+
+    <div class="page-buttons">
+      <button class="oval-btn" onclick="prevLine()">⬅ 이전</button>
+      <button class="oval-btn" onclick="nextLine()">다음 ➡</button>
     </div>
   </div>
 </div>
 
 <script>
 const foods=["🍰","🧁","🍪","🍩","🍫","🥐","🥞","🧇"];
-let page=0;
-const PAGE_SIZE=5;
 
-/* 선물 */
+/* ---------- 선물 ---------- */
+let giftPage=0;
+const GIFT_SIZE=5;
+
 function renderFoods(){
   gems.innerHTML="";
   foods.sort(()=>.5-Math.random()).slice(0,2).forEach(e=>{
@@ -210,51 +231,73 @@ function renderFoods(){
   });
 }
 
-/* 선물 기록 */
 function openSaved(){
-  page=0;
-  renderSaved();
+  giftPage=0;
+  renderGift();
   savedModal.style.display="flex";
 }
-function closeSaved(){
-  savedModal.style.display="none";
-}
+function closeSaved(){savedModal.style.display="none";}
 
-function renderSaved(){
+function renderGift(){
   const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
-  const start=page*PAGE_SIZE;
-  const slice=list.slice(start,start+PAGE_SIZE);
+  const start=giftPage*GIFT_SIZE;
+  const slice=list.slice(start,start+GIFT_SIZE);
 
   savedList.innerHTML=slice.length
-    ? slice.map((m,i)=>`
+    ? slice.map(m=>`
       <div class="saved-item">
         <div class="saved-date">${m.date}</div>
         <div>${m.text}</div>
-        <button class="btn-delete" onclick="deleteGift(${start+i})">삭제</button>
       </div>
     `).join("")
     : "기록이 없어요 🙂";
 }
-
-function prevPage(){
-  if(page>0){
-    page--;
-    renderSaved();
-  }
-}
-function nextPage(){
+function prevGift(){ if(giftPage>0){giftPage--;renderGift();} }
+function nextGift(){
   const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
-  if((page+1)*PAGE_SIZE < list.length){
-    page++;
-    renderSaved();
-  }
+  if((giftPage+1)*GIFT_SIZE<list.length){giftPage++;renderGift();}
 }
 
-function deleteGift(i){
-  const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
-  list.splice(i,1);
-  localStorage.setItem("giftMsgs",JSON.stringify(list));
-  renderSaved();
+/* ---------- 한문장 ---------- */
+let linePage=0;
+const LINE_SIZE=3;
+
+function openOneLine(){
+  linePage=0;
+  oneLineText.value="";
+  renderLine();
+  oneLineModal.style.display="flex";
+}
+function closeOneLine(){oneLineModal.style.display="none";}
+
+function saveOneLine(){
+  const text=oneLineText.value.trim();
+  if(!text) return;
+  const list=JSON.parse(localStorage.getItem("oneLineMsgs")||"[]");
+  list.unshift({text,date:new Date().toLocaleString("ko-KR")});
+  localStorage.setItem("oneLineMsgs",JSON.stringify(list));
+  oneLineText.value="";
+  renderLine();
+}
+
+function renderLine(){
+  const list=JSON.parse(localStorage.getItem("oneLineMsgs")||"[]");
+  const start=linePage*LINE_SIZE;
+  const slice=list.slice(start,start+LINE_SIZE);
+
+  oneLineList.innerHTML=slice.length
+    ? slice.map(m=>`
+      <div class="saved-item">
+        <div class="saved-date">${m.date}</div>
+        <div>${m.text}</div>
+      </div>
+    `).join("")
+    : "아직 기록이 없어요 🙂";
+}
+function prevLine(){ if(linePage>0){linePage--;renderLine();} }
+function nextLine(){
+  const list=JSON.parse(localStorage.getItem("oneLineMsgs")||"[]");
+  if((linePage+1)*LINE_SIZE<list.length){linePage++;renderLine();}
 }
 
 renderFoods();

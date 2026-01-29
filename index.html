@@ -96,8 +96,8 @@ body{
   margin-top:2px;
 }
 
-/* ===== 알림 영역 ===== */
-.alarm-section{
+/* ===== 공통 박스 ===== */
+.box-section{
   background:#fff;
   border:3px solid #ffb6d9;
   border-radius:22px;
@@ -105,12 +105,14 @@ body{
   width:100%;
   max-width:440px;
   padding:18px;
-  margin-top:6px;
+  margin-top:10px;
   text-align:center;
 }
 
-.alarm-section h3{
-  font-size:24px;
+/* 제목 */
+.box-section h3{
+  font-size:26px;
+  font-weight:bold;
   color:#ff69b4;
   margin-bottom:10px;
 }
@@ -134,22 +136,15 @@ body{
   font-weight:bold;
 }
 
-/* 알림 설명 */
-.alarm-desc{
-  margin-top:6px;
-  font-size:15px;
+/* 설명 문구 (크게 + 진하게) */
+.box-desc{
+  margin-top:8px;
+  font-size:18px;
+  font-weight:bold;
   color:#000;
-  font-family:'Poor Story',cursive;
 }
 
-/* 저장 버튼 */
-.saved-btn{
-  margin:18px 0 26px;
-  color:#1565c0;
-  font-family:'Poor Story',cursive;
-}
-
-/* ===== 모달 공통 ===== */
+/* ===== 모달 ===== */
 .modal{
   display:none;
   position:fixed;
@@ -177,7 +172,6 @@ body{
   cursor:pointer;
 }
 
-/* 응원 메시지 */
 .message-text{
   font-size:20px;
   line-height:1.7;
@@ -215,13 +209,18 @@ body{
 
 <div class="gems-container" id="gems"></div>
 
-<div class="alarm-section">
-  <h3>매일 아침 응원 받기</h3>
+<!-- 알림 받기 -->
+<div class="box-section">
+  <h3>매일 알림받기</h3>
   <button class="oval-btn alarm-btn">알림 받기 🔔</button>
-  <div class="alarm-desc">매일 오전 9시에 따뜻한 메시지를 보내드려요</div>
+  <div class="box-desc">매일 오전 ７시에 따뜻한 메세지를 보내드려요</div>
 </div>
 
-<button class="oval-btn saved-btn" onclick="openSaved()">저장한 메시지 ⭐</button>
+<!-- 저장한 메시지 -->
+<div class="box-section">
+  <h3>저장한 메시지</h3>
+  <button class="oval-btn alarm-btn" onclick="openSaved()">저장한 메시지 ⭐</button>
+</div>
 
 <!-- 응원 메시지 팝업 -->
 <div class="modal" id="messageModal">
@@ -291,6 +290,10 @@ function closeMessage(){
 
 function saveMessage(){
   closeMessage();
+}
+
+function openSaved(){
+  alert("저장된 메시지가 여기에 표시됩니다 🙂");
 }
 
 renderFoods();

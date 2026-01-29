@@ -187,6 +187,7 @@ body{
   background:#ffd1e8;
   cursor:pointer;
 }
+
 .page-buttons{
   display:flex;
   justify-content:space-between;
@@ -213,11 +214,12 @@ body{
 
 <div class="box-section">
   <button class="oval-btn" onclick="openOneLine()">스스로 응원 한마디 ✏️</button>
-  <button class="oval-btn" onclick="openChallenge()">나의 할일 & 목표 💪</button>
+  <button class="oval-btn" onclick="openChallenge()">나의 할일 💪</button>
+  <button class="oval-btn" onclick="openGoal()">나의 목표 🎯</button>
 </div>
 
 <div class="box-section">
-  <button class="oval-btn" onclick="openGift()">응원 메시지 저장함 ⭐</button>
+  <button class="oval-btn" onclick="openGift()">선물 보관함 🎁</button>
 </div>
 
 <!-- 메시지 모달 -->
@@ -229,7 +231,7 @@ body{
   </div>
 </div>
 
-<!-- 저장함 -->
+<!-- 저장함(선물 보관함) -->
 <div class="modal" id="giftModal">
   <div class="modal-box">
     <div class="close-x" onclick="closeModal('giftModal')">✕</div>
@@ -261,13 +263,13 @@ body{
   </div>
 </div>
 
-<!-- 도전 -->
+<!-- 할일 -->
 <div class="modal" id="challengeModal">
   <div class="modal-box">
     <div class="close-x" onclick="closeModal('challengeModal')">✕</div>
 
     <div class="input-wrap">
-      <input class="text-input" id="challengeInput" placeholder="오늘의 할 일 or 목표를 적고 체크">
+      <input class="text-input" id="challengeInput" placeholder="해야 할 일을 적어주세요">
       <button class="new-save-btn" onclick="saveChallenge()">✔</button>
     </div>
 
@@ -276,6 +278,25 @@ body{
     <div class="page-buttons">
       <button class="oval-btn small-nav" onclick="prevChallenge()">⬅ 이전</button>
       <button class="oval-btn small-nav" onclick="nextChallenge()">다음 ➡</button>
+    </div>
+  </div>
+</div>
+
+<!-- 목표 -->
+<div class="modal" id="goalModal">
+  <div class="modal-box">
+    <div class="close-x" onclick="closeModal('goalModal')">✕</div>
+
+    <div class="input-wrap">
+      <input class="text-input" id="goalInput" placeholder="나의 목표를 적어주세요">
+      <button class="new-save-btn" onclick="saveGoal()">✔</button>
+    </div>
+
+    <div id="goalList"></div>
+
+    <div class="page-buttons">
+      <button class="oval-btn small-nav" onclick="prevGoal()">⬅ 이전</button>
+      <button class="oval-btn small-nav" onclick="nextGoal()">다음 ➡</button>
     </div>
   </div>
 </div>
@@ -305,7 +326,8 @@ const messages=[
 ];
 
 const PAGE=5;
-let giftPage=0, linePage=0, chPage=0;
+
+let giftPage=0, linePage=0, chPage=0, goalPage=0;
 
 function openModal(id){document.getElementById(id).style.display="flex";}
 function closeModal(id){document.getElementById(id).style.display="none";}
@@ -341,7 +363,7 @@ function renderFoods(){
   });
 }
 
-/* 저장함 */
+/* 선물 저장함 */
 function openGift(){
   giftPage=0;
   renderGift();
@@ -350,6 +372,7 @@ function openGift(){
 
 function renderGift(){
   const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+  const maxPage=Math.ceil(l.length/PAGE)-1;
   const s=l.slice(giftPage*PAGE,(giftPage+1)*PAGE);
 
   giftList.innerHTML=s.map((m,i)=>`
@@ -360,7 +383,16 @@ function renderGift(){
       </div>
       <div>${m.text}</div>
     </div>
-  `).join("") || "저장된 응원 메시지가 없어요 🙂";
+  `).join("") || "저장된 메시지가 없어요 🙂";
+}
+
+function prevGift(){
+  if(giftPage>0){giftPage--; renderGift();}
+}
+function nextGift(){
+  const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+  const maxPage=Math.ceil(l.length/PAGE)-1;
+  if(giftPage<maxPage){giftPage++; renderGift();}
 }
 
 function delGift(i){
@@ -384,6 +416,7 @@ function saveOneLine(){
 
 function renderOneLine(){
   const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
+  const maxPage=Math.ceil(l.length/PAGE)-1;
   const s=l.slice(linePage*PAGE,(linePage+1)*PAGE);
 
   oneLineList.innerHTML=s.map((m,i)=>`
@@ -394,21 +427,14 @@ function renderOneLine(){
       </div>
       <div>${m.text}</div>
     </div>
-  `).join("") || "아직 기록이 없어요 🙂";
+  `).join("") || "기록이 없어요 🙂";
 }
 
-function prevLine(){
-  const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
-  const maxPage=Math.ceil(l.length/PAGE)-1;
-  linePage = (linePage === 0 ? maxPage : linePage-1);
-  renderOneLine();
-}
-
+function prevLine(){if(linePage>0){linePage--; renderOneLine();}}
 function nextLine(){
   const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
   const maxPage=Math.ceil(l.length/PAGE)-1;
-  linePage = (linePage === maxPage ? 0 : linePage+1);
-  renderOneLine();
+  if(linePage<maxPage){linePage++; renderOneLine();}
 }
 
 function delLine(i){
@@ -418,7 +444,7 @@ function delLine(i){
   renderOneLine();
 }
 
-/* 도전 */
+/* 할 일 */
 function openChallenge(){chPage=0;renderChallenge();openModal("challengeModal");}
 
 function saveChallenge(){
@@ -447,7 +473,7 @@ function renderChallenge(){
       </div>
       <div class="saved-date">${m.date}</div>
     </div>
-  `).join("") || "아직 할 일이 없어요 🙂";
+  `).join("") || "할 일이 없어요 🙂";
 }
 
 function toggleCheck(i){
@@ -464,35 +490,59 @@ function delChallenge(i){
   renderChallenge();
 }
 
-function prevChallenge(){
-  const l=JSON.parse(localStorage.getItem("challenges")||"[]");
-  const maxPage=Math.ceil(l.length/PAGE)-1;
-  chPage = (chPage === 0 ? maxPage : chPage-1);
-  renderChallenge();
-}
-
+function prevChallenge(){if(chPage>0){chPage--; renderChallenge();}}
 function nextChallenge(){
   const l=JSON.parse(localStorage.getItem("challenges")||"[]");
   const maxPage=Math.ceil(l.length/PAGE)-1;
-  chPage = (chPage === maxPage ? 0 : chPage+1);
-  renderChallenge();
+  if(chPage<maxPage){chPage++; renderChallenge();}
 }
 
-function prevGift(){
-  const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+/* 목표 (새 기능) */
+
+function openGoal(){goalPage=0;renderGoal();openModal("goalModal");}
+
+function saveGoal(){
+  if(!goalInput.value.trim()) return;
+  const l=JSON.parse(localStorage.getItem("goals")||"[]");
+  l.unshift({text:goalInput.value,date:new Date().toLocaleString("ko-KR")});
+  localStorage.setItem("goals",JSON.stringify(l));
+  goalInput.value="";
+  renderGoal();
+}
+
+function renderGoal(){
+  const l=JSON.parse(localStorage.getItem("goals")||"[]");
   const maxPage=Math.ceil(l.length/PAGE)-1;
-  giftPage = (giftPage === 0 ? maxPage : giftPage-1);
-  renderGift();
+  const s=l.slice(goalPage*PAGE,(goalPage+1)*PAGE);
+
+  goalList.innerHTML=s.map((m,i)=>`
+    <div class="saved-item">
+      <div class="saved-row">
+        <div class="saved-date">${m.date}</div>
+        <button class="btn-del" onclick="delGoal(${goalPage*PAGE+i})">삭제</button>
+      </div>
+      <div>${m.text}</div>
+    </div>
+  `).join("") || "목표가 없어요 🙂";
 }
 
-function nextGift(){
-  const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+function prevGoal(){if(goalPage>0){goalPage--; renderGoal();}}
+function nextGoal(){
+  const l=JSON.parse(localStorage.getItem("goals")||"[]");
   const maxPage=Math.ceil(l.length/PAGE)-1;
-  giftPage = (giftPage === maxPage ? 0 : giftPage+1);
-  renderGift();
+  if(goalPage<maxPage){goalPage++; renderGoal();}
 }
 
+function delGoal(i){
+  const l=JSON.parse(localStorage.getItem("goals")||"[]");
+  l.splice(i,1);
+  localStorage.setItem("goals",JSON.stringify(l));
+  renderGoal();
+}
+
+/* 초기 실행 */
 renderFoods();
+
 </script>
 
 </body>

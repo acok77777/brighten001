@@ -176,13 +176,13 @@ body{
   <button class="oval-btn" onclick="openGift()">매일 받은 메시지 선물 ⭐</button>
 </div>
 
-<!-- 응원 메시지 팝업 -->
-<div class="modal" id="messageModal">
+<!-- 공통 팝업 -->
+<div class="modal" id="commonModal">
   <div class="modal-box">
-    <div class="close-x" onclick="closeModal('messageModal')">✕</div>
-    <div class="popup-title">힘내요 오늘</div>
-    <div class="message-text" id="messageText"></div>
-    <button class="save-small" onclick="closeModal('messageModal')">저장</button>
+    <div class="close-x" onclick="closeModal()">✕</div>
+    <div class="popup-title" id="popupTitle">힘내요 오늘</div>
+    <div class="message-text" id="popupText"></div>
+    <button class="save-small" onclick="closeModal()">저장</button>
   </div>
 </div>
 
@@ -203,16 +203,40 @@ const messages=[
  "오늘은 별처럼 반짝일 거야",
  "뭐든 해 보는 거야",
  "해낼 수 있다고 믿어",
- "오늘도 충분히 잘하고 있어"
+ "오늘도 충분히 잘하고 있어",
+ "지금 이 순간도 의미 있어",
+ "천천히 가도 괜찮아",
+ "너라서 가능해",
+ "오늘의 선택은 잘한 선택",
+ "포기하지 않는 네가 좋아",
+ "지금도 성장 중이야",
+ "오늘 하루도 소중해",
+ "마음 먹은 대로 돼",
+ "지금 충분히 잘하고 있어",
+ "작은 한 걸음이면 돼",
+ "오늘은 네 편이야",
+ "이미 잘 해냈어",
+ "계속 가보자",
+ "오늘도 빛나",
+ "너 자신을 믿어"
 ];
 
-function openModal(id){document.getElementById(id).style.display="flex";}
-function closeModal(id){document.getElementById(id).style.display="none";}
+function openModal(title,text){
+  popupTitle.textContent=title;
+  popupText.textContent=text;
+  commonModal.style.display="flex";
+}
+function closeModal(){
+  commonModal.style.display="none";
+}
 
 /* 선물 */
 function renderFoods(){
   gems.innerHTML="";
-  [...foods].sort(()=>0.5-Math.random()).slice(0,2).forEach(item=>{
+  const shuffledMsgs=[...messages].sort(()=>0.5-Math.random());
+  const picks=[...foods].sort(()=>0.5-Math.random()).slice(0,2);
+
+  picks.forEach((item,idx)=>{
     const d=document.createElement("div");
     d.className="food";
     d.innerHTML=`
@@ -220,19 +244,29 @@ function renderFoods(){
       <div class="food-name">${item.name}</div>
     `;
     d.onclick=()=>{
-      if(d.classList.contains("used"))return;
-      const msg=messages[Math.floor(Math.random()*messages.length)];
-      messageText.textContent=msg;
-      openModal("messageModal");
+      if(d.classList.contains("used")) return;
+      d.classList.add("used");
+
+      const msg=shuffledMsgs[idx];
+      openModal("힘내요 오늘",msg);
 
       const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
       list.unshift({text:msg,date:new Date().toLocaleString("ko-KR")});
       localStorage.setItem("giftMsgs",JSON.stringify(list));
-
-      d.classList.add("used");
     };
     gems.appendChild(d);
   });
+}
+
+/* 아래 버튼들 – 이전과 동일하게 팝업 */
+function openOneLine(){
+  openModal("힘내요 오늘","스스로에게 따뜻한 한마디를 남겨보세요 💗");
+}
+function openChallenge(){
+  openModal("힘내요 오늘","오늘의 할 일과 목표를 응원해요 💪");
+}
+function openGift(){
+  openModal("힘내요 오늘","지금까지 받은 응원 메시지를 확인해보세요 ⭐");
 }
 
 renderFoods();

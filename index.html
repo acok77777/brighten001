@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>  
 <html lang="ko">
 <head>  
 <meta charset="UTF-8">
@@ -54,12 +54,6 @@ body{
 .food{
   cursor:pointer;
   animation: float 3s ease-in-out infinite;
-}
-.food.used{
-  opacity:.4;
-  filter:grayscale(1);
-  cursor:not-allowed;
-  animation:none;
 }
 @keyframes float{
   0%,100%{transform:translateY(0);}
@@ -120,11 +114,14 @@ body{
   padding:20px;
   position:relative;
 }
+
+/* ❌ 닫기 버튼 오른쪽 위 */
 .close-x{
   position:absolute;
   top:12px;
-  left:14px;
+  right:14px;
   cursor:pointer;
+  font-size:18px;
 }
 
 .message-text{
@@ -153,19 +150,11 @@ body{
   cursor:pointer;
 }
 
-/* 한문장 */
-.one-line-input{
-  width:100%;
-  padding:12px;
-  border-radius:14px;
-  border:2px solid #ffb6d9;
-  font-size:16px;
-  font-family:'Poor Story';
-}
-
-.one-line-list{
-  margin-top:14px;
-  text-align:left;
+/* 페이지 버튼 */
+.page-buttons{
+  display:flex;
+  justify-content:space-between;
+  margin-top:12px;
 }
 </style>
 </head>
@@ -191,46 +180,24 @@ body{
   <button class="oval-btn" onclick="openOneLine()">나의 하루 한문장 ✏️</button>
 </div>
 
-<!-- 🎁 선물 메시지 모달 -->
-<div class="modal" id="messageModal">
-  <div class="modal-box">
-    <div class="close-x" onclick="closeMessage()">✕</div>
-    <div class="message-text" id="messageText"></div>
-    <button class="oval-btn" onclick="saveGift()">저장하기</button>
-  </div>
-</div>
-
-<!-- ✏️ 한문장 모달 -->
-<div class="modal" id="oneLineModal">
-  <div class="modal-box">
-    <div class="close-x" onclick="closeOneLine()">✕</div>
-    <div class="message-text">오늘 나의 하루를 한문장으로</div>
-    <input class="one-line-input" id="oneLineText">
-    <button class="oval-btn" onclick="saveOneLine()">저장하기</button>
-
-    <!-- ✅ 한문장 저장 위치 -->
-    <div class="one-line-list" id="oneLineList"></div>
-  </div>
-</div>
-
 <!-- 🎁 선물 기록 -->
 <div class="modal" id="savedModal">
   <div class="modal-box">
     <div class="close-x" onclick="closeSaved()">✕</div>
     <div id="savedList"></div>
+
+    <!-- 이전 / 다음 -->
+    <div class="page-buttons">
+      <button class="oval-btn" onclick="prevPage()">⬅ 이전</button>
+      <button class="oval-btn" onclick="nextPage()">다음 ➡</button>
+    </div>
   </div>
 </div>
 
 <script>
 const foods=["🍰","🧁","🍪","🍩","🍫","🥐","🥞","🧇"];
-const messages=[
- "오늘도 충분히 잘하고 있어요",
- "당신은 소중한 사람이에요",
- "천천히 가도 괜찮아요",
- "당신은 더 나은 내일을 만들어가고 있어요"
-];
-
-let currentMessage="";
+let page=0;
+const PAGE_SIZE=5;
 
 /* 선물 */
 function renderFoods(){
@@ -239,71 +206,55 @@ function renderFoods(){
     const d=document.createElement("div");
     d.className="food";
     d.innerHTML=`<div class="gem">${e}</div>`;
-    d.onclick=()=>openMessage();
     gems.appendChild(d);
   });
-}
-function openMessage(){
-  currentMessage=messages[Math.floor(Math.random()*messages.length)];
-  messageText.textContent=currentMessage;
-  messageModal.style.display="flex";
-}
-function closeMessage(){messageModal.style.display="none";}
-
-function saveGift(){
-  const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
-  list.unshift({text:currentMessage,date:new Date().toLocaleString("ko-KR")});
-  localStorage.setItem("giftMsgs",JSON.stringify(list));
-  closeMessage();
-}
-
-/* 한문장 */
-function openOneLine(){
-  oneLineText.value="";
-  renderOneLine();
-  oneLineModal.style.display="flex";
-}
-function closeOneLine(){oneLineModal.style.display="none";}
-
-function saveOneLine(){
-  const text=oneLineText.value.trim();
-  if(!text) return;
-  const list=JSON.parse(localStorage.getItem("oneLineMsgs")||"[]");
-  list.unshift({text,date:new Date().toLocaleString("ko-KR")});
-  localStorage.setItem("oneLineMsgs",JSON.stringify(list));
-  oneLineText.value="";
-  renderOneLine();
-}
-
-function renderOneLine(){
-  const list=JSON.parse(localStorage.getItem("oneLineMsgs")||"[]");
-  oneLineList.innerHTML=list.map((m,i)=>`
-    <div class="saved-item">
-      <div class="saved-date">${m.date}</div>
-      <div>${m.text}</div>
-    </div>
-  `).join("");
 }
 
 /* 선물 기록 */
 function openSaved(){
-  const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
-  savedList.innerHTML=list.length?list.map((m,i)=>`
-    <div class="saved-item">
-      <div class="saved-date">${m.date}</div>
-      <div>${m.text}</div>
-      <button class="btn-delete" onclick="deleteGift(${i})">삭제</button>
-    </div>
-  `).join(""):"기록이 없어요 🙂";
+  page=0;
+  renderSaved();
   savedModal.style.display="flex";
 }
-function closeSaved(){savedModal.style.display="none";}
+function closeSaved(){
+  savedModal.style.display="none";
+}
+
+function renderSaved(){
+  const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+  const start=page*PAGE_SIZE;
+  const slice=list.slice(start,start+PAGE_SIZE);
+
+  savedList.innerHTML=slice.length
+    ? slice.map((m,i)=>`
+      <div class="saved-item">
+        <div class="saved-date">${m.date}</div>
+        <div>${m.text}</div>
+        <button class="btn-delete" onclick="deleteGift(${start+i})">삭제</button>
+      </div>
+    `).join("")
+    : "기록이 없어요 🙂";
+}
+
+function prevPage(){
+  if(page>0){
+    page--;
+    renderSaved();
+  }
+}
+function nextPage(){
+  const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+  if((page+1)*PAGE_SIZE < list.length){
+    page++;
+    renderSaved();
+  }
+}
 
 function deleteGift(i){
   const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
   list.splice(i,1);
   localStorage.setItem("giftMsgs",JSON.stringify(list));
-  openSaved();
+  renderSaved();
 }
 
 renderFoods();

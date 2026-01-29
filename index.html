@@ -55,12 +55,6 @@ body{
   cursor:pointer;
   animation: float 3s ease-in-out infinite;
 }
-.food.used{
-  opacity:0.4;
-  filter:grayscale(1);
-  cursor:default;
-  animation:none;
-}
 @keyframes float{
   0%,100%{transform:translateY(0);}
   50%{transform:translateY(-10px);}
@@ -101,6 +95,84 @@ body{
 }
 
 .bold-desc{font-weight:bold;}
+
+/* 모달 */
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  justify-content:center;
+  align-items:center;
+  z-index:1000;
+}
+.modal-box{
+  background:#fff;
+  width:92%;
+  max-width:420px;
+  border-radius:22px;
+  padding:20px;
+  position:relative;
+}
+
+/* 닫기 버튼 */
+.close-x{
+  position:absolute;
+  top:12px;
+  right:14px;
+  cursor:pointer;
+  font-size:18px;
+}
+
+.message-text{
+  font-size:20px;
+  text-align:center;
+  margin:20px 0;
+}
+
+/* 리스트 */
+.saved-item{
+  border-bottom:1px dashed #ccc;
+  padding:10px 0;
+}
+.saved-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.saved-date{
+  font-size:13px;
+  font-weight:bold;
+}
+
+/* 삭제 버튼 */
+.btn-delete{
+  background:#ffe4ec;
+  border:none;
+  border-radius:14px;
+  font-size:12px;
+  padding:4px 10px;
+  cursor:pointer;
+}
+
+/* 한문장 입력 */
+.one-line-input{
+  width:100%;
+  padding:12px;
+  border-radius:14px;
+  border:2px solid #ffb6d9;
+  font-size:16px;
+  font-family:'Poor Story';
+  margin-bottom:10px;
+}
+
+/* 페이지 버튼 */
+.page-buttons{
+  display:flex;
+  justify-content:space-between;
+  margin-top:12px;
+}
 </style>
 </head>
 
@@ -121,8 +193,17 @@ body{
 </div>
 
 <div class="box-section">
-  <button class="oval-btn">매일 받은 선물 기록 ⭐</button>
-  <button class="oval-btn">나의 하루 한문장 ✏️</button>
+  <button class="oval-btn" onclick="openSaved()">매일 받은 선물 기록 ⭐</button>
+  <button class="oval-btn" onclick="openOneLine()">나의 하루 한문장 ✏️</button>
+</div>
+
+<!-- ✅ 선물 클릭 시 응원 글 팝업 -->
+<div class="modal" id="messageModal">
+  <div class="modal-box">
+    <div class="close-x" onclick="closeMessage()">✕</div>
+    <div class="message-text" id="messageText"></div>
+    <button class="oval-btn" onclick="saveGift()">저장하기</button>
+  </div>
 </div>
 
 <script>
@@ -134,33 +215,34 @@ const messages=[
   "당신은 더 나은 내일을 만들어가고 있어요"
 ];
 
+let currentMessage="";
+
 /* 선물 렌더링 */
 function renderFoods(){
   gems.innerHTML="";
   foods.sort(()=>.5-Math.random()).slice(0,2).forEach(e=>{
     const d=document.createElement("div");
     d.className="food";
-    d.innerHTML=`<div class="gem">${e}</div>`;
-
-    d.onclick=()=>{
-      if(d.classList.contains("used")) return;
-
-      // 🔒 한 번만 클릭
-      d.classList.add("used");
-
-      // 🎁 자동 저장
-      const msg=messages[Math.floor(Math.random()*messages.length)];
-      const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
-      list.unshift({
-        emoji:e,
-        text:msg,
-        date:new Date().toLocaleString("ko-KR")
-      });
-      localStorage.setItem("giftMsgs",JSON.stringify(list));
-    };
-
+    d.innerHTML = `<div class="gem">${e}</div>`;   // ✅ 문법 수정
+    d.onclick = openMessage;                      // ✅ 클릭 가능
     gems.appendChild(d);
   });
+}
+
+function openMessage(){
+  currentMessage = messages[Math.floor(Math.random()*messages.length)];
+  messageText.textContent = currentMessage;
+  messageModal.style.display="flex";
+}
+function closeMessage(){
+  messageModal.style.display="none";
+}
+
+function saveGift(){
+  const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+  list.unshift({text:currentMessage,date:new Date().toLocaleString("ko-KR")});
+  localStorage.setItem("giftMsgs",JSON.stringify(list));
+  closeMessage();
 }
 
 renderFoods();

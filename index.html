@@ -135,8 +135,9 @@ body{
 }
 .saved-row{
   display:flex;
-  justify-content:space-between;
   align-items:center;
+  justify-content:space-between;
+  gap:8px;
 }
 .saved-date{
   font-size:13px;
@@ -149,6 +150,17 @@ body{
   font-size:11px;
   padding:4px 8px;
   cursor:pointer;
+}
+
+/* 체크박스 */
+.check-wrap{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.check-wrap input{
+  width:18px;
+  height:18px;
 }
 
 /* 입력 */
@@ -238,28 +250,14 @@ body{
 /* ===== 선물 ===== */
 const foods=["🍰","🧁","🍪","🍩","🍫","🥐","🥞","🧇"];
 const messages=[
-  "오늘은 위기를 기회로, 화이팅",
-  "오늘은 별처럼 반짝일 거야",
-  "뭐든 해 보는 거야",
-  "해낼 수 있다고 믿어",
-  "지금 이 순간도 충분해",
-  "오늘도 너답게",
-  "작은 한 걸음이면 돼",
-  "포기하지 않는 내가 멋져",
-  "오늘의 나는 어제보다 강해",
-  "조금 느려도 괜찮아",
-  "마음 먹은 게 이미 반은 성공",
-  "오늘은 나를 믿자",
-  "될 때까지 해보는 거야",
-  "지금 이대로도 잘하고 있어",
-  "오늘의 선택이 내일을 바꿔",
-  "지금 시작해도 늦지 않아",
-  "오늘은 나에게 박수",
-  "용기 낸 나, 최고야",
-  "오늘도 해내는 중",
-  "분명히 잘 될 거야"
+  "오늘은 위기를 기회로, 화이팅","오늘은 별처럼 반짝일 거야","뭐든 해 보는 거야",
+  "해낼 수 있다고 믿어","지금 이 순간도 충분해","오늘도 너답게",
+  "작은 한 걸음이면 돼","포기하지 않는 내가 멋져","오늘의 나는 어제보다 강해",
+  "조금 느려도 괜찮아","마음 먹은 게 이미 반은 성공","오늘은 나를 믿자",
+  "될 때까지 해보는 거야","지금 이대로도 잘하고 있어","오늘의 선택이 내일을 바꿔",
+  "지금 시작해도 늦지 않아","오늘은 나에게 박수","용기 낸 나, 최고야",
+  "오늘도 해내는 중","분명히 잘 될 거야"
 ];
-
 let usedEmojis=JSON.parse(localStorage.getItem("usedEmojis")||"[]");
 
 function renderFoods(){
@@ -284,13 +282,13 @@ function renderFoods(){
 }
 
 /* ===== 메시지 선물 ===== */
-let giftPage=0, GIFT_SIZE=5;
-function openGiftLog(){ giftPage=0; renderGift(); giftModal.style.display="flex"; }
-function closeGiftLog(){ giftModal.style.display="none"; }
+let giftPage=0,GIFT_SIZE=5;
+function openGiftLog(){giftPage=0;renderGift();giftModal.style.display="flex";}
+function closeGiftLog(){giftModal.style.display="none";}
 function renderGift(){
-  const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
-  const slice=list.slice(giftPage*GIFT_SIZE,(giftPage+1)*GIFT_SIZE);
-  giftList.innerHTML=slice.length?slice.map((m,i)=>`
+  const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+  const s=l.slice(giftPage*GIFT_SIZE,(giftPage+1)*GIFT_SIZE);
+  giftList.innerHTML=s.length?s.map((m,i)=>`
     <div class="saved-item">
       <div class="saved-row">
         <div class="saved-date">${m.date}</div>
@@ -299,26 +297,22 @@ function renderGift(){
       <div>${m.emoji} ${m.text}</div>
     </div>`).join(""):"기록이 없어요 🙂";
 }
-function prevGift(){ if(giftPage>0){giftPage--;renderGift();} }
-function nextGift(){
-  const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
-  if((giftPage+1)*GIFT_SIZE<l.length){giftPage++;renderGift();}
-}
-function deleteGift(i){
-  const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
-  l.splice(i,1); localStorage.setItem("giftMsgs",JSON.stringify(l)); renderGift();
-}
+function prevGift(){if(giftPage>0){giftPage--;renderGift();}}
+function nextGift(){const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+if((giftPage+1)*GIFT_SIZE<l.length){giftPage++;renderGift();}}
+function deleteGift(i){const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+l.splice(i,1);localStorage.setItem("giftMsgs",JSON.stringify(l));renderGift();}
 
 /* ===== 나의 하루 한문장 ===== */
-let linePage=0, LINE_SIZE=5;
-function openOneLine(){ linePage=0; renderLine(); oneLineModal.style.display="flex"; }
-function closeOneLine(){ oneLineModal.style.display="none"; }
+let linePage=0,LINE_SIZE=5;
+function openOneLine(){linePage=0;renderLine();oneLineModal.style.display="flex";}
+function closeOneLine(){oneLineModal.style.display="none";}
 function saveOneLine(){
-  const t=oneLineText.value.trim(); if(!t) return;
+  const t=oneLineText.value.trim();if(!t)return;
   const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
   l.unshift({text:t,date:new Date().toLocaleString("ko-KR")});
   localStorage.setItem("oneLines",JSON.stringify(l));
-  oneLineText.value=""; renderLine();
+  oneLineText.value="";renderLine();
 }
 function renderLine(){
   const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
@@ -332,26 +326,28 @@ function renderLine(){
       <div>${m.text}</div>
     </div>`).join(""):"아직 기록이 없어요 🙂";
 }
-function prevLine(){ if(linePage>0){linePage--;renderLine();} }
-function nextLine(){
-  const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
-  if((linePage+1)*LINE_SIZE<l.length){linePage++;renderLine();}
-}
-function deleteLine(i){
-  const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
-  l.splice(i,1); localStorage.setItem("oneLines",JSON.stringify(l)); renderLine();
-}
+function prevLine(){if(linePage>0){linePage--;renderLine();}}
+function nextLine(){const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
+if((linePage+1)*LINE_SIZE<l.length){linePage++;renderLine();}}
+function deleteLine(i){const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
+l.splice(i,1);localStorage.setItem("oneLines",JSON.stringify(l));renderLine();}
 
 /* ===== 나의 도전 ===== */
-let chPage=0, CH_SIZE=5;
-function openChallenge(){ chPage=0; renderChallenge(); challengeModal.style.display="flex"; }
-function closeChallenge(){ challengeModal.style.display="none"; }
+let chPage=0,CH_SIZE=5;
+function openChallenge(){chPage=0;renderChallenge();challengeModal.style.display="flex";}
+function closeChallenge(){challengeModal.style.display="none";}
 function saveChallenge(){
-  const t=challengeText.value.trim(); if(!t) return;
+  const t=challengeText.value.trim();if(!t)return;
   const l=JSON.parse(localStorage.getItem("challenges")||"[]");
-  l.unshift({text:t,date:new Date().toLocaleString("ko-KR")});
+  l.unshift({text:t,date:new Date().toLocaleString("ko-KR"),done:false});
   localStorage.setItem("challenges",JSON.stringify(l));
-  challengeText.value=""; renderChallenge();
+  challengeText.value="";renderChallenge();
+}
+function toggleDone(i){
+  const l=JSON.parse(localStorage.getItem("challenges")||"[]");
+  l[i].done=!l[i].done;
+  localStorage.setItem("challenges",JSON.stringify(l));
+  renderChallenge();
 }
 function renderChallenge(){
   const l=JSON.parse(localStorage.getItem("challenges")||"[]");
@@ -359,20 +355,22 @@ function renderChallenge(){
   challengeList.innerHTML=s.length?s.map((m,i)=>`
     <div class="saved-item">
       <div class="saved-row">
-        <div class="saved-date">${m.date}</div>
+        <div class="check-wrap">
+          <input type="checkbox" ${m.done?"checked":""}
+            onchange="toggleDone(${chPage*CH_SIZE+i})">
+          <div class="saved-date">${m.date}</div>
+        </div>
         <button class="btn-delete" onclick="deleteChallenge(${chPage*CH_SIZE+i})">삭제</button>
       </div>
-      <div>${m.text}</div>
+      <div style="${m.done?'text-decoration:line-through;opacity:.6;':''}">${m.text}</div>
     </div>`).join(""):"아직 도전이 없어요 🙂";
 }
-function prevChallenge(){ if(chPage>0){chPage--;renderChallenge();} }
-function nextChallenge(){
-  const l=JSON.parse(localStorage.getItem("challenges")||"[]");
-  if((chPage+1)*CH_SIZE<l.length){chPage++;renderChallenge();}
-}
+function prevChallenge(){if(chPage>0){chPage--;renderChallenge();}}
+function nextChallenge(){const l=JSON.parse(localStorage.getItem("challenges")||"[]");
+if((chPage+1)*CH_SIZE<l.length){chPage++;renderChallenge();}}
 function deleteChallenge(i){
   const l=JSON.parse(localStorage.getItem("challenges")||"[]");
-  l.splice(i,1); localStorage.setItem("challenges",JSON.stringify(l)); renderChallenge();
+  l.splice(i,1);localStorage.setItem("challenges",JSON.stringify(l));renderChallenge();
 }
 
 renderFoods();

@@ -108,6 +108,20 @@ body{
   font-family:Dotum,'돋움',sans-serif;
 }
 
+/* 🔥 팝업 저장 버튼 작게 */
+.small-save{
+  font-size:14px;
+  padding:8px 18px;
+  float:right;
+  margin-bottom:10px;
+}
+
+/* 🔥 팝업 이전/다음 버튼 작게 */
+.small-nav{
+  font-size:14px;
+  padding:8px 20px;
+}
+
 /* 모달 */
 .modal{
   display:none;
@@ -126,7 +140,6 @@ body{
   padding:20px;
   position:relative;
 
-  /* 🔥 추가됨: 모바일 입력 시 팝업 밀림 방지 */
   max-height:80vh;
   overflow-y:auto;
 }
@@ -218,8 +231,8 @@ body{
     <div id="giftList"></div>
 
     <div class="page-buttons">
-      <button class="oval-btn" onclick="prevGift()">⬅ 이전</button>
-      <button class="oval-btn" onclick="nextGift()">다음 ➡</button>
+      <button class="oval-btn small-nav" onclick="prevGift()">⬅ 이전</button>
+      <button class="oval-btn small-nav" onclick="nextGift()">다음 ➡</button>
     </div>
   </div>
 </div>
@@ -228,12 +241,16 @@ body{
 <div class="modal" id="oneLineModal">
   <div class="modal-box">
     <div class="close-x" onclick="closeModal('oneLineModal')">✕</div>
+
     <input class="text-input" id="oneLineInput" placeholder="오늘 나에게 해주고 싶은 말">
-    <button class="oval-btn" onclick="saveOneLine()">저장</button>
+
+    <button class="oval-btn small-save" onclick="saveOneLine()">저장</button>
+
     <div id="oneLineList"></div>
+
     <div class="page-buttons">
-      <button class="oval-btn" onclick="prevLine()">⬅ 이전</button>
-      <button class="oval-btn" onclick="nextLine()">다음 ➡</button>
+      <button class="oval-btn small-nav" onclick="prevLine()">⬅ 이전</button>
+      <button class="oval-btn small-nav" onclick="nextLine()">다음 ➡</button>
     </div>
   </div>
 </div>
@@ -245,11 +262,13 @@ body{
 
     <input class="text-input" id="challengeInput" placeholder="오늘의 할 일 or 목표를 적고 체크">
 
-    <button class="oval-btn" onclick="saveChallenge()">저장</button>
+    <button class="oval-btn small-save" onclick="saveChallenge()">저장</button>
+
     <div id="challengeList"></div>
+
     <div class="page-buttons">
-      <button class="oval-btn" onclick="prevChallenge()">⬅ 이전</button>
-      <button class="oval-btn" onclick="nextChallenge()">다음 ➡</button>
+      <button class="oval-btn small-nav" onclick="prevChallenge()">⬅ 이전</button>
+      <button class="oval-btn small-nav" onclick="nextChallenge()">다음 ➡</button>
     </div>
   </div>
 </div>

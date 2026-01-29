@@ -1,6 +1,6 @@
-<!DOCTYPE html>  
+<!DOCTYPE html>
 <html lang="ko">
-<head>  
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>힘내요 오늘</title>
@@ -154,7 +154,6 @@ body{
   font-size:12px;
   padding:4px 10px;
   cursor:pointer;
-  flex:0 0 auto;
 }
 
 /* 한문장 입력 */
@@ -207,60 +206,25 @@ body{
   </div>
 </div>
 
-<!-- 🎁 선물 기록 -->
-<div class="modal" id="savedModal">
-  <div class="modal-box">
-    <div class="close-x" onclick="closeSaved()">✕</div>
-    <div id="savedList"></div>
-
-    <div class="page-buttons">
-      <button class="oval-btn" onclick="prevGift()">⬅ 이전</button>
-      <button class="oval-btn" onclick="nextGift()">다음 ➡</button>
-    </div>
-  </div>
-</div>
-
-<!-- ✏️ 한문장 팝업 -->
-<div class="modal" id="oneLineModal">
-  <div class="modal-box">
-    <div class="close-x" onclick="closeOneLine()">✕</div>
-
-    <div class="message-text">오늘 나의 하루를 한문장으로</div>
-
-    <input class="one-line-input" id="oneLineText" placeholder="한 문장을 적어주세요">
-    <button class="oval-btn" onclick="saveOneLine()">저장하기</button>
-
-    <div id="oneLineList"></div>
-
-    <div class="page-buttons">
-      <button class="oval-btn" onclick="prevLine()">⬅ 이전</button>
-      <button class="oval-btn" onclick="nextLine()">다음 ➡</button>
-    </div>
-  </div>
-</div>
-
 <script>
 const foods=["🍰","🧁","🍪","🍩","🍫","🥐","🥞","🧇"];
 const messages=[
- "오늘도 충분히 잘하고 있어요",
- "당신은 소중한 사람이에요",
- "천천히 가도 괜찮아요",
- "당신은 더 나은 내일을 만들어가고 있어요"
+  "오늘도 충분히 잘하고 있어요",
+  "당신은 소중한 사람이에요",
+  "천천히 가도 괜찮아요",
+  "당신은 더 나은 내일을 만들어가고 있어요"
 ];
 
 let currentMessage="";
 
-/* ---------- 선물 ---------- */
-let giftPage=0;
-const GIFT_SIZE=5;
-
+/* 선물 렌더링 */
 function renderFoods(){
   gems.innerHTML="";
   foods.sort(()=>.5-Math.random()).slice(0,2).forEach(e=>{
     const d=document.createElement("div");
     d.className="food";
-    d.innerHTML=`<div class="gem">${e}</div>`;
-    d.onclick=()=>openMessage();   // ✅ 클릭하면 응원글 팝업
+    d.innerHTML = `<div class="gem">${e}</div>`;   // ✅ 문법 수정
+    d.onclick = openMessage;                      // ✅ 클릭 가능
     gems.appendChild(d);
   });
 }
@@ -270,101 +234,15 @@ function openMessage(){
   messageText.textContent = currentMessage;
   messageModal.style.display="flex";
 }
-function closeMessage(){ messageModal.style.display="none"; }
+function closeMessage(){
+  messageModal.style.display="none";
+}
 
 function saveGift(){
   const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
   list.unshift({text:currentMessage,date:new Date().toLocaleString("ko-KR")});
   localStorage.setItem("giftMsgs",JSON.stringify(list));
   closeMessage();
-}
-
-/* 선물 기록 */
-function openSaved(){
-  giftPage=0;
-  renderGift();
-  savedModal.style.display="flex";
-}
-function closeSaved(){ savedModal.style.display="none"; }
-
-function renderGift(){
-  const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
-  const start=giftPage*GIFT_SIZE;
-  const slice=list.slice(start,start+GIFT_SIZE);
-
-  savedList.innerHTML=slice.length
-    ? slice.map((m,i)=>`
-      <div class="saved-item">
-        <div class="saved-row">
-          <div class="saved-date">${m.date}</div>
-          <button class="btn-delete" onclick="deleteGift(${start+i})">삭제</button>
-        </div>
-        <div>${m.text}</div>
-      </div>
-    `).join("")
-    : "기록이 없어요 🙂";
-}
-function prevGift(){ if(giftPage>0){giftPage--;renderGift();} }
-function nextGift(){
-  const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
-  if((giftPage+1)*GIFT_SIZE<list.length){giftPage++;renderGift();}
-}
-function deleteGift(i){
-  const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
-  list.splice(i,1);
-  localStorage.setItem("giftMsgs",JSON.stringify(list));
-  renderGift();
-}
-
-/* ---------- 한문장 ---------- */
-let linePage=0;
-const LINE_SIZE=3;
-
-function openOneLine(){
-  linePage=0;
-  oneLineText.value="";
-  renderLine();
-  oneLineModal.style.display="flex";
-}
-function closeOneLine(){ oneLineModal.style.display="none"; }
-
-function saveOneLine(){
-  const text=oneLineText.value.trim();
-  if(!text) return;
-  const list=JSON.parse(localStorage.getItem("oneLineMsgs")||"[]");
-  list.unshift({text,date:new Date().toLocaleString("ko-KR")});
-  localStorage.setItem("oneLineMsgs",JSON.stringify(list));
-  oneLineText.value="";
-  renderLine();
-}
-
-function renderLine(){
-  const list=JSON.parse(localStorage.getItem("oneLineMsgs")||"[]");
-  const start=linePage*LINE_SIZE;
-  const slice=list.slice(start,start+LINE_SIZE);
-
-  oneLineList.innerHTML=slice.length
-    ? slice.map((m,i)=>`
-      <div class="saved-item">
-        <div class="saved-row">
-          <div class="saved-date">${m.date}</div>
-          <button class="btn-delete" onclick="deleteLine(${start+i})">삭제</button>
-        </div>
-        <div>${m.text}</div>
-      </div>
-    `).join("")
-    : "아직 기록이 없어요 🙂";
-}
-function prevLine(){ if(linePage>0){linePage--;renderLine();} }
-function nextLine(){
-  const list=JSON.parse(localStorage.getItem("oneLineMsgs")||"[]");
-  if((linePage+1)*LINE_SIZE<list.length){linePage++;renderLine();}
-}
-function deleteLine(i){
-  const list=JSON.parse(localStorage.getItem("oneLineMsgs")||"[]");
-  list.splice(i,1);
-  localStorage.setItem("oneLineMsgs",JSON.stringify(list));
-  renderLine();
 }
 
 renderFoods();

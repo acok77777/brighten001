@@ -12,14 +12,9 @@
 
 body{
   font-family:'Poor Story','Malgun Gothic','맑은 고딕',sans-serif;
-  background:
-    repeating-linear-gradient(
-      45deg,
-      #ffe4ec,
-      #ffe4ec 20px,
-      #ffd1e8 20px,
-      #ffd1e8 40px
-    );
+  background:repeating-linear-gradient(
+    45deg,#ffe4ec,#ffe4ec 20px,#ffd1e8 20px,#ffd1e8 40px
+  );
   min-height:100svh;
   display:flex;
   flex-direction:column;
@@ -49,7 +44,7 @@ body{
   margin:6px 0;
 }
 
-/* 음식 */
+/* 선물 */
 .gems-container{
   display:flex;
   gap:24px;
@@ -62,16 +57,15 @@ body{
   cursor:pointer;
   animation: float 3s ease-in-out infinite;
 }
-.food:nth-child(2){animation-delay:1.2s;}
-@keyframes float{
-  0%,100%{transform:translateY(0);}
-  50%{transform:translateY(-10px);}
-}
 .food.used{
   opacity:.4;
   filter:grayscale(1);
   cursor:not-allowed;
   animation:none;
+}
+@keyframes float{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-10px);}
 }
 .gem{
   width:110px;height:110px;
@@ -108,11 +102,10 @@ body{
   font-family:Dotum,'돋움',sans-serif;
 }
 
-/* 설명 */
 .box-desc{
-  margin-top:8px;
-  font-size:18px;
-  font-weight:bold;
+  margin-top:6px;
+  font-size:15px;
+  color:#555;
 }
 
 /* 모달 */
@@ -160,20 +153,24 @@ body{
 }
 .btn-save{background:#90caf9;}
 .btn-close{background:#ddd;}
-.btn-delete{
-  background:#ffcdd2;
-  color:#b71c1c;
-  font-size:13px;
-  padding:6px 12px;
-}
+
+/* 저장 목록 */
 .saved-item{
   border-bottom:1px dashed #ccc;
   padding:10px 0;
 }
 .saved-date{
-  font-size:13px;
-  color:#777;
+  font-size:12px;
+  color:#888;
   margin-bottom:4px;
+}
+.btn-delete{
+  background:#ffe4ec;
+  border:none;
+  border-radius:14px;
+  font-size:11px;
+  padding:4px 8px;
+  cursor:pointer;
 }
 </style>
 </head>
@@ -196,6 +193,7 @@ body{
 
 <div class="box-section">
   <button class="oval-btn" onclick="openSaved()">저장한 메시지 ⭐</button>
+  <div class="box-desc">매일 받은 선물 메세지를 저장</div>
 </div>
 
 <!-- 메시지 모달 -->
@@ -216,14 +214,14 @@ body{
     <div class="close-x" onclick="closeSaved()">✕</div>
     <div id="savedList"></div>
     <div class="buttons">
-      <button class="btn" onclick="prevPage()">⬅️ 이전</button>
-      <button class="btn" onclick="nextPage()">다음 ➡️</button>
+      <button class="btn" onclick="prevPage()">⬅️</button>
+      <button class="btn" onclick="nextPage()">➡️</button>
     </div>
   </div>
 </div>
 
 <script>
-const foods=["🍰","🧁","🍪","🍩","🍫","🍓"];
+const foods=["🍰","🧁","🍪","🍩","🍫","🥐","🥞","🧇"];
 const messages=[
  "오늘도 충분히 잘하고 있어요",
  "당신은 소중한 사람이에요",
@@ -231,7 +229,6 @@ const messages=[
  "당신은 더 나은 내일을 만들어가고 있어요"
 ];
 
-let used=false;
 let currentMessage="";
 let page=0;
 
@@ -243,9 +240,8 @@ function renderFoods(){
     d.className="food";
     d.innerHTML=`<div class="gem">${e}</div>`;
     d.onclick=()=>{
-      if(used) return;
-      used=true;
-      document.querySelectorAll(".food").forEach(el=>el.classList.add("used"));
+      if(d.classList.contains("used")) return;
+      d.classList.add("used");
       openMessage();
     };
     gems.appendChild(d);
@@ -261,9 +257,7 @@ function closeMessage(){messageModal.style.display="none";}
 
 function saveMessage(){
   const saved=JSON.parse(localStorage.getItem("savedMsgs")||"[]");
-  const now=new Date();
-  const date=now.toLocaleString("ko-KR");
-  saved.unshift({text:currentMessage,date});
+  saved.unshift({text:currentMessage,date:new Date().toLocaleString("ko-KR")});
   localStorage.setItem("savedMsgs",JSON.stringify(saved));
   closeMessage();
 }
@@ -283,7 +277,7 @@ function renderSaved(){
     <div class="saved-item">
       <div class="saved-date">${m.date}</div>
       <div>${m.text}</div>
-      <button class="btn-delete" onclick="deleteMsg(${start+i})">삭제</button>
+      <button class="btn-delete" onclick="deleteMsg(${start+i})">🗑️</button>
     </div>
   `).join(""):"저장된 메시지가 없어요 🙂";
 }

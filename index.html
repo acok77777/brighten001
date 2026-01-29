@@ -130,15 +130,31 @@ body{
   margin:20px 0;
 }
 
-.saved-date{
-  font-size:13px;
-  font-weight:bold;
-  margin-bottom:4px;
-}
-
+/* 리스트 */
 .saved-item{
   border-bottom:1px dashed #ccc;
   padding:10px 0;
+}
+.saved-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.saved-date{
+  font-size:13px;
+  font-weight:bold;
+}
+
+/* 삭제 버튼 */
+.btn-delete{
+  background:#ffe4ec;
+  border:none;
+  border-radius:14px;
+  font-size:12px;
+  padding:4px 10px;
+  cursor:pointer;
+  flex:0 0 auto;
 }
 
 /* 한문장 입력 */
@@ -182,6 +198,15 @@ body{
   <button class="oval-btn" onclick="openOneLine()">나의 하루 한문장 ✏️</button>
 </div>
 
+<!-- ✅ 선물 클릭 시 응원 글 팝업 -->
+<div class="modal" id="messageModal">
+  <div class="modal-box">
+    <div class="close-x" onclick="closeMessage()">✕</div>
+    <div class="message-text" id="messageText"></div>
+    <button class="oval-btn" onclick="saveGift()">저장하기</button>
+  </div>
+</div>
+
 <!-- 🎁 선물 기록 -->
 <div class="modal" id="savedModal">
   <div class="modal-box">
@@ -216,6 +241,14 @@ body{
 
 <script>
 const foods=["🍰","🧁","🍪","🍩","🍫","🥐","🥞","🧇"];
+const messages=[
+ "오늘도 충분히 잘하고 있어요",
+ "당신은 소중한 사람이에요",
+ "천천히 가도 괜찮아요",
+ "당신은 더 나은 내일을 만들어가고 있어요"
+];
+
+let currentMessage="";
 
 /* ---------- 선물 ---------- */
 let giftPage=0;
@@ -227,16 +260,32 @@ function renderFoods(){
     const d=document.createElement("div");
     d.className="food";
     d.innerHTML=`<div class="gem">${e}</div>`;
+    d.onclick=()=>openMessage();   // ✅ 클릭하면 응원글 팝업
     gems.appendChild(d);
   });
 }
 
+function openMessage(){
+  currentMessage = messages[Math.floor(Math.random()*messages.length)];
+  messageText.textContent = currentMessage;
+  messageModal.style.display="flex";
+}
+function closeMessage(){ messageModal.style.display="none"; }
+
+function saveGift(){
+  const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+  list.unshift({text:currentMessage,date:new Date().toLocaleString("ko-KR")});
+  localStorage.setItem("giftMsgs",JSON.stringify(list));
+  closeMessage();
+}
+
+/* 선물 기록 */
 function openSaved(){
   giftPage=0;
   renderGift();
   savedModal.style.display="flex";
 }
-function closeSaved(){savedModal.style.display="none";}
+function closeSaved(){ savedModal.style.display="none"; }
 
 function renderGift(){
   const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
@@ -244,9 +293,12 @@ function renderGift(){
   const slice=list.slice(start,start+GIFT_SIZE);
 
   savedList.innerHTML=slice.length
-    ? slice.map(m=>`
+    ? slice.map((m,i)=>`
       <div class="saved-item">
-        <div class="saved-date">${m.date}</div>
+        <div class="saved-row">
+          <div class="saved-date">${m.date}</div>
+          <button class="btn-delete" onclick="deleteGift(${start+i})">삭제</button>
+        </div>
         <div>${m.text}</div>
       </div>
     `).join("")
@@ -256,6 +308,12 @@ function prevGift(){ if(giftPage>0){giftPage--;renderGift();} }
 function nextGift(){
   const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
   if((giftPage+1)*GIFT_SIZE<list.length){giftPage++;renderGift();}
+}
+function deleteGift(i){
+  const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+  list.splice(i,1);
+  localStorage.setItem("giftMsgs",JSON.stringify(list));
+  renderGift();
 }
 
 /* ---------- 한문장 ---------- */
@@ -268,7 +326,7 @@ function openOneLine(){
   renderLine();
   oneLineModal.style.display="flex";
 }
-function closeOneLine(){oneLineModal.style.display="none";}
+function closeOneLine(){ oneLineModal.style.display="none"; }
 
 function saveOneLine(){
   const text=oneLineText.value.trim();
@@ -286,9 +344,12 @@ function renderLine(){
   const slice=list.slice(start,start+LINE_SIZE);
 
   oneLineList.innerHTML=slice.length
-    ? slice.map(m=>`
+    ? slice.map((m,i)=>`
       <div class="saved-item">
-        <div class="saved-date">${m.date}</div>
+        <div class="saved-row">
+          <div class="saved-date">${m.date}</div>
+          <button class="btn-delete" onclick="deleteLine(${start+i})">삭제</button>
+        </div>
         <div>${m.text}</div>
       </div>
     `).join("")
@@ -298,6 +359,12 @@ function prevLine(){ if(linePage>0){linePage--;renderLine();} }
 function nextLine(){
   const list=JSON.parse(localStorage.getItem("oneLineMsgs")||"[]");
   if((linePage+1)*LINE_SIZE<list.length){linePage++;renderLine();}
+}
+function deleteLine(i){
+  const list=JSON.parse(localStorage.getItem("oneLineMsgs")||"[]");
+  list.splice(i,1);
+  localStorage.setItem("oneLineMsgs",JSON.stringify(list));
+  renderLine();
 }
 
 renderFoods();

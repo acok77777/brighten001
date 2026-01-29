@@ -4,143 +4,43 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>힘내요 오늘</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Poor+Story&display=swap" rel="stylesheet">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-
 body{
-  font-family:'Poor Story','Malgun Gothic','맑은 고딕',sans-serif;
+  font-family:'Poor Story','맑은 고딕',sans-serif;
   background:repeating-linear-gradient(
     45deg,#ffe4ec,#ffe4ec 20px,#ffd1e8 20px,#ffd1e8 40px
   );
-  min-height:100svh;
+  min-height:100vh;
   display:flex;
   flex-direction:column;
   align-items:center;
   padding:10px;
 }
 
-/* 타이틀 */
-.title-lace{
-  position:relative;
-  width:92%;
-  max-width:420px;
-  margin:12px auto 8px;
-}
-.title-lace img{width:100%;}
-.title-lace h1{
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  font-size:20px;
-  white-space:nowrap;
-}
-
-/* 안내 */
-.subtitle{
-  font-size:21px;
-  font-weight:bold;
-  margin:6px 0;
-}
-
-/* 선물 */
-.gems-container{
-  display:flex;
-  gap:24px;
-  margin:12px 0 16px;
-}
-.food{
-  cursor:pointer;
-  animation: float 3s ease-in-out infinite;
-  text-align:center;
-}
-.food.used{
-  opacity:.4;
-  filter:grayscale(1);
-  cursor:default;
-  animation:none;
-}
-@keyframes float{
-  0%,100%{transform:translateY(0);}
-  50%{transform:translateY(-10px);}
-}
-.gem{
-  width:110px;
-  height:110px;
-  font-size:80px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-.food-name{
-  font-size:13px;
-  margin-top:4px;
-  color:#444;
-}
-
-/* 박스 */
-.box-section{
+.box{
   background:#fff;
-  border:3px solid #ffb6d9;
-  border-radius:22px;
-  box-shadow:0 6px 18px rgba(255,182,217,.45);
   width:100%;
   max-width:440px;
+  border-radius:22px;
   padding:18px;
-  margin-top:10px;
-  text-align:center;
-  display:flex;
-  flex-direction:column;
+  box-shadow:0 6px 18px rgba(0,0,0,.15);
 }
 
-/* 버튼 */
-.oval-btn{
-  background:#e3f2fd;
-  border:2px solid #90caf9;
-  border-radius:40px;
-  padding:14px 36px;
-  font-size:18px;
-  cursor:pointer;
+.btn{
+  width:100%;
   margin:6px 0;
-  color:#1565c0;
-  font-weight:bold;
-  font-family:Dotum,'돋움',sans-serif;
-}
-
-/* 저장 버튼 */
-.new-save-btn{
-  background:#e3f2fd;
+  padding:14px;
+  border-radius:30px;
   border:2px solid #90caf9;
-  border-radius:16px;
-  padding:5px 14px;
-  font-size:16px;
+  background:#e3f2fd;
+  font-size:18px;
+  font-weight:bold;
   cursor:pointer;
-  flex-shrink:0;
 }
 
-/* 이전/다음 */
-.small-nav{
-  font-size:13px;
-  padding:6px 14px;
-}
-
-/* 입력 */
-.input-wrap{
-  display:flex;
-  gap:6px;
-}
-.text-input{
-  flex:1;
-  padding:12px;
-  border-radius:14px;
-  border:2px solid #ffb6d9;
-  font-size:16px;
-}
-
-/* 모달 */
 .modal{
   display:none;
   position:fixed;
@@ -156,146 +56,122 @@ body{
   max-width:420px;
   border-radius:22px;
   padding:20px;
-  max-height:80vh;
-  overflow-y:auto;
 }
-.close-x{
+.close{
   position:absolute;
+  right:16px;
   top:12px;
-  right:14px;
   cursor:pointer;
 }
 
-/* 리스트 */
-.saved-item{border-bottom:1px dashed #ccc;padding:10px 0;}
-.saved-row{display:flex;justify-content:space-between;align-items:center;}
-.saved-date{font-size:13px;font-weight:bold;}
-.btn-del{
-  font-size:12px;
-  padding:4px 10px;
+.input-wrap{
+  display:flex;
+  gap:6px;
+  margin-bottom:12px;
+}
+input{
+  flex:1;
+  padding:12px;
+  border-radius:14px;
+  border:2px solid #ffb6d9;
+}
+.save{
+  border-radius:14px;
+  border:2px solid #90caf9;
+  background:#e3f2fd;
+  padding:8px 14px;
+  cursor:pointer;
+}
+
+.item{
+  border-bottom:1px dashed #ccc;
+  padding:8px 0;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.done{text-decoration:line-through;opacity:.6}
+.del{
+  margin-left:auto;
   border:none;
   border-radius:12px;
+  padding:4px 10px;
   background:#ffd1e8;
   cursor:pointer;
 }
-
-/* 체크 */
-.check-wrap{display:flex;gap:8px;align-items:center;}
-.checked{text-decoration:line-through;opacity:.6;}
 </style>
 </head>
 
 <body>
 
-<div class="title-lace">
-  <img src="title-box.png">
-  <h1>당신의 하루를 응원해요</h1>
+<div class="box">
+  <button class="btn" onclick="openOneLine()">스스로 응원 한마디 ✏️</button>
+  <button class="btn" onclick="openTodo()">나의 할일 💪</button>
+  <button class="btn" onclick="openGoal()">나의 목표 🎯</button>
+  <button class="btn" onclick="openGift()">선물 보관함 🎁</button>
 </div>
 
-<p class="subtitle">오늘의 선물을 클릭해 보세요</p>
-<div class="gems-container" id="gems"></div>
-
-<!-- ✅ 하나의 박스에 4개 배너 -->
-<div class="box-section">
-  <button class="oval-btn" onclick="openOneLine()">스스로 응원 한마디 ✏️</button>
-  <button class="oval-btn" onclick="openChallenge()">나의 할일 💪</button>
-  <button class="oval-btn" onclick="openGoal()">나의 목표 🎯</button>
-  <button class="oval-btn" onclick="openGift()">선물 보관함 🎁</button>
-</div>
-
-<!-- 메시지 모달 -->
-<div class="modal" id="messageModal">
-  <div class="modal-box">
-    <div class="close-x" onclick="closeModal('messageModal')">✕</div>
-    <h2 style="text-align:center;">☆ 힘내요 오늘 ☆</h2>
-    <div id="messageText" style="font-size:22px;text-align:center;margin-top:10px;"></div>
-  </div>
-</div>
-
-<!-- 목표 = 할일과 동일 -->
+<!-- 목표 / 할일 공용 모달 -->
 <div class="modal" id="goalModal">
   <div class="modal-box">
-    <div class="close-x" onclick="closeModal('goalModal')">✕</div>
-
+    <div class="close" onclick="closeModal()">✕</div>
     <div class="input-wrap">
-      <input class="text-input" id="goalInput" placeholder="나의 목표를 적어주세요">
-      <button class="new-save-btn" onclick="saveGoal()">✔</button>
+      <input id="goalInput" placeholder="적어주세요">
+      <button class="save" onclick="saveItem()">✔</button>
     </div>
-
     <div id="goalList"></div>
   </div>
 </div>
 
 <script>
-const foodsData=[
-  {emoji:"🍰",name:"케이크"},
-  {emoji:"🍩",name:"도넛"},
-  {emoji:"🍪",name:"쿠키"},
-  {emoji:"🧁",name:"컵케이크"}
-];
+let mode="goal";
 
-const messages=[
- "오늘은 위기를 기회로 만드는 날 💪",
- "너무 잘하고 있어 ✨",
- "오늘의 너는 빛나 🌟"
-];
+function openGoal(){mode="goal";render();openModal();}
+function openTodo(){mode="todo";render();openModal();}
+function openOneLine(){alert("응원 기능은 다음 단계에서 붙여줄게 🙂")}
+function openGift(){alert("선물 보관함 연결 예정 🎁")}
 
-function openModal(id){document.getElementById(id).style.display="flex";}
-function closeModal(id){document.getElementById(id).style.display="none";}
+function openModal(){document.getElementById("goalModal").style.display="flex";}
+function closeModal(){document.getElementById("goalModal").style.display="none";}
 
-/* 목표 = 체크 가능 */
-function openGoal(){renderGoal();openModal("goalModal");}
+function saveItem(){
+  const input=document.getElementById("goalInput");
+  if(!input.value.trim()) return;
 
-function saveGoal(){
-  if(!goalInput.value.trim()) return;
-  const l=JSON.parse(localStorage.getItem("goals")||"[]");
-  l.unshift({text:goalInput.value,done:false});
-  localStorage.setItem("goals",JSON.stringify(l));
-  goalInput.value="";
-  renderGoal();
+  const key=mode==="goal"?"goals":"todos";
+  const list=JSON.parse(localStorage.getItem(key)||"[]");
+  list.unshift({text:input.value,done:false});
+  localStorage.setItem(key,JSON.stringify(list));
+  input.value="";
+  render();
 }
 
-function renderGoal(){
-  const l=JSON.parse(localStorage.getItem("goals")||"[]");
-  goalList.innerHTML=l.map((m,i)=>`
-    <div class="saved-item">
-      <div class="check-wrap">
-        <input type="checkbox" ${m.done?"checked":""} onclick="toggleGoal(${i})">
-        <div class="${m.done?"checked":""}">${m.text}</div>
-        <button class="btn-del" onclick="delGoal(${i})">삭제</button>
-      </div>
+function render(){
+  const key=mode==="goal"?"goals":"todos";
+  const list=JSON.parse(localStorage.getItem(key)||"[]");
+  goalList.innerHTML=list.map((m,i)=>`
+    <div class="item">
+      <input type="checkbox" ${m.done?"checked":""} onclick="toggle(${i})">
+      <span class="${m.done?"done":""}">${m.text}</span>
+      <button class="del" onclick="del(${i})">삭제</button>
     </div>
-  `).join("") || "목표가 없어요 🙂";
+  `).join("")||"아직 없어요 🙂";
 }
 
-function toggleGoal(i){
-  const l=JSON.parse(localStorage.getItem("goals")||"[]");
-  l[i].done=!l[i].done;
-  localStorage.setItem("goals",JSON.stringify(l));
-  renderGoal();
+function toggle(i){
+  const key=mode==="goal"?"goals":"todos";
+  const list=JSON.parse(localStorage.getItem(key));
+  list[i].done=!list[i].done;
+  localStorage.setItem(key,JSON.stringify(list));
+  render();
 }
-
-function delGoal(i){
-  const l=JSON.parse(localStorage.getItem("goals")||"[]");
-  l.splice(i,1);
-  localStorage.setItem("goals",JSON.stringify(l));
-  renderGoal();
+function del(i){
+  const key=mode==="goal"?"goals":"todos";
+  const list=JSON.parse(localStorage.getItem(key));
+  list.splice(i,1);
+  localStorage.setItem(key,JSON.stringify(list));
+  render();
 }
-
-function renderFoods(){
-  gems.innerHTML="";
-  foodsData.sort(()=>0.5-Math.random()).slice(0,2).forEach(f=>{
-    const d=document.createElement("div");
-    d.className="food";
-    d.innerHTML=`<div class="gem">${f.emoji}</div><div class="food-name">${f.name}</div>`;
-    d.onclick=()=>{
-      messageText.textContent=messages[Math.floor(Math.random()*messages.length)];
-      openModal("messageModal");
-    };
-    gems.appendChild(d);
-  });
-}
-renderFoods();
 </script>
 
 </body>

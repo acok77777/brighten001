@@ -4,10 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>힘내요 오늘</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Poor+Story&display=swap" rel="stylesheet">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
+
 body{
   font-family:'Poor Story','맑은 고딕',sans-serif;
   background:repeating-linear-gradient(
@@ -15,25 +17,25 @@ body{
   );
   min-height:100vh;
   display:flex;
-  flex-direction:column;
-  align-items:center;
-  padding:10px;
+  justify-content:center;
+  align-items:flex-start;
+  padding:16px;
 }
 
-.box{
+.main-box{
   background:#fff;
   width:100%;
   max-width:440px;
-  border-radius:22px;
+  border-radius:26px;
   padding:18px;
-  box-shadow:0 6px 18px rgba(0,0,0,.15);
+  box-shadow:0 8px 20px rgba(0,0,0,.15);
 }
 
 .btn{
   width:100%;
-  margin:6px 0;
-  padding:14px;
-  border-radius:30px;
+  padding:16px;
+  margin:8px 0;
+  border-radius:40px;
   border:2px solid #90caf9;
   background:#e3f2fd;
   font-size:18px;
@@ -41,6 +43,7 @@ body{
   cursor:pointer;
 }
 
+/* 모달 공통 */
 .modal{
   display:none;
   position:fixed;
@@ -54,19 +57,21 @@ body{
   background:#fff;
   width:92%;
   max-width:420px;
-  border-radius:22px;
+  border-radius:24px;
   padding:20px;
+  position:relative;
 }
 .close{
   position:absolute;
-  right:16px;
   top:12px;
+  right:16px;
+  font-size:18px;
   cursor:pointer;
 }
 
 .input-wrap{
   display:flex;
-  gap:6px;
+  gap:8px;
   margin-bottom:12px;
 }
 input{
@@ -84,19 +89,19 @@ input{
 }
 
 .item{
-  border-bottom:1px dashed #ccc;
-  padding:8px 0;
   display:flex;
   align-items:center;
   gap:8px;
+  border-bottom:1px dashed #ccc;
+  padding:8px 0;
 }
-.done{text-decoration:line-through;opacity:.6}
+.done{opacity:.6;text-decoration:line-through}
 .del{
   margin-left:auto;
+  background:#ffd1e8;
   border:none;
   border-radius:12px;
   padding:4px 10px;
-  background:#ffd1e8;
   cursor:pointer;
 }
 </style>
@@ -104,69 +109,85 @@ input{
 
 <body>
 
-<div class="box">
-  <button class="btn" onclick="openOneLine()">스스로 응원 한마디 ✏️</button>
+<div class="main-box">
+  <button class="btn" onclick="openOne()">스스로 응원 한마디 ✏️</button>
   <button class="btn" onclick="openTodo()">나의 할일 💪</button>
   <button class="btn" onclick="openGoal()">나의 목표 🎯</button>
   <button class="btn" onclick="openGift()">선물 보관함 🎁</button>
 </div>
 
-<!-- 목표 / 할일 공용 모달 -->
-<div class="modal" id="goalModal">
+<!-- 할일 / 목표 공용 모달 -->
+<div class="modal" id="taskModal">
   <div class="modal-box">
     <div class="close" onclick="closeModal()">✕</div>
+
     <div class="input-wrap">
-      <input id="goalInput" placeholder="적어주세요">
-      <button class="save" onclick="saveItem()">✔</button>
+      <input id="taskInput" placeholder="">
+      <button class="save" onclick="saveTask()">✔</button>
     </div>
-    <div id="goalList"></div>
+
+    <div id="taskList"></div>
   </div>
 </div>
 
 <script>
-let mode="goal";
+let mode="todo";
 
-function openGoal(){mode="goal";render();openModal();}
-function openTodo(){mode="todo";render();openModal();}
-function openOneLine(){alert("응원 기능은 다음 단계에서 붙여줄게 🙂")}
-function openGift(){alert("선물 보관함 연결 예정 🎁")}
+function openTodo(){
+  mode="todo";
+  taskInput.placeholder="해야 할 일을 적어주세요";
+  render();
+  openModal();
+}
+function openGoal(){
+  mode="goal";
+  taskInput.placeholder="나의 목표를 적어주세요";
+  render();
+  openModal();
+}
 
-function openModal(){document.getElementById("goalModal").style.display="flex";}
-function closeModal(){document.getElementById("goalModal").style.display="none";}
+function openOne(){alert("응원 한마디 기능은 다음 단계 😊");}
+function openGift(){alert("선물 보관함 연결 예정 🎁");}
 
-function saveItem(){
-  const input=document.getElementById("goalInput");
-  if(!input.value.trim()) return;
+function openModal(){
+  document.getElementById("taskModal").style.display="flex";
+}
+function closeModal(){
+  document.getElementById("taskModal").style.display="none";
+}
 
-  const key=mode==="goal"?"goals":"todos";
+function saveTask(){
+  if(!taskInput.value.trim()) return;
+  const key=mode==="todo"?"todos":"goals";
   const list=JSON.parse(localStorage.getItem(key)||"[]");
-  list.unshift({text:input.value,done:false});
+  list.unshift({text:taskInput.value,done:false});
   localStorage.setItem(key,JSON.stringify(list));
-  input.value="";
+  taskInput.value="";
   render();
 }
 
 function render(){
-  const key=mode==="goal"?"goals":"todos";
+  const key=mode==="todo"?"todos":"goals";
   const list=JSON.parse(localStorage.getItem(key)||"[]");
-  goalList.innerHTML=list.map((m,i)=>`
+
+  taskList.innerHTML=list.map((m,i)=>`
     <div class="item">
       <input type="checkbox" ${m.done?"checked":""} onclick="toggle(${i})">
       <span class="${m.done?"done":""}">${m.text}</span>
       <button class="del" onclick="del(${i})">삭제</button>
     </div>
-  `).join("")||"아직 없어요 🙂";
+  `).join("") || "아직 없어요 🙂";
 }
 
 function toggle(i){
-  const key=mode==="goal"?"goals":"todos";
+  const key=mode==="todo"?"todos":"goals";
   const list=JSON.parse(localStorage.getItem(key));
   list[i].done=!list[i].done;
   localStorage.setItem(key,JSON.stringify(list));
   render();
 }
 function del(i){
-  const key=mode==="goal"?"goals":"todos";
+  const key=mode==="todo"?"todos":"goals";
   const list=JSON.parse(localStorage.getItem(key));
   list.splice(i,1);
   localStorage.setItem(key,JSON.stringify(list));

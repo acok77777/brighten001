@@ -127,21 +127,36 @@ body{
   font-size:18px;
   cursor:pointer;
 }
-.message-text{
-  font-size:20px;
-  text-align:center;
-  margin:20px 0;
-}
 
 /* 기록 */
 .saved-item{
   border-bottom:1px dashed #ccc;
-  padding:10px 0;
+  padding:8px 0;
+}
+.saved-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 .saved-date{
-  font-size:13px;
+  font-size:12px;
   font-weight:bold;
-  margin-bottom:4px;
+  color:#555;
+}
+.btn-delete{
+  background:#ffe4ec;
+  border:none;
+  border-radius:10px;
+  font-size:11px;
+  padding:2px 8px;
+  cursor:pointer;
+}
+
+/* 페이지 */
+.page-buttons{
+  display:flex;
+  justify-content:space-between;
+  margin-top:10px;
 }
 
 /* 한문장 */
@@ -174,26 +189,34 @@ body{
 </div>
 
 <div class="box-section">
-  <button class="oval-btn" onclick="openGiftLog()">매일 받은 선물 기록 ⭐</button>
+  <button class="oval-btn" onclick="openGift()">매일 받은 메시지 선물 ⭐</button>
   <button class="oval-btn" onclick="openOneLine()">나의 하루 한문장 ✏️</button>
 </div>
 
-<!-- 🎁 선물 기록 팝업 -->
+<!-- 🎁 메시지 선물 -->
 <div class="modal" id="giftModal">
   <div class="modal-box">
-    <div class="close-x" onclick="closeGiftLog()">✕</div>
+    <div class="close-x" onclick="closeGift()">✕</div>
     <div id="giftList"></div>
+    <div class="page-buttons">
+      <button class="oval-btn" onclick="prevGift()">⬅ 이전</button>
+      <button class="oval-btn" onclick="nextGift()">다음 ➡</button>
+    </div>
   </div>
 </div>
 
-<!-- ✏️ 한문장 팝업 -->
+<!-- ✏️ 한문장 -->
 <div class="modal" id="oneLineModal">
   <div class="modal-box">
     <div class="close-x" onclick="closeOneLine()">✕</div>
-    <div class="message-text">오늘 나의 하루를 한문장으로</div>
+    <div class="bold-desc" style="margin-bottom:8px;">오늘 나의 하루 한문장</div>
     <input class="one-line-input" id="oneLineText" placeholder="한 문장을 적어주세요">
     <button class="oval-btn" onclick="saveOneLine()">저장하기</button>
     <div id="oneLineList"></div>
+    <div class="page-buttons">
+      <button class="oval-btn" onclick="prevLine()">⬅ 이전</button>
+      <button class="oval-btn" onclick="nextLine()">다음 ➡</button>
+    </div>
   </div>
 </div>
 
@@ -205,6 +228,10 @@ const messages=[
   "천천히 가도 괜찮아요",
   "당신은 더 나은 내일을 만들어가고 있어요"
 ];
+
+const PAGE=5;
+let giftPage=0;
+let linePage=0;
 
 /* 선물 */
 function renderFoods(){
@@ -226,23 +253,44 @@ function renderFoods(){
   });
 }
 
-/* 선물 기록 */
-function openGiftLog(){
+/* 메시지 선물 */
+function openGift(){
+  giftPage=0;
+  renderGift();
+  giftModal.style.display="flex";
+}
+function closeGift(){ giftModal.style.display="none"; }
+
+function renderGift(){
   const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
-  giftList.innerHTML=list.length?list.map(m=>`
+  const slice=list.slice(giftPage*PAGE,(giftPage+1)*PAGE);
+  giftList.innerHTML=slice.length?slice.map((m,i)=>`
     <div class="saved-item">
-      <div class="saved-date">${m.date}</div>
+      <div class="saved-row">
+        <div class="saved-date">${m.date}</div>
+        <button class="btn-delete" onclick="deleteGift(${giftPage*PAGE+i})">삭제</button>
+      </div>
       <div>${m.emoji} ${m.text}</div>
     </div>
   `).join(""):"기록이 없어요 🙂";
-  giftModal.style.display="flex";
 }
-function closeGiftLog(){ giftModal.style.display="none"; }
+function prevGift(){ if(giftPage>0){giftPage--;renderGift();} }
+function nextGift(){
+  const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+  if((giftPage+1)*PAGE<list.length){giftPage++;renderGift();}
+}
+function deleteGift(i){
+  const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+  list.splice(i,1);
+  localStorage.setItem("giftMsgs",JSON.stringify(list));
+  renderGift();
+}
 
 /* 한문장 */
 function openOneLine(){
+  linePage=0;
   oneLineText.value="";
-  renderOneLine();
+  renderLine();
   oneLineModal.style.display="flex";
 }
 function closeOneLine(){ oneLineModal.style.display="none"; }
@@ -254,17 +302,32 @@ function saveOneLine(){
   list.unshift({text,date:new Date().toLocaleString("ko-KR")});
   localStorage.setItem("oneLineMsgs",JSON.stringify(list));
   oneLineText.value="";
-  renderOneLine();
+  renderLine();
 }
 
-function renderOneLine(){
+function renderLine(){
   const list=JSON.parse(localStorage.getItem("oneLineMsgs")||"[]");
-  oneLineList.innerHTML=list.length?list.map(m=>`
+  const slice=list.slice(linePage*PAGE,(linePage+1)*PAGE);
+  oneLineList.innerHTML=slice.length?slice.map((m,i)=>`
     <div class="saved-item">
-      <div class="saved-date">${m.date}</div>
+      <div class="saved-row">
+        <div class="saved-date">${m.date}</div>
+        <button class="btn-delete" onclick="deleteLine(${linePage*PAGE+i})">삭제</button>
+      </div>
       <div>${m.text}</div>
     </div>
-  `).join(""):"아직 기록이 없어요 🙂";
+  `).join(""):"기록이 없어요 🙂";
+}
+function prevLine(){ if(linePage>0){linePage--;renderLine();} }
+function nextLine(){
+  const list=JSON.parse(localStorage.getItem("oneLineMsgs")||"[]");
+  if((linePage+1)*PAGE<list.length){linePage++;renderLine();}
+}
+function deleteLine(i){
+  const list=JSON.parse(localStorage.getItem("oneLineMsgs")||"[]");
+  list.splice(i,1);
+  localStorage.setItem("oneLineMsgs",JSON.stringify(list));
+  renderLine();
 }
 
 renderFoods();

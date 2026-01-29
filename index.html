@@ -1,6 +1,6 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="ko">
-<head>
+<head>  
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>힘내요 오늘</title>
@@ -34,8 +34,8 @@ body{
   position:absolute;
   top:50%;left:50%;
   transform:translate(-50%,-50%);
-  font-size:20px;              /* 한 줄 유지 */
-  white-space:nowrap;          /* 줄바꿈 방지 */
+  font-size:20px;
+  white-space:nowrap;
 }
 
 /* 안내 */
@@ -103,13 +103,6 @@ body{
   font-family:Dotum,'돋움',sans-serif;
 }
 
-.box-desc{
-  margin-top:6px;
-  font-size:15px;
-  color:#555;
-}
-
-/* 굵은 알림 문구 */
 .bold-desc{
   font-weight:bold;
   color:#000;
@@ -146,6 +139,15 @@ body{
   text-align:center;
   margin:20px 0;
 }
+
+/* 날짜 굵게 */
+.saved-date{
+  font-size:13px;
+  font-weight:bold;
+  color:#444;
+  margin-bottom:6px;
+}
+
 .buttons{
   display:flex;
   justify-content:center;
@@ -161,15 +163,9 @@ body{
 .btn-save{background:#90caf9;}
 .btn-close{background:#ddd;}
 
-/* 저장 목록 */
 .saved-item{
   border-bottom:1px dashed #ccc;
   padding:10px 0;
-}
-.saved-date{
-  font-size:12px;
-  color:#888;
-  margin-bottom:4px;
 }
 .btn-delete{
   background:#ffe4ec;
@@ -178,6 +174,16 @@ body{
   font-size:12px;
   padding:4px 10px;
   cursor:pointer;
+}
+
+/* 한문장 입력 */
+.one-line-input{
+  width:100%;
+  padding:12px;
+  border-radius:14px;
+  border:2px solid #ffb6d9;
+  font-size:16px;
+  font-family:'Poor Story';
 }
 </style>
 </head>
@@ -195,15 +201,15 @@ body{
 
 <div class="box-section">
   <button class="oval-btn">알림 받기 🔔</button>
-  <div class="box-desc bold-desc">매일 오전 ７시 따뜻한 메시지를 받아보세요</div>
+  <div class="bold-desc">매일 오전 ７시 따뜻한 메시지를 받아보세요</div>
 </div>
 
 <div class="box-section">
   <button class="oval-btn" onclick="openSaved()">매일 받은 선물 기록 ⭐</button>
-  <div class="box-desc">매일 받은 선물 메시지를 저장·삭제</div>
+  <button class="oval-btn" onclick="openOneLine()">나의 하루 한문장 ✏️</button>
 </div>
 
-<!-- 메시지 모달 -->
+<!-- 선물 메시지 모달 -->
 <div class="modal" id="messageModal">
   <div class="modal-box">
     <div class="close-x" onclick="closeMessage()">✕</div>
@@ -215,15 +221,24 @@ body{
   </div>
 </div>
 
-<!-- 저장 목록 모달 -->
+<!-- 한문장 모달 -->
+<div class="modal" id="oneLineModal">
+  <div class="modal-box">
+    <div class="close-x" onclick="closeOneLine()">✕</div>
+    <div class="message-text">오늘 나의 하루를 한문장으로</div>
+    <input class="one-line-input" id="oneLineText" placeholder="한 문장을 적어주세요">
+    <div class="buttons" style="margin-top:14px;">
+      <button class="btn btn-save" onclick="saveOneLine()">저장하기</button>
+      <button class="btn btn-close" onclick="closeOneLine()">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 저장 목록 -->
 <div class="modal" id="savedModal">
   <div class="modal-box">
     <div class="close-x" onclick="closeSaved()">✕</div>
     <div id="savedList"></div>
-    <div class="buttons">
-      <button class="btn" onclick="prevPage()">⬅️</button>
-      <button class="btn" onclick="nextPage()">➡️</button>
-    </div>
   </div>
 </div>
 
@@ -237,7 +252,6 @@ const messages=[
 ];
 
 let currentMessage="";
-let page=0;
 
 function renderFoods(){
   const pick=[...foods].sort(()=>.5-Math.random()).slice(0,2);
@@ -269,8 +283,22 @@ function saveMessage(){
   closeMessage();
 }
 
+function openOneLine(){
+  oneLineText.value="";
+  oneLineModal.style.display="flex";
+}
+function closeOneLine(){oneLineModal.style.display="none";}
+
+function saveOneLine(){
+  const text=oneLineText.value.trim();
+  if(!text) return;
+  const saved=JSON.parse(localStorage.getItem("savedMsgs")||"[]");
+  saved.unshift({text, date:new Date().toLocaleString("ko-KR")});
+  localStorage.setItem("savedMsgs",JSON.stringify(saved));
+  closeOneLine();
+}
+
 function openSaved(){
-  page=0;
   renderSaved();
   savedModal.style.display="flex";
 }
@@ -278,28 +306,20 @@ function closeSaved(){savedModal.style.display="none";}
 
 function renderSaved(){
   const saved=JSON.parse(localStorage.getItem("savedMsgs")||"[]");
-  const start=page*5;
-  const slice=saved.slice(start,start+5);
-  savedList.innerHTML=slice.length?slice.map((m,i)=>`
+  savedList.innerHTML=saved.length?saved.map((m,i)=>`
     <div class="saved-item">
       <div class="saved-date">${m.date}</div>
       <div>${m.text}</div>
-      <button class="btn-delete" onclick="deleteMsg(${start+i})">삭제</button>
+      <button class="btn-delete" onclick="deleteMsg(${i})">삭제</button>
     </div>
-  `).join(""):"저장된 메시지가 없어요 🙂";
+  `).join(""):"저장된 기록이 없어요 🙂";
 }
 
-function deleteMsg(idx){
+function deleteMsg(i){
   const saved=JSON.parse(localStorage.getItem("savedMsgs")||"[]");
-  saved.splice(idx,1);
+  saved.splice(i,1);
   localStorage.setItem("savedMsgs",JSON.stringify(saved));
   renderSaved();
-}
-
-function prevPage(){if(page>0){page--;renderSaved();}}
-function nextPage(){
-  const saved=JSON.parse(localStorage.getItem("savedMsgs")||"[]");
-  if((page+1)*5<saved.length){page++;renderSaved();}
 }
 
 renderFoods();

@@ -133,9 +133,24 @@ body{
   border-bottom:1px dashed #ccc;
   padding:10px 0;
 }
+.saved-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
 .saved-date{
   font-size:13px;
   font-weight:bold;
+}
+
+/* 삭제 버튼 */
+.btn-del{
+  font-size:11px;
+  padding:2px 8px;
+  border:none;
+  border-radius:10px;
+  background:#ffd1e8;
+  cursor:pointer;
 }
 
 /* 입력 */
@@ -154,6 +169,22 @@ body{
   display:flex;
   justify-content:space-between;
   margin-top:12px;
+}
+
+/* 체크박스 */
+.check-wrap{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.check-wrap input{
+  width:20px;
+  height:20px;
+  accent-color:#ff8fb1;
+}
+.checked{
+  text-decoration:line-through;
+  opacity:.6;
 }
 </style>
 </head>
@@ -251,6 +282,7 @@ function renderFoods(){
     d.className="food";
     d.innerHTML=`<div class="gem">${e}</div>`;
     d.onclick=()=>{
+      if(d.classList.contains("used"))return;
       const msg=messages[Math.floor(Math.random()*messages.length)];
       messageText.textContent=msg;
       openModal("messageModal");
@@ -258,7 +290,6 @@ function renderFoods(){
       list.unshift({text:msg,date:new Date().toLocaleString("ko-KR")});
       localStorage.setItem("giftMsgs",JSON.stringify(list));
       d.classList.add("used");
-      d.onclick=null;
     };
     gems.appendChild(d);
   });
@@ -269,11 +300,20 @@ function openGift(){giftPage=0;renderGift();openModal("giftModal");}
 function renderGift(){
   const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
   const s=l.slice(giftPage*PAGE,(giftPage+1)*PAGE);
-  giftList.innerHTML=s.map(m=>`
+  giftList.innerHTML=s.map((m,i)=>`
     <div class="saved-item">
-      <div class="saved-date">${m.date}</div>
+      <div class="saved-row">
+        <div class="saved-date">${m.date}</div>
+        <button class="btn-del" onclick="delGift(${giftPage*PAGE+i})">삭제</button>
+      </div>
       <div>${m.text}</div>
     </div>`).join("")||"기록이 없어요 🙂";
+}
+function delGift(i){
+  const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+  l.splice(i,1);
+  localStorage.setItem("giftMsgs",JSON.stringify(l));
+  renderGift();
 }
 function prevGift(){if(giftPage>0){giftPage--;renderGift();}}
 function nextGift(){
@@ -294,11 +334,20 @@ function saveOneLine(){
 function renderOneLine(){
   const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
   const s=l.slice(linePage*PAGE,(linePage+1)*PAGE);
-  oneLineList.innerHTML=s.map(m=>`
+  oneLineList.innerHTML=s.map((m,i)=>`
     <div class="saved-item">
-      <div class="saved-date">${m.date}</div>
+      <div class="saved-row">
+        <div class="saved-date">${m.date}</div>
+        <button class="btn-del" onclick="delLine(${linePage*PAGE+i})">삭제</button>
+      </div>
       <div>${m.text}</div>
     </div>`).join("")||"아직 기록이 없어요 🙂";
+}
+function delLine(i){
+  const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
+  l.splice(i,1);
+  localStorage.setItem("oneLines",JSON.stringify(l));
+  renderOneLine();
 }
 function prevLine(){if(linePage>0){linePage--;renderOneLine();}}
 function nextLine(){
@@ -311,18 +360,36 @@ function openChallenge(){chPage=0;renderChallenge();openModal("challengeModal");
 function saveChallenge(){
   if(!challengeInput.value.trim())return;
   const l=JSON.parse(localStorage.getItem("challenges")||"[]");
-  l.unshift({text:challengeInput.value,date:new Date().toLocaleString("ko-KR")});
+  l.unshift({text:challengeInput.value,done:false,date:new Date().toLocaleString("ko-KR")});
   localStorage.setItem("challenges",JSON.stringify(l));
   challengeInput.value="";
+  renderChallenge();
+}
+function toggleCheck(i){
+  const l=JSON.parse(localStorage.getItem("challenges")||"[]");
+  l[i].done=!l[i].done;
+  localStorage.setItem("challenges",JSON.stringify(l));
+  renderChallenge();
+}
+function delChallenge(i){
+  const l=JSON.parse(localStorage.getItem("challenges")||"[]");
+  l.splice(i,1);
+  localStorage.setItem("challenges",JSON.stringify(l));
   renderChallenge();
 }
 function renderChallenge(){
   const l=JSON.parse(localStorage.getItem("challenges")||"[]");
   const s=l.slice(chPage*PAGE,(chPage+1)*PAGE);
-  challengeList.innerHTML=s.map(m=>`
+  challengeList.innerHTML=s.map((m,i)=>`
     <div class="saved-item">
+      <div class="saved-row">
+        <div class="check-wrap">
+          <input type="checkbox" ${m.done?"checked":""} onclick="toggleCheck(${chPage*PAGE+i})">
+          <div class="${m.done?"checked":""}">${m.text}</div>
+        </div>
+        <button class="btn-del" onclick="delChallenge(${chPage*PAGE+i})">삭제</button>
+      </div>
       <div class="saved-date">${m.date}</div>
-      <div>${m.text}</div>
     </div>`).join("")||"아직 도전이 없어요 🙂";
 }
 function prevChallenge(){if(chPage>0){chPage--;renderChallenge();}}

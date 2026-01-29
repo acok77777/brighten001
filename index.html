@@ -152,7 +152,7 @@ body{
 }
 
 /* 입력 */
-.challenge-input{
+.text-input{
   width:100%;
   padding:12px;
   border-radius:14px;
@@ -189,9 +189,10 @@ body{
 
 <div class="box-section">
   <button class="oval-btn" onclick="openGiftLog()">매일 받은 메시지 선물 ⭐</button>
+  <button class="oval-btn" onclick="openOneLine()">나의 하루 한문장 ✏️</button>
 </div>
 
-<!-- 🎁 메시지 선물 기록 -->
+<!-- 🎁 메시지 선물 -->
 <div class="modal" id="giftModal">
   <div class="modal-box">
     <div class="close-x" onclick="closeGiftLog()">✕</div>
@@ -203,12 +204,27 @@ body{
   </div>
 </div>
 
+<!-- ✏️ 나의 하루 한문장 -->
+<div class="modal" id="oneLineModal">
+  <div class="modal-box">
+    <div class="close-x" onclick="closeOneLine()">✕</div>
+    <div class="subtitle">오늘 나의 하루를 한문장으로</div>
+    <input class="text-input" id="oneLineText" placeholder="한 문장을 적어주세요">
+    <button class="oval-btn" onclick="saveOneLine()">저장하기</button>
+    <div id="oneLineList"></div>
+    <div class="page-buttons">
+      <button class="oval-btn" onclick="prevLine()">⬅ 이전</button>
+      <button class="oval-btn" onclick="nextLine()">다음 ➡</button>
+    </div>
+  </div>
+</div>
+
 <!-- 💪 나의 도전 -->
 <div class="modal" id="challengeModal">
   <div class="modal-box">
     <div class="close-x" onclick="closeChallenge()">✕</div>
     <div class="subtitle">오늘 나의 도전을 적어보세요</div>
-    <input class="challenge-input" id="challengeText" placeholder="오늘의 도전">
+    <input class="text-input" id="challengeText" placeholder="오늘의 도전">
     <button class="oval-btn" onclick="saveChallenge()">저장하기</button>
     <div id="challengeList"></div>
     <div class="page-buttons">
@@ -291,6 +307,39 @@ function nextGift(){
 function deleteGift(i){
   const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
   l.splice(i,1); localStorage.setItem("giftMsgs",JSON.stringify(l)); renderGift();
+}
+
+/* ===== 나의 하루 한문장 ===== */
+let linePage=0, LINE_SIZE=5;
+function openOneLine(){ linePage=0; renderLine(); oneLineModal.style.display="flex"; }
+function closeOneLine(){ oneLineModal.style.display="none"; }
+function saveOneLine(){
+  const t=oneLineText.value.trim(); if(!t) return;
+  const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
+  l.unshift({text:t,date:new Date().toLocaleString("ko-KR")});
+  localStorage.setItem("oneLines",JSON.stringify(l));
+  oneLineText.value=""; renderLine();
+}
+function renderLine(){
+  const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
+  const s=l.slice(linePage*LINE_SIZE,(linePage+1)*LINE_SIZE);
+  oneLineList.innerHTML=s.length?s.map((m,i)=>`
+    <div class="saved-item">
+      <div class="saved-row">
+        <div class="saved-date">${m.date}</div>
+        <button class="btn-delete" onclick="deleteLine(${linePage*LINE_SIZE+i})">삭제</button>
+      </div>
+      <div>${m.text}</div>
+    </div>`).join(""):"아직 기록이 없어요 🙂";
+}
+function prevLine(){ if(linePage>0){linePage--;renderLine();} }
+function nextLine(){
+  const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
+  if((linePage+1)*LINE_SIZE<l.length){linePage++;renderLine();}
+}
+function deleteLine(i){
+  const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
+  l.splice(i,1); localStorage.setItem("oneLines",JSON.stringify(l)); renderLine();
 }
 
 /* ===== 나의 도전 ===== */

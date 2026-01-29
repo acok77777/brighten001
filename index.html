@@ -125,7 +125,12 @@ body{
   border-radius:22px;
   padding:20px;
   position:relative;
+
+  /* 🔥 추가됨: 모바일 입력 시 팝업 밀림 방지 */
+  max-height:80vh;
+  overflow-y:auto;
 }
+
 .close-x{
   position:absolute;
   top:12px;
@@ -201,7 +206,6 @@ body{
 
     <h2 style="text-align:center; font-size:20px; margin-bottom:12px;">☆ 힘내요 오늘 ☆</h2>
 
-    <!-- ✔ 한 줄 띄우기 적용 -->
     <div id="messageText" style="font-size:22px;text-align:center; margin-top:10px;"></div>
   </div>
 </div>
@@ -239,7 +243,6 @@ body{
   <div class="modal-box">
     <div class="close-x" onclick="closeModal('challengeModal')">✕</div>
 
-    <!-- ✔ 문구 변경됨 -->
     <input class="text-input" id="challengeInput" placeholder="오늘의 할 일 or 목표를 적고 체크">
 
     <button class="oval-btn" onclick="saveChallenge()">저장</button>
@@ -281,7 +284,7 @@ let giftPage=0, linePage=0, chPage=0;
 function openModal(id){document.getElementById(id).style.display="flex";}
 function closeModal(id){document.getElementById(id).style.display="none";}
 
-/* 선물 두 개 랜덤 표시 */
+/* 선물 2개 랜덤 표시 */
 function renderFoods(){
   gems.innerHTML="";
   [...foodsData].sort(()=>0.5-Math.random()).slice(0,2).forEach(obj=>{
@@ -313,26 +316,23 @@ function renderFoods(){
   });
 }
 
-/* 저장함 열기 */
+/* 저장함 */
 function openGift(){
   giftPage=0;
   renderGift();
   openModal("giftModal");
 }
 
-/* 저장함 — 날짜 + 삭제 버튼 추가 */
 function renderGift(){
   const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
   const s=l.slice(giftPage*PAGE,(giftPage+1)*PAGE);
 
   giftList.innerHTML=s.map((m,i)=>`
     <div class="saved-item">
-
       <div class="saved-row">
         <div class="saved-date">${m.date}</div>
         <button class="btn-del" onclick="delGift(${giftPage*PAGE+i})">삭제</button>
       </div>
-
       <div>${m.text}</div>
     </div>
   `).join("") || "저장된 응원 메시지가 없어요 🙂";
@@ -343,15 +343,6 @@ function delGift(i){
   l.splice(i,1);
   localStorage.setItem("giftMsgs",JSON.stringify(l));
   renderGift();
-}
-
-function prevGift(){ if(giftPage>0){giftPage--;renderGift();} }
-function nextGift(){
-  const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
-  if((giftPage+1)*PAGE < l.length){
-    giftPage++;
-    renderGift();
-  }
 }
 
 /* 한문장 */
@@ -388,12 +379,6 @@ function delLine(i){
   l.splice(i,1);
   localStorage.setItem("oneLines",JSON.stringify(l));
   renderOneLine();
-}
-
-function prevLine(){if(linePage>0){linePage--;renderOneLine();}}
-function nextLine(){
-  const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
-  if((linePage+1)*PAGE<l.length){linePage++;renderOneLine();}
 }
 
 /* 도전 */
@@ -447,13 +432,6 @@ function renderChallenge(){
   `).join("") || "아직 할 일이 없어요 🙂";
 }
 
-function prevChallenge(){if(chPage>0){chPage--;renderChallenge();}}
-function nextChallenge(){
-  const l=JSON.parse(localStorage.getItem("challenges")||"[]");
-  if((chPage+1)*PAGE<l.length){chPage++;renderChallenge();}
-}
-
-/* 초기 렌더 */
 renderFoods();
 </script>
 

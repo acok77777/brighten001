@@ -11,39 +11,138 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 
 body{
-  font-family:'Poor Story','맑은 고딕',sans-serif;
+  font-family:'Poor Story','Malgun Gothic','맑은 고딕',sans-serif;
   background:repeating-linear-gradient(
     45deg,#ffe4ec,#ffe4ec 20px,#ffd1e8 20px,#ffd1e8 40px
   );
-  min-height:100vh;
+  min-height:100svh;
   display:flex;
-  justify-content:center;
-  align-items:flex-start;
-  padding:16px;
+  flex-direction:column;
+  align-items:center;
+  padding:10px;
 }
 
-.main-box{
+/* 타이틀 */
+.title-lace{
+  position:relative;
+  width:92%;
+  max-width:420px;
+  margin:12px auto 8px;
+}
+.title-lace img{width:100%;}
+.title-lace h1{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:20px;
+  white-space:nowrap;
+}
+
+/* 안내 */
+.subtitle{
+  font-size:21px;
+  font-weight:bold;
+  margin:6px 0;
+}
+
+/* 선물 */
+.gems-container{
+  display:flex;
+  gap:24px;
+  margin:12px 0 16px;
+}
+.food{
+  cursor:pointer;
+  animation: float 3s ease-in-out infinite;
+  text-align:center;
+}
+.food.used{
+  opacity:.4;
+  filter:grayscale(1);
+  cursor:default;
+  animation:none;
+}
+@keyframes float{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-10px);}
+}
+.gem{
+  width:110px;
+  height:110px;
+  font-size:80px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.food-name{
+  font-size:13px;
+  margin-top:4px;
+  color:#444;
+}
+
+/* 박스 */
+.box-section{
   background:#fff;
+  border:3px solid #ffb6d9;
+  border-radius:22px;
+  box-shadow:0 6px 18px rgba(255,182,217,.45);
   width:100%;
   max-width:440px;
-  border-radius:26px;
   padding:18px;
-  box-shadow:0 8px 20px rgba(0,0,0,.15);
+  margin-top:10px;
+  text-align:center;
 }
 
-.btn{
-  width:100%;
-  padding:16px;
-  margin:8px 0;
-  border-radius:40px;
-  border:2px solid #90caf9;
+/* 기본 버튼 */
+.oval-btn{
   background:#e3f2fd;
+  border:2px solid #90caf9;
+  border-radius:40px;
+  padding:14px 36px;
   font-size:18px;
-  font-weight:bold;
   cursor:pointer;
+  margin:6px 0;
+  color:#1565c0;
+  font-weight:bold;
+  font-family:Dotum,'돋움',sans-serif;
 }
 
-/* 모달 공통 */
+/* 저장 버튼 */
+.new-save-btn{
+  background:#e3f2fd;
+  border:2px solid #90caf9;
+  border-radius:16px;
+  padding:5px 14px;
+  font-size:16px;
+  cursor:pointer;
+  flex-shrink:0;
+}
+
+/* 이전/다음 */
+.small-nav{
+  font-size:13px;
+  padding:6px 14px;
+}
+
+.input-wrap{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  width:100%;
+  flex-wrap:nowrap;
+}
+
+.text-input{
+  flex:1;
+  padding:12px;
+  border-radius:14px;
+  border:2px solid #ffb6d9;
+  font-size:16px;
+  min-width:0;
+}
+
+/* 모달 */
 .modal{
   display:none;
   position:fixed;
@@ -57,142 +156,408 @@ body{
   background:#fff;
   width:92%;
   max-width:420px;
-  border-radius:24px;
+  border-radius:22px;
   padding:20px;
   position:relative;
+  max-height:80vh;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
 }
-.close{
+
+.close-x{
   position:absolute;
   top:12px;
-  right:16px;
+  right:14px;
   font-size:18px;
   cursor:pointer;
 }
 
-.input-wrap{
+/* 리스트 */
+.saved-item{
+  border-bottom:1px dashed #ccc;
+  padding:10px 0;
+}
+.saved-row{
   display:flex;
-  gap:8px;
-  margin-bottom:12px;
+  align-items:center;
+  justify-content:space-between;
 }
-input{
-  flex:1;
-  padding:12px;
-  border-radius:14px;
-  border:2px solid #ffb6d9;
+.saved-date{
+  font-size:13px;
+  font-weight:bold;
 }
-.save{
-  border-radius:14px;
-  border:2px solid #90caf9;
-  background:#e3f2fd;
-  padding:8px 14px;
+
+.btn-del{
+  font-size:12px;
+  padding:4px 10px;
+  border:none;
+  border-radius:12px;
+  background:#ffd1e8;
   cursor:pointer;
 }
 
-.item{
+.page-buttons{
+  display:flex;
+  justify-content:space-between;
+  margin-top:12px;
+}
+
+/* 체크박스 */
+.check-wrap{
   display:flex;
   align-items:center;
   gap:8px;
-  border-bottom:1px dashed #ccc;
-  padding:8px 0;
 }
-.done{opacity:.6;text-decoration:line-through}
-.del{
-  margin-left:auto;
-  background:#ffd1e8;
-  border:none;
-  border-radius:12px;
-  padding:4px 10px;
-  cursor:pointer;
+.check-wrap input{
+  width:20px;
+  height:20px;
+  accent-color:#ff8fb1;
+}
+.checked{
+  text-decoration:line-through;
+  opacity:.6;
 }
 </style>
 </head>
 
 <body>
 
-<div class="main-box">
-  <button class="btn" onclick="openOne()">스스로 응원 한마디 ✏️</button>
-  <button class="btn" onclick="openTodo()">나의 할일 💪</button>
-  <button class="btn" onclick="openGoal()">나의 목표 🎯</button>
-  <button class="btn" onclick="openGift()">선물 보관함 🎁</button>
+<div class="title-lace">
+  <img src="title-box.png">
+  <h1>당신의 하루를 응원해요</h1>
 </div>
 
-<!-- 할일 / 목표 공용 모달 -->
-<div class="modal" id="taskModal">
+<p class="subtitle">오늘의 선물을 클릭해 보세요</p>
+<div class="gems-container" id="gems"></div>
+
+<!-- ✅ 요청 2: 배너 4개를 한 박스 안에 모두 넣음 -->
+<div class="box-section">
+  <button class="oval-btn" onclick="openOneLine()">스스로 응원 한마디 ✏️</button>
+  <button class="oval-btn" onclick="openChallenge()">나의 할일 💪</button>
+  <button class="oval-btn" onclick="openGoal()">나의 목표 🎯</button>
+  <button class="oval-btn" onclick="openGift()">선물 보관함 🎁</button>
+</div>
+
+<!-- 메시지 모달 -->
+<div class="modal" id="messageModal">
   <div class="modal-box">
-    <div class="close" onclick="closeModal()">✕</div>
+    <div class="close-x" onclick="closeModal('messageModal')">✕</div>
+    <h2 style="text-align:center; font-size:20px; margin-bottom:12px;">☆ 힘내요 오늘 ☆</h2>
+    <div id="messageText" style="font-size:22px;text-align:center; margin-top:10px;"></div>
+  </div>
+</div>
+
+<!-- 선물 보관함 -->
+<div class="modal" id="giftModal">
+  <div class="modal-box">
+    <div class="close-x" onclick="closeModal('giftModal')">✕</div>
+    <div id="giftList"></div>
+
+    <div class="page-buttons">
+      <button class="oval-btn small-nav" onclick="prevGift()">⬅ 이전</button>
+      <button class="oval-btn small-nav" onclick="nextGift()">다음 ➡</button>
+    </div>
+  </div>
+</div>
+
+<!-- 한문장 -->
+<div class="modal" id="oneLineModal">
+  <div class="modal-box">
+    <div class="close-x" onclick="closeModal('oneLineModal')">✕</div>
 
     <div class="input-wrap">
-      <input id="taskInput" placeholder="">
-      <button class="save" onclick="saveTask()">✔</button>
+      <input class="text-input" id="oneLineInput" placeholder="오늘 나에게 해주고 싶은 말">
+      <button class="new-save-btn" onclick="saveOneLine()">✔</button>
     </div>
 
-    <div id="taskList"></div>
+    <div id="oneLineList"></div>
+
+    <div class="page-buttons">
+      <button class="oval-btn small-nav" onclick="prevLine()">⬅ 이전</button>
+      <button class="oval-btn small-nav" onclick="nextLine()">다음 ➡</button>
+    </div>
+  </div>
+</div>
+
+<!-- 할일 -->
+<div class="modal" id="challengeModal">
+  <div class="modal-box">
+    <div class="close-x" onclick="closeModal('challengeModal')">✕</div>
+
+    <div class="input-wrap">
+      <input class="text-input" id="challengeInput" placeholder="해야 할 일을 적어주세요">
+      <button class="new-save-btn" onclick="saveChallenge()">✔</button>
+    </div>
+
+    <div id="challengeList"></div>
+
+    <div class="page-buttons">
+      <button class="oval-btn small-nav" onclick="prevChallenge()">⬅ 이전</button>
+      <button class="oval-btn small-nav" onclick="nextChallenge()">다음 ➡</button>
+    </div>
+  </div>
+</div>
+
+<!-- 목표 → (요청 1) 체크박스 적용, 할일과 동일하게 변경 -->
+<div class="modal" id="goalModal">
+  <div class="modal-box">
+    <div class="close-x" onclick="closeModal('goalModal')">✕</div>
+
+    <div class="input-wrap">
+      <input class="text-input" id="goalInput" placeholder="나의 목표를 적어주세요">
+      <button class="new-save-btn" onclick="saveGoal()">✔</button>
+    </div>
+
+    <div id="goalList"></div>
+
+    <div class="page-buttons">
+      <button class="oval-btn small-nav" onclick="prevGoal()">⬅ 이전</button>
+      <button class="oval-btn small-nav" onclick="nextGoal()">다음 ➡</button>
+    </div>
   </div>
 </div>
 
 <script>
-let mode="todo";
 
-function openTodo(){
-  mode="todo";
-  taskInput.placeholder="해야 할 일을 적어주세요";
-  render();
-  openModal();
+/* 이모티콘 + 이름 */
+const foodsData=[
+  {emoji:"🍰",name:"케이크"},
+  {emoji:"🍩",name:"도넛"},
+  {emoji:"🍪",name:"쿠키"},
+  {emoji:"🧁",name:"컵케이크"},
+  {emoji:"🍫",name:"초콜릿"},
+  {emoji:"🥐",name:"크루아상"},
+  {emoji:"🥞",name:"팬케이크"},
+  {emoji:"🧇",name:"와플"}
+];
+
+const messages=[
+ "오늘은 위기를 기회로 만드는 날 💪",
+ "너무 잘하고 있어, 계속 가보자 ✨",
+ "오늘의 너는 누구보다 빛나 🌟",
+ "할 수 있어! 이미 많이 해냈어 🙌",
+ "조금 쉬어도 괜찮아, 너는 충분해 💗",
+ "기적은 조용히 오고 있어 ✨",
+ "오늘도 네 편은 바로 너야 😊"
+];
+
+const PAGE=5;
+
+let giftPage=0, linePage=0, chPage=0, goalPage=0;
+
+function openModal(id){document.getElementById(id).style.display="flex";}
+function closeModal(id){document.getElementById(id).style.display="none";}
+
+/* 선물 */
+function renderFoods(){
+  gems.innerHTML="";
+  [...foodsData].sort(()=>0.5-Math.random()).slice(0,2).forEach(obj=>{
+    const d=document.createElement("div");
+    d.className="food";
+
+    d.innerHTML = `
+      <div class="gem">${obj.emoji}</div>
+      <div class="food-name">${obj.name}</div>
+    `;
+
+    d.onclick=()=>{
+      if(d.classList.contains("used")) return;
+
+      const msg=messages[Math.floor(Math.random()*messages.length)];
+      messageText.textContent = msg;
+
+      openModal("messageModal");
+
+      const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+      list.unshift({text:msg,date:new Date().toLocaleString("ko-KR")});
+      localStorage.setItem("giftMsgs",JSON.stringify(list));
+
+      d.classList.add("used");
+    };
+
+    gems.appendChild(d);
+  });
 }
-function openGoal(){
-  mode="goal";
-  taskInput.placeholder="나의 목표를 적어주세요";
-  render();
-  openModal();
+
+/* 선물 보관함 */
+function openGift(){
+  giftPage=0;
+  renderGift();
+  openModal("giftModal");
 }
 
-function openOne(){alert("응원 한마디 기능은 다음 단계 😊");}
-function openGift(){alert("선물 보관함 연결 예정 🎁");}
+function renderGift(){
+  const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+  const s=l.slice(giftPage*PAGE,(giftPage+1)*PAGE);
 
-function openModal(){
-  document.getElementById("taskModal").style.display="flex";
-}
-function closeModal(){
-  document.getElementById("taskModal").style.display="none";
-}
-
-function saveTask(){
-  if(!taskInput.value.trim()) return;
-  const key=mode==="todo"?"todos":"goals";
-  const list=JSON.parse(localStorage.getItem(key)||"[]");
-  list.unshift({text:taskInput.value,done:false});
-  localStorage.setItem(key,JSON.stringify(list));
-  taskInput.value="";
-  render();
-}
-
-function render(){
-  const key=mode==="todo"?"todos":"goals";
-  const list=JSON.parse(localStorage.getItem(key)||"[]");
-
-  taskList.innerHTML=list.map((m,i)=>`
-    <div class="item">
-      <input type="checkbox" ${m.done?"checked":""} onclick="toggle(${i})">
-      <span class="${m.done?"done":""}">${m.text}</span>
-      <button class="del" onclick="del(${i})">삭제</button>
+  giftList.innerHTML=s.map((m,i)=>`
+    <div class="saved-item">
+      <div class="saved-row">
+        <div class="saved-date">${m.date}</div>
+        <button class="btn-del" onclick="delGift(${giftPage*PAGE+i})">삭제</button>
+      </div>
+      <div>${m.text}</div>
     </div>
-  `).join("") || "아직 없어요 🙂";
+  `).join("") || "저장된 메시지가 없어요 🙂";
 }
 
-function toggle(i){
-  const key=mode==="todo"?"todos":"goals";
-  const list=JSON.parse(localStorage.getItem(key));
-  list[i].done=!list[i].done;
-  localStorage.setItem(key,JSON.stringify(list));
-  render();
+function prevGift(){if(giftPage>0){giftPage--; renderGift();}}
+function nextGift(){
+  const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+  if(giftPage < Math.ceil(l.length/PAGE)-1){giftPage++; renderGift();}
 }
-function del(i){
-  const key=mode==="todo"?"todos":"goals";
-  const list=JSON.parse(localStorage.getItem(key));
-  list.splice(i,1);
-  localStorage.setItem(key,JSON.stringify(list));
-  render();
+function delGift(i){
+  const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+  l.splice(i,1);
+  localStorage.setItem("giftMsgs",JSON.stringify(l));
+  renderGift();
 }
+
+/* 한문장 */
+function openOneLine(){linePage=0;renderOneLine();openModal("oneLineModal");}
+
+function saveOneLine(){
+  if(!oneLineInput.value.trim()) return;
+  const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
+  l.unshift({text:oneLineInput.value,date:new Date().toLocaleString("ko-KR")});
+  localStorage.setItem("oneLines",JSON.stringify(l));
+  oneLineInput.value="";
+  renderOneLine();
+}
+
+function renderOneLine(){
+  const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
+  const s=l.slice(linePage*PAGE,(linePage+1)*PAGE);
+
+  oneLineList.innerHTML=s.map((m,i)=>`
+    <div class="saved-item">
+      <div class="saved-row">
+        <div class="saved-date">${m.date}</div>
+        <button class="btn-del" onclick="delLine(${linePage*PAGE+i})">삭제</button>
+      </div>
+      <div>${m.text}</div>
+    </div>
+  `).join("") || "기록이 없어요 🙂";
+}
+
+function prevLine(){if(linePage>0){linePage--; renderOneLine();}}
+function nextLine(){
+  const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
+  if(linePage < Math.ceil(l.length/PAGE)-1){linePage++; renderOneLine();}
+}
+function delLine(i){
+  const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
+  l.splice(i,1);
+  localStorage.setItem("oneLines",JSON.stringify(l));
+  renderOneLine();
+}
+
+/* 할 일 */
+function openChallenge(){chPage=0;renderChallenge();openModal("challengeModal");}
+
+function saveChallenge(){
+  if(!challengeInput.value.trim()) return;
+
+  const l=JSON.parse(localStorage.getItem("challenges")||"[]");
+  l.unshift({text:challengeInput.value,done:false,date:new Date().toLocaleString("ko-KR")});
+  localStorage.setItem("challenges",JSON.stringify(l));
+
+  challengeInput.value="";
+  renderChallenge();
+}
+
+function renderChallenge(){
+  const l=JSON.parse(localStorage.getItem("challenges")||"[]");
+  const s=l.slice(chPage*PAGE,(chPage+1)*PAGE);
+
+  challengeList.innerHTML=s.map((m,i)=>`
+    <div class="saved-item">
+      <div class="saved-row">
+        <div class='check-wrap'>
+          <input type="checkbox" ${m.done?"checked":""} onclick="toggleChallenge(${chPage*PAGE+i})">
+          <div class="${m.done?"checked":""}">${m.text}</div>
+        </div>
+        <button class="btn-del" onclick="delChallenge(${chPage*PAGE+i})">삭제</button>
+      </div>
+      <div class="saved-date">${m.date}</div>
+    </div>
+  `).join("") || "할 일이 없어요 🙂";
+}
+
+function toggleChallenge(i){
+  const l=JSON.parse(localStorage.getItem("challenges")||"[]");
+  l[i].done=!l[i].done;
+  localStorage.setItem("challenges",JSON.stringify(l));
+  renderChallenge();
+}
+
+function delChallenge(i){
+  const l=JSON.parse(localStorage.getItem("challenges")||"[]");
+  l.splice(i,1);
+  localStorage.setItem("challenges",JSON.stringify(l));
+  renderChallenge();
+}
+
+function prevChallenge(){if(chPage>0){chPage--; renderChallenge();}}
+function nextChallenge(){
+  const l=JSON.parse(localStorage.getItem("challenges")||"[]");
+  if(chPage < Math.ceil(l.length/PAGE)-1){chPage++; renderChallenge();}
+}
+
+/* 목표 = 체크박스 적용됨 */
+function openGoal(){goalPage=0;renderGoal();openModal("goalModal");}
+
+function saveGoal(){
+  if(!goalInput.value.trim()) return;
+  const l=JSON.parse(localStorage.getItem("goals")||"[]");
+  l.unshift({text:goalInput.value,done:false,date:new Date().toLocaleString("ko-KR")});
+  localStorage.setItem("goals",JSON.stringify(l));
+  goalInput.value="";
+  renderGoal();
+}
+
+function renderGoal(){
+  const l=JSON.parse(localStorage.getItem("goals")||"[]");
+  const s=l.slice(goalPage*PAGE,(goalPage+1)*PAGE);
+
+  goalList.innerHTML=s.map((m,i)=>`
+    <div class="saved-item">
+      <div class="saved-row">
+        <div class="check-wrap">
+          <input type="checkbox" ${m.done?"checked":""} onclick="toggleGoal(${goalPage*PAGE+i})">
+          <div class="${m.done?"checked":""}">${m.text}</div>
+        </div>
+        <button class="btn-del" onclick="delGoal(${goalPage*PAGE+i})">삭제</button>
+      </div>
+      <div class="saved-date">${m.date}</div>
+    </div>
+  `).join("") || "목표가 없어요 🙂";
+}
+
+function toggleGoal(i){
+  const l=JSON.parse(localStorage.getItem("goals")||"[]");
+  l[i].done=!l[i].done;
+  localStorage.setItem("goals",JSON.stringify(l));
+  renderGoal();
+}
+
+function delGoal(i){
+  const l=JSON.parse(localStorage.getItem("goals")||"[]");
+  l.splice(i,1);
+  localStorage.setItem("goals",JSON.stringify(l));
+  renderGoal();
+}
+
+function prevGoal(){if(goalPage>0){goalPage--; renderGoal();}}
+function nextGoal(){
+  const l=JSON.parse(localStorage.getItem("goals")||"[]");
+  if(goalPage < Math.ceil(l.length/PAGE)-1){goalPage++; renderGoal();}
+}
+
+/* 초기 실행 */
+renderFoods();
+
 </script>
 
 </body>

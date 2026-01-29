@@ -1,47 +1,108 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="ko">
-<head>
+<head>  
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>힘내요 오늘</title>
-
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#ffd1e8">
 
 <link href="https://fonts.googleapis.com/css2?family=Poor+Story&display=swap" rel="stylesheet">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
+
 body{
-  font-family:'Poor Story','맑은 고딕',sans-serif;
+  font-family:'Poor Story','Malgun Gothic','맑은 고딕',sans-serif;
   background:repeating-linear-gradient(
     45deg,#ffe4ec,#ffe4ec 20px,#ffd1e8 20px,#ffd1e8 40px
   );
-  min-height:100vh;
+  min-height:100svh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
   padding:10px;
-  text-align:center;
 }
 
+/* 타이틀 */
+.title-lace{
+  position:relative;
+  width:92%;
+  max-width:420px;
+  margin:12px auto 8px;
+}
+.title-lace img{width:100%;}
+.title-lace h1{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  font-size:20px;
+  white-space:nowrap;
+}
+
+/* 안내 */
+.subtitle{
+  font-size:21px;
+  font-weight:bold;
+  margin:6px 0;
+}
+
+/* 선물 */
+.gems-container{
+  display:flex;
+  gap:24px;
+  margin:12px 0 16px;
+}
+.food{
+  cursor:pointer;
+  animation: float 3s ease-in-out infinite;
+}
+.food.used{
+  opacity:.4;
+  filter:grayscale(1);
+  cursor:not-allowed;
+  animation:none;
+}
+@keyframes float{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-10px);}
+}
+.gem{
+  width:110px;height:110px;
+  font-size:80px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* 공통 박스 */
 .box-section{
   background:#fff;
   border:3px solid #ffb6d9;
   border-radius:22px;
+  box-shadow:0 6px 18px rgba(255,182,217,.45);
+  width:100%;
   max-width:440px;
-  margin:10px auto;
-  padding:16px;
+  padding:18px;
+  margin-top:10px;
+  text-align:center;
 }
 
+/* 버튼 */
 .oval-btn{
   background:#e3f2fd;
   border:2px solid #90caf9;
   border-radius:40px;
-  padding:12px 30px;
-  font-size:16px;
-  font-weight:bold;
-  margin:6px;
+  padding:14px 36px;
+  font-size:18px;
   cursor:pointer;
+  margin:6px 0;
+  color:#1565c0;
+  font-weight:bold;
+  font-family:Dotum,'돋움',sans-serif;
 }
 
+.bold-desc{font-weight:bold;}
+
+/* 모달 */
 .modal{
   display:none;
   position:fixed;
@@ -49,79 +110,156 @@ body{
   background:rgba(0,0,0,.6);
   justify-content:center;
   align-items:center;
+  z-index:1000;
 }
 .modal-box{
   background:#fff;
-  border-radius:20px;
-  padding:16px;
   width:92%;
   max-width:420px;
-  text-align:left;
+  border-radius:22px;
+  padding:20px;
+  position:relative;
 }
 .close-x{
+  position:absolute;
+  top:12px;
+  left:14px;
   cursor:pointer;
-  font-size:18px;
 }
 
+.message-text{
+  font-size:20px;
+  text-align:center;
+  margin:20px 0;
+}
+
+.saved-date{
+  font-size:13px;
+  font-weight:bold;
+  margin-bottom:4px;
+}
+
+.saved-item{
+  border-bottom:1px dashed #ccc;
+  padding:10px 0;
+}
+
+.btn-delete{
+  background:#ffe4ec;
+  border:none;
+  border-radius:14px;
+  font-size:12px;
+  padding:4px 10px;
+  cursor:pointer;
+}
+
+/* 한문장 */
 .one-line-input{
   width:100%;
-  padding:10px;
-  border-radius:12px;
+  padding:12px;
+  border-radius:14px;
   border:2px solid #ffb6d9;
+  font-size:16px;
   font-family:'Poor Story';
-  margin-bottom:10px;
 }
 
-.date-header{
-  font-weight:bold;
-  cursor:pointer;
-  margin-top:10px;
-  background:#ffe4ec;
-  padding:6px 10px;
-  border-radius:10px;
-}
-
-.entry{
-  border-bottom:1px dashed #ccc;
-  padding:6px 0;
-}
-.entry small{font-weight:bold;}
-
-.edit-btn,.del-btn{
-  font-size:12px;
-  margin-left:6px;
-  cursor:pointer;
+.one-line-list{
+  margin-top:14px;
+  text-align:left;
 }
 </style>
 </head>
 
 <body>
 
-<div class="box-section">
-  <button class="oval-btn" onclick="openOneLine()">나의 하루 한문장 ✏️</button>
-  <button class="oval-btn" onclick="backupData()">☁️ 백업</button>
-  <input type="file" id="restoreFile" hidden onchange="restoreData(event)">
-  <button class="oval-btn" onclick="document.getElementById('restoreFile').click()">☁️ 복원</button>
+<div class="title-lace">
+  <img src="title-box.png">
+  <h1>당신의 하루를 응원해요</h1>
 </div>
 
-<!-- 한문장 모달 -->
+<p class="subtitle">오늘의 선물을 클릭해 보세요</p>
+
+<div class="gems-container" id="gems"></div>
+
+<div class="box-section">
+  <button class="oval-btn">알림 받기 🔔</button>
+  <div class="bold-desc">매일 오전 ７시 따뜻한 메시지를 받아보세요</div>
+</div>
+
+<div class="box-section">
+  <button class="oval-btn" onclick="openSaved()">매일 받은 선물 기록 ⭐</button>
+  <button class="oval-btn" onclick="openOneLine()">나의 하루 한문장 ✏️</button>
+</div>
+
+<!-- 🎁 선물 메시지 모달 -->
+<div class="modal" id="messageModal">
+  <div class="modal-box">
+    <div class="close-x" onclick="closeMessage()">✕</div>
+    <div class="message-text" id="messageText"></div>
+    <button class="oval-btn" onclick="saveGift()">저장하기</button>
+  </div>
+</div>
+
+<!-- ✏️ 한문장 모달 -->
 <div class="modal" id="oneLineModal">
   <div class="modal-box">
     <div class="close-x" onclick="closeOneLine()">✕</div>
-    <p style="text-align:center;font-size:18px;">오늘 나의 하루를 한문장으로</p>
-    <input id="oneLineText" class="one-line-input" placeholder="한 문장 입력">
-    <button class="oval-btn" onclick="saveOneLine()">저장</button>
-    <div id="oneLineList"></div>
+    <div class="message-text">오늘 나의 하루를 한문장으로</div>
+    <input class="one-line-input" id="oneLineText">
+    <button class="oval-btn" onclick="saveOneLine()">저장하기</button>
+
+    <!-- ✅ 한문장 저장 위치 -->
+    <div class="one-line-list" id="oneLineList"></div>
+  </div>
+</div>
+
+<!-- 🎁 선물 기록 -->
+<div class="modal" id="savedModal">
+  <div class="modal-box">
+    <div class="close-x" onclick="closeSaved()">✕</div>
+    <div id="savedList"></div>
   </div>
 </div>
 
 <script>
-let editIndex=null;
+const foods=["🍰","🧁","🍪","🍩","🍫","🥐","🥞","🧇"];
+const messages=[
+ "오늘도 충분히 잘하고 있어요",
+ "당신은 소중한 사람이에요",
+ "천천히 가도 괜찮아요",
+ "당신은 더 나은 내일을 만들어가고 있어요"
+];
 
-/* ---------- 한문장 ---------- */
+let currentMessage="";
+
+/* 선물 */
+function renderFoods(){
+  gems.innerHTML="";
+  foods.sort(()=>.5-Math.random()).slice(0,2).forEach(e=>{
+    const d=document.createElement("div");
+    d.className="food";
+    d.innerHTML=`<div class="gem">${e}</div>`;
+    d.onclick=()=>openMessage();
+    gems.appendChild(d);
+  });
+}
+function openMessage(){
+  currentMessage=messages[Math.floor(Math.random()*messages.length)];
+  messageText.textContent=currentMessage;
+  messageModal.style.display="flex";
+}
+function closeMessage(){messageModal.style.display="none";}
+
+function saveGift(){
+  const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+  list.unshift({text:currentMessage,date:new Date().toLocaleString("ko-KR")});
+  localStorage.setItem("giftMsgs",JSON.stringify(list));
+  closeMessage();
+}
+
+/* 한문장 */
 function openOneLine(){
   oneLineText.value="";
-  editIndex=null;
   renderOneLine();
   oneLineModal.style.display="flex";
 }
@@ -130,18 +268,8 @@ function closeOneLine(){oneLineModal.style.display="none";}
 function saveOneLine(){
   const text=oneLineText.value.trim();
   if(!text) return;
-
   const list=JSON.parse(localStorage.getItem("oneLineMsgs")||"[]");
-  const now=new Date();
-  const dateKey=now.toISOString().slice(0,10);
-
-  if(editIndex!==null){
-    list[editIndex].text=text;
-    editIndex=null;
-  }else{
-    list.unshift({text,date:now.toLocaleString("ko-KR"),key:dateKey});
-  }
-
+  list.unshift({text,date:new Date().toLocaleString("ko-KR")});
   localStorage.setItem("oneLineMsgs",JSON.stringify(list));
   oneLineText.value="";
   renderOneLine();
@@ -149,78 +277,36 @@ function saveOneLine(){
 
 function renderOneLine(){
   const list=JSON.parse(localStorage.getItem("oneLineMsgs")||"[]");
-  const grouped={};
-
-  list.forEach((m,i)=>{
-    if(!grouped[m.key]) grouped[m.key]=[];
-    grouped[m.key].push({...m,index:i});
-  });
-
-  oneLineList.innerHTML=Object.keys(grouped).map(date=>`
-    <div class="date-header" onclick="toggleDate('${date}')">
-      📅 ${date}
-    </div>
-    <div id="group-${date}" style="display:none;">
-      ${grouped[date].map(m=>`
-        <div class="entry">
-          <small>${m.date}</small><br>
-          ${m.text}
-          <span class="edit-btn" onclick="editLine(${m.index})">✏️</span>
-          <span class="del-btn" onclick="deleteLine(${m.index})">🗑</span>
-        </div>
-      `).join("")}
+  oneLineList.innerHTML=list.map((m,i)=>`
+    <div class="saved-item">
+      <div class="saved-date">${m.date}</div>
+      <div>${m.text}</div>
     </div>
   `).join("");
 }
 
-function toggleDate(date){
-  const el=document.getElementById("group-"+date);
-  el.style.display=el.style.display==="none"?"block":"none";
+/* 선물 기록 */
+function openSaved(){
+  const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+  savedList.innerHTML=list.length?list.map((m,i)=>`
+    <div class="saved-item">
+      <div class="saved-date">${m.date}</div>
+      <div>${m.text}</div>
+      <button class="btn-delete" onclick="deleteGift(${i})">삭제</button>
+    </div>
+  `).join(""):"기록이 없어요 🙂";
+  savedModal.style.display="flex";
 }
+function closeSaved(){savedModal.style.display="none";}
 
-function editLine(i){
-  const list=JSON.parse(localStorage.getItem("oneLineMsgs"));
-  oneLineText.value=list[i].text;
-  editIndex=i;
-}
-
-function deleteLine(i){
-  const list=JSON.parse(localStorage.getItem("oneLineMsgs"));
+function deleteGift(i){
+  const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
   list.splice(i,1);
-  localStorage.setItem("oneLineMsgs",JSON.stringify(list));
-  renderOneLine();
+  localStorage.setItem("giftMsgs",JSON.stringify(list));
+  openSaved();
 }
 
-/* ---------- 백업 / 복원 ---------- */
-function backupData(){
-  const data={
-    oneLineMsgs:JSON.parse(localStorage.getItem("oneLineMsgs")||"[]"),
-    savedMsgs:JSON.parse(localStorage.getItem("savedMsgs")||"[]")
-  };
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="힘내요오늘_backup.json";
-  a.click();
-}
-
-function restoreData(e){
-  const file=e.target.files[0];
-  const reader=new FileReader();
-  reader.onload=()=>{
-    const data=JSON.parse(reader.result);
-    if(data.oneLineMsgs) localStorage.setItem("oneLineMsgs",JSON.stringify(data.oneLineMsgs));
-    if(data.savedMsgs) localStorage.setItem("savedMsgs",JSON.stringify(data.savedMsgs));
-    alert("복원 완료!");
-    renderOneLine();
-  };
-  reader.readAsText(file);
-}
-
-/* ---------- PWA ---------- */
-if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("service-worker.js");
-}
+renderFoods();
 </script>
 
 </body>

@@ -108,48 +108,38 @@ body{
   font-family:Dotum,'돋움',sans-serif;
 }
 
-/* ★ 저장 버튼 더 작게 */
+/* 저장 버튼 */
 .new-save-btn{
   background:#e3f2fd;
   border:2px solid #90caf9;
   border-radius:16px;
   padding:5px 14px;
-  font-size:13px;
-  color:#1565c0;
-  font-weight:bold;
+  font-size:16px;
   cursor:pointer;
-
-  /* ★ 수정: 버튼이 화면에서 안 잘리게 함 */
   flex-shrink:0;
 }
 
-/* ★ 이전/다음 버튼 더 작게 */
+/* 이전/다음 */
 .small-nav{
   font-size:13px;
   padding:6px 14px;
 }
 
-/* ★ 입력창 + 저장 버튼 묶는 박스 */
+/* 입력 + 버튼 */
 .input-wrap{
   display:flex;
   align-items:center;
   gap:6px;
   width:100%;
-
-  /* ★ 수정: 줄바꿈 없이 한 줄 유지 */
   flex-wrap:nowrap;
 }
 
-/* 입력창 */
 .text-input{
   flex:1;
   padding:12px;
   border-radius:14px;
   border:2px solid #ffb6d9;
   font-size:16px;
-  font-family:'Poor Story';
-
-  /* ★ 수정: 폭 계산 오류로 잘리는 현상 방지 */
   min-width:0;
 }
 
@@ -170,10 +160,8 @@ body{
   border-radius:22px;
   padding:20px;
   position:relative;
-
   max-height:80vh;
   overflow-y:auto;
-
   display:flex;
   flex-direction:column;
 }
@@ -199,8 +187,6 @@ body{
   background:#ffd1e8;
   cursor:pointer;
 }
-
-/* 페이지 */
 .page-buttons{
   display:flex;
   justify-content:space-between;
@@ -261,10 +247,9 @@ body{
   <div class="modal-box">
     <div class="close-x" onclick="closeModal('oneLineModal')">✕</div>
 
-    <!-- ★ 저장 버튼이 짤리지 않게 한 줄 박스로 통합 -->
     <div class="input-wrap">
       <input class="text-input" id="oneLineInput" placeholder="오늘 나에게 해주고 싶은 말">
-      <button class="new-save-btn" onclick="saveOneLine()">저장</button>
+      <button class="new-save-btn" onclick="saveOneLine()">✔</button>
     </div>
 
     <div id="oneLineList"></div>
@@ -281,10 +266,9 @@ body{
   <div class="modal-box">
     <div class="close-x" onclick="closeModal('challengeModal')">✕</div>
 
-    <!-- ★ 동일 방식 적용 -->
     <div class="input-wrap">
       <input class="text-input" id="challengeInput" placeholder="오늘의 할 일 or 목표를 적고 체크">
-      <button class="new-save-btn" onclick="saveChallenge()">저장</button>
+      <button class="new-save-btn" onclick="saveChallenge()">✔</button>
     </div>
 
     <div id="challengeList"></div>
@@ -310,7 +294,6 @@ const foodsData=[
   {emoji:"🧇",name:"와플"}
 ];
 
-/* 랜덤 메시지 */
 const messages=[
  "오늘은 위기를 기회로 만드는 날 💪",
  "너무 잘하고 있어, 계속 가보자 ✨",
@@ -414,7 +397,6 @@ function renderOneLine(){
   `).join("") || "아직 기록이 없어요 🙂";
 }
 
-/* 페이지 순환 */
 function prevLine(){
   const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
   const maxPage=Math.ceil(l.length/PAGE)-1;
@@ -482,7 +464,6 @@ function delChallenge(i){
   renderChallenge();
 }
 
-/* 페이지 순환 */
 function prevChallenge(){
   const l=JSON.parse(localStorage.getItem("challenges")||"[]");
   const maxPage=Math.ceil(l.length/PAGE)-1;
@@ -497,7 +478,6 @@ function nextChallenge(){
   renderChallenge();
 }
 
-/* 저장함 순환 */
 function prevGift(){
   const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
   const maxPage=Math.ceil(l.length/PAGE)-1;

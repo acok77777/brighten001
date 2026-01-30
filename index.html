@@ -27,7 +27,7 @@ body{
   margin:18px 0 12px;
 }
 
-/* 선물 */
+/* 랜덤 선물 */
 .gems-container{
   display:flex;
   gap:40px;
@@ -62,7 +62,7 @@ body{
   font-size:15px;
 }
 
-/* 메뉴 전체 박스 */
+/* 메뉴 전체 배경 */
 .menu-wrapper{
   width:92%;
   max-width:420px;
@@ -70,12 +70,12 @@ body{
   position:relative;
 }
 
-/* 새로 업로드한 menu-bg.png 비율에 맞춤 */
+/* ⭐ 새 이미지 비율 = 360 / 370 = 97.3% */
 .menu-wrapper::before{
   content:"";
   display:block;
   width:100%;
-  padding-top:70%; /* ⭐ 세로 비율 맞춤 – 새 이미지 기반 */
+  padding-top:97.3%;
   background:url('menu-bg.png') no-repeat center/contain;
 }
 
@@ -86,15 +86,15 @@ body{
   width:100%; height:100%;
   display:grid;
   grid-template-columns:repeat(2,1fr);
-  gap:18px;
+  gap:20px;
   align-items:center;
   justify-items:center;
-  padding:28px 20px;
+  padding:40px 24px;
 }
 
-/* 메뉴 버튼 이미지 */
+/* 버튼 이미지 */
 .menu-img{
-  width:170px;
+  width:165px;
   cursor:pointer;
   user-select:none;
 }
@@ -193,10 +193,8 @@ body{
 
 <body>
 
-<!-- 타이틀 -->
 <p class="main-title">오늘의 선물을 클릭해 보세요</p>
 
-<!-- 랜덤 선물 -->
 <div class="gems-container" id="gems"></div>
 
 <!-- 메뉴 배경 + 버튼 -->
@@ -209,82 +207,15 @@ body{
   </div>
 </div>
 
-<!-- 모달들 (기능 동일) -->
-<div class="modal" id="oneLineModal">
-  <div class="modal-box">
-    <div class="close-x" onclick="closeModal('oneLineModal')">✕</div>
-
-    <div class="input-wrap">
-      <input class="text-input" id="oneLineInput" placeholder="오늘 나에게 해주고 싶은 말">
-      <button class="new-save-btn" onclick="saveOneLine()">✔</button>
-    </div>
-
-    <div id="oneLineList"></div>
-
-    <div class="page-buttons">
-      <button class="small-nav" onclick="prevLine()">⬅ 이전</button>
-      <button class="small-nav" onclick="nextLine()">다음 ➡</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal" id="challengeModal">
-  <div class="modal-box">
-    <div class="close-x" onclick="closeModal('challengeModal')">✕</div>
-
-    <div class="input-wrap">
-      <input class="text-input" id="challengeInput" placeholder="해야 할 일을 적어주세요">
-      <button class="new-save-btn" onclick="saveChallenge()">✔</button>
-    </div>
-
-    <div id="challengeList"></div>
-
-    <div class="page-buttons">
-      <button class="small-nav" onclick="prevChallenge()">⬅ 이전</button>
-      <button class="small-nav" onclick="nextChallenge()">다음 ➡</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal" id="goalModal">
-  <div class="modal-box">
-    <div class="close-x" onclick="closeModal('goalModal')">✕</div>
-
-    <div class="input-wrap">
-      <input class="text-input" id="goalInput" placeholder="나의 목표를 적어주세요">
-      <button class="new-save-btn" onclick="saveGoal()">✔</button>
-    </div>
-
-    <div id="goalList"></div>
-
-    <div class="page-buttons">
-      <button class="small-nav" onclick="prevGoal()">⬅ 이전</button>
-      <button class="small-nav" onclick="nextGoal()">다음 ➡</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal" id="giftModal">
-  <div class="modal-box">
-    <div class="close-x" onclick="closeModal('giftModal')">✕</div>
-    <div id="giftList"></div>
-
-    <div class="page-buttons">
-      <button class="small-nav" onclick="prevGift()">⬅ 이전</button>
-      <button class="small-nav" onclick="nextGift()">다음 ➡</button>
-    </div>
-  </div>
-</div>
-
 <script>
 function openModal(id){document.getElementById(id).style.display="flex";}
 function closeModal(id){document.getElementById(id).style.display="none";}
 
 const foods=[
-  {emoji:"🍫",name:"초콜릿"},
-  {emoji:"🧇",name:"와플"},
   {emoji:"🍰",name:"케이크"},
   {emoji:"🍩",name:"도넛"},
+  {emoji:"🍫",name:"초콜릿"},
+  {emoji:"🧇",name:"와플"},
 ];
 
 const messages=[

@@ -22,7 +22,7 @@ body{
   padding:10px;
 }
 
-/* 타이틀 */
+/* 타이틀 박스 — 글씨는 삭제됨 */
 .title-lace{
   position:relative;
   width:92%;
@@ -30,14 +30,6 @@ body{
   margin:12px auto 8px;
 }
 .title-lace img{width:100%;}
-.title-lace h1{
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  font-size:20px;
-  white-space:nowrap;
-}
 
 /* 안내 */
 .subtitle{
@@ -81,20 +73,22 @@ body{
   color:#444;
 }
 
-/* ⭐ 이미지 버튼 — 1/2 크기로 줄인 버전 */
+/* 이미지 버튼 — 절반 크기 */
 .menu-img{
-  width:180px;           /* ← 기존 360px → 180px (정확히 절반) */
+  width:180px;
   display:block;
-  margin:12px auto;
   cursor:pointer;
 }
 
-/* 박스 */
-.box-section{
+/* 2×2 그리드 배치 */
+.menu-grid{
   width:100%;
-  max-width:440px;
+  max-width:420px;
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:16px;
+  justify-items:center;
   margin-top:10px;
-  text-align:center;
 }
 
 /* 모달 */
@@ -170,23 +164,21 @@ body{
   text-decoration:line-through;
   opacity:.6;
 }
-
 </style>
 </head>
 
 <body>
 
+<!-- 타이틀 이미지만 표시 (글씨 삭제됨) -->
 <div class="title-lace">
   <img src="title-box.png">
-  <h1>당신의 하루를 응원해요</h1>
 </div>
 
 <p class="subtitle">오늘의 선물을 클릭해 보세요</p>
-
 <div class="gems-container" id="gems"></div>
 
-<!-- 버튼 이미지 4개 -->
-<div class="box-section">
+<!-- ■■■ 2×2 버튼 배치 구역 ■■■ -->
+<div class="menu-grid">
   <img src="banner-oneline.png" class="menu-img" onclick="openOneLine()">
   <img src="banner-challenge.png" class="menu-img" onclick="openChallenge()">
   <img src="banner-goal.png" class="menu-img" onclick="openGoal()">
@@ -274,7 +266,7 @@ body{
 
 <script>
 
-/* 이모티콘 + 이름 */
+/* 랜덤 선물 */
 const foodsData=[
   {emoji:"🍰",name:"케이크"},
   {emoji:"🍩",name:"도넛"},
@@ -303,7 +295,7 @@ let giftPage=0, linePage=0, chPage=0, goalPage=0;
 function openModal(id){document.getElementById(id).style.display="flex";}
 function closeModal(id){document.getElementById(id).style.display="none";}
 
-/* 선물 */
+/* 선물 생성 */
 function renderFoods(){
   gems.innerHTML="";
   [...foodsData].sort(()=>0.5-Math.random()).slice(0,2).forEach(obj=>{
@@ -334,7 +326,7 @@ function renderFoods(){
   });
 }
 
-/* 선물 보관함 */
+/* 보관함 */
 function openGift(){
   giftPage=0;
   renderGift();

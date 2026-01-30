@@ -30,14 +30,6 @@ body{
   margin:12px auto 8px;
 }
 .title-lace img{width:100%;}
-.title-lace h1{
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  font-size:20px;
-  white-space:nowrap;
-}
 
 /* 안내 */
 .subtitle{
@@ -81,16 +73,16 @@ body{
   color:#444;
 }
 
-/* 박스 */
+/* 💗 귀여운 박스로 변경된 부분 */
 .box-section{
-  background:#fff;
+  background:linear-gradient(135deg, #fff7fb, #ffe3f3);
   border:3px solid #ffb6d9;
-  border-radius:22px;
-  box-shadow:0 6px 18px rgba(255,182,217,.45);
+  border-radius:28px;
+  box-shadow:0 4px 14px rgba(255,182,217,0.55);
   width:100%;
   max-width:440px;
-  padding:18px;
-  margin-top:10px;
+  padding:24px 18px;
+  margin-top:14px;
   text-align:center;
 }
 
@@ -225,13 +217,12 @@ body{
 
 <div class="title-lace">
   <img src="title-box.png">
-  <h1>당신의 하루를 응원해요</h1>
 </div>
 
 <p class="subtitle">오늘의 선물을 클릭해 보세요</p>
 <div class="gems-container" id="gems"></div>
 
-<!-- ✅ 요청 2: 배너 4개를 한 박스 안에 모두 넣음 -->
+<!-- 💗 귀여운 아래 박스 -->
 <div class="box-section">
   <button class="oval-btn" onclick="openOneLine()">스스로 응원 한마디 ✏️</button>
   <button class="oval-btn" onclick="openChallenge()">나의 할일 💪</button>
@@ -299,7 +290,7 @@ body{
   </div>
 </div>
 
-<!-- 목표 → (요청 1) 체크박스 적용, 할일과 동일하게 변경 -->
+<!-- 목표  -->
 <div class="modal" id="goalModal">
   <div class="modal-box">
     <div class="close-x" onclick="closeModal('goalModal')">✕</div>
@@ -505,7 +496,7 @@ function nextChallenge(){
   if(chPage < Math.ceil(l.length/PAGE)-1){chPage++; renderChallenge();}
 }
 
-/* 목표 = 체크박스 적용됨 */
+/* 목표 */
 function openGoal(){goalPage=0;renderGoal();openModal("goalModal");}
 
 function saveGoal(){

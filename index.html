@@ -57,12 +57,6 @@ body{
   animation: float 3s ease-in-out infinite;
   text-align:center;
 }
-.food.used{
-  opacity:.4;
-  filter:grayscale(1);
-  cursor:default;
-  animation:none;
-}
 @keyframes float{
   0%,100%{transform:translateY(0);}
   50%{transform:translateY(-10px);}
@@ -151,20 +145,24 @@ body{
 }
 .saved-item{
   border-bottom:1px dashed #ccc;
-  padding:10px 0;
+  padding:8px 0;
 }
 .saved-row{
   display:flex;
   justify-content:space-between;
   align-items:center;
 }
-.saved-date{font-size:12px;}
+.saved-date{
+  font-size:12px;
+  color:#666;
+}
 .btn-del{
   font-size:12px;
   padding:4px 10px;
   border:none;
   border-radius:12px;
   background:#ffd1e8;
+  cursor:pointer;
 }
 .page-buttons{
   display:flex;
@@ -176,7 +174,10 @@ body{
   align-items:center;
   gap:8px;
 }
-.checked{text-decoration:line-through;opacity:.6;}
+.checked{
+  text-decoration:line-through;
+  opacity:.6;
+}
 </style>
 </head>
 
@@ -197,14 +198,12 @@ body{
   <div class="banner-btn banner-gift" onclick="openGift()"></div>
 </div>
 
-<!-- ================= 모달들 ================= -->
-
 <!-- 응원 한마디 -->
 <div class="modal" id="oneLineModal">
   <div class="modal-box">
     <div class="close-x" onclick="closeModal('oneLineModal')">✕</div>
     <div class="input-wrap">
-      <input class="text-input" id="oneLineInput" placeholder="나에게 해주고 싶은 말">
+      <input class="text-input" id="oneLineInput" placeholder="오늘 나에게 해주고 싶은 말">
       <button class="new-save-btn" onclick="saveOneLine()">✔</button>
     </div>
     <div id="oneLineList"></div>
@@ -220,7 +219,7 @@ body{
   <div class="modal-box">
     <div class="close-x" onclick="closeModal('challengeModal')">✕</div>
     <div class="input-wrap">
-      <input class="text-input" id="challengeInput" placeholder="해야 할 일">
+      <input class="text-input" id="challengeInput" placeholder="나의 할 일 적어보기">
       <button class="new-save-btn" onclick="saveChallenge()">✔</button>
     </div>
     <div id="challengeList"></div>
@@ -236,7 +235,7 @@ body{
   <div class="modal-box">
     <div class="close-x" onclick="closeModal('goalModal')">✕</div>
     <div class="input-wrap">
-      <input class="text-input" id="goalInput" placeholder="나의 목표">
+      <input class="text-input" id="goalInput" placeholder="나의 목표 적어보기">
       <button class="new-save-btn" onclick="saveGoal()">✔</button>
     </div>
     <div id="goalList"></div>
@@ -280,7 +279,7 @@ function renderFoods(){
     d.onclick=()=>{
       const msg=messages[Math.floor(Math.random()*messages.length)];
       const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
-      list.unshift({text:msg,date:new Date().toLocaleString()});
+      list.unshift({text:msg,date:new Date().toLocaleString("ko-KR")});
       localStorage.setItem("giftMsgs",JSON.stringify(list));
       alert(msg);
     };
@@ -288,43 +287,61 @@ function renderFoods(){
   });
 }
 
-/* 응원 */
+/* ===== 응원 ===== */
 function openOneLine(){linePage=0;renderOneLine();openModal("oneLineModal");}
 function saveOneLine(){
   if(!oneLineInput.value.trim())return;
   const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
-  l.unshift({text:oneLineInput.value});
+  l.unshift({text:oneLineInput.value,date:new Date().toLocaleString("ko-KR")});
   localStorage.setItem("oneLines",JSON.stringify(l));
   oneLineInput.value="";
   renderOneLine();
 }
 function renderOneLine(){
   const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
-  oneLineList.innerHTML=l.slice(linePage*PAGE,(linePage+1)*PAGE)
-    .map(m=>`<div class="saved-item">${m.text}</div>`).join("");
+  oneLineList.innerHTML=l.slice(linePage*PAGE,(linePage+1)*PAGE).map((m,i)=>`
+    <div class="saved-item">
+      <div class="saved-row">
+        <div class="saved-date">${m.date}</div>
+        <button class="btn-del" onclick="delLine(${linePage*PAGE+i})">삭제</button>
+      </div>
+      <div>${m.text}</div>
+    </div>
+  `).join("") || "기록이 없어요 🙂";
+}
+function delLine(i){
+  const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
+  l.splice(i,1);
+  localStorage.setItem("oneLines",JSON.stringify(l));
+  renderOneLine();
 }
 function prevLine(){if(linePage>0){linePage--;renderOneLine();}}
 function nextLine(){linePage++;renderOneLine();}
 
-/* 할일 */
+/* ===== 할 일 ===== */
 function openChallenge(){chPage=0;renderChallenge();openModal("challengeModal");}
 function saveChallenge(){
   if(!challengeInput.value.trim())return;
   const l=JSON.parse(localStorage.getItem("challenges")||"[]");
-  l.unshift({text:challengeInput.value,done:false});
+  l.unshift({text:challengeInput.value,done:false,date:new Date().toLocaleString("ko-KR")});
   localStorage.setItem("challenges",JSON.stringify(l));
   challengeInput.value="";
   renderChallenge();
 }
 function renderChallenge(){
   const l=JSON.parse(localStorage.getItem("challenges")||"[]");
-  challengeList.innerHTML=l.slice(chPage*PAGE,(chPage+1)*PAGE)
-    .map((m,i)=>`
-      <div class="check-wrap">
-        <input type="checkbox" ${m.done?"checked":""}
-        onclick="toggleChallenge(${i})">
-        <div class="${m.done?'checked':''}">${m.text}</div>
-      </div>`).join("");
+  challengeList.innerHTML=l.slice(chPage*PAGE,(chPage+1)*PAGE).map((m,i)=>`
+    <div class="saved-item">
+      <div class="saved-row">
+        <div class="check-wrap">
+          <input type="checkbox" ${m.done?"checked":""} onclick="toggleChallenge(${chPage*PAGE+i})">
+          <div class="${m.done?'checked':''}">${m.text}</div>
+        </div>
+        <button class="btn-del" onclick="delChallenge(${chPage*PAGE+i})">삭제</button>
+      </div>
+      <div class="saved-date">${m.date}</div>
+    </div>
+  `).join("") || "할 일이 없어요 🙂";
 }
 function toggleChallenge(i){
   const l=JSON.parse(localStorage.getItem("challenges")||"[]");
@@ -332,28 +349,39 @@ function toggleChallenge(i){
   localStorage.setItem("challenges",JSON.stringify(l));
   renderChallenge();
 }
+function delChallenge(i){
+  const l=JSON.parse(localStorage.getItem("challenges")||"[]");
+  l.splice(i,1);
+  localStorage.setItem("challenges",JSON.stringify(l));
+  renderChallenge();
+}
 function prevChallenge(){if(chPage>0){chPage--;renderChallenge();}}
 function nextChallenge(){chPage++;renderChallenge();}
 
-/* 목표 */
+/* ===== 목표 ===== */
 function openGoal(){goalPage=0;renderGoal();openModal("goalModal");}
 function saveGoal(){
   if(!goalInput.value.trim())return;
   const l=JSON.parse(localStorage.getItem("goals")||"[]");
-  l.unshift({text:goalInput.value,done:false});
+  l.unshift({text:goalInput.value,done:false,date:new Date().toLocaleString("ko-KR")});
   localStorage.setItem("goals",JSON.stringify(l));
   goalInput.value="";
   renderGoal();
 }
 function renderGoal(){
   const l=JSON.parse(localStorage.getItem("goals")||"[]");
-  goalList.innerHTML=l.slice(goalPage*PAGE,(goalPage+1)*PAGE)
-    .map((m,i)=>`
-      <div class="check-wrap">
-        <input type="checkbox" ${m.done?"checked":""}
-        onclick="toggleGoal(${i})">
-        <div class="${m.done?'checked':''}">${m.text}</div>
-      </div>`).join("");
+  goalList.innerHTML=l.slice(goalPage*PAGE,(goalPage+1)*PAGE).map((m,i)=>`
+    <div class="saved-item">
+      <div class="saved-row">
+        <div class="check-wrap">
+          <input type="checkbox" ${m.done?"checked":""} onclick="toggleGoal(${goalPage*PAGE+i})">
+          <div class="${m.done?'checked':''}">${m.text}</div>
+        </div>
+        <button class="btn-del" onclick="delGoal(${goalPage*PAGE+i})">삭제</button>
+      </div>
+      <div class="saved-date">${m.date}</div>
+    </div>
+  `).join("") || "목표가 없어요 🙂";
 }
 function toggleGoal(i){
   const l=JSON.parse(localStorage.getItem("goals")||"[]");
@@ -361,15 +389,34 @@ function toggleGoal(i){
   localStorage.setItem("goals",JSON.stringify(l));
   renderGoal();
 }
+function delGoal(i){
+  const l=JSON.parse(localStorage.getItem("goals")||"[]");
+  l.splice(i,1);
+  localStorage.setItem("goals",JSON.stringify(l));
+  renderGoal();
+}
 function prevGoal(){if(goalPage>0){goalPage--;renderGoal();}}
 function nextGoal(){goalPage++;renderGoal();}
 
-/* 선물 보관함 */
+/* ===== 선물 보관함 ===== */
 function openGift(){giftPage=0;renderGift();openModal("giftModal");}
 function renderGift(){
   const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
-  giftList.innerHTML=l.slice(giftPage*PAGE,(giftPage+1)*PAGE)
-    .map(m=>`<div class="saved-item">${m.text}<div class="saved-date">${m.date}</div></div>`).join("");
+  giftList.innerHTML=l.slice(giftPage*PAGE,(giftPage+1)*PAGE).map((m,i)=>`
+    <div class="saved-item">
+      <div class="saved-row">
+        <div class="saved-date">${m.date}</div>
+        <button class="btn-del" onclick="delGift(${giftPage*PAGE+i})">삭제</button>
+      </div>
+      <div>${m.text}</div>
+    </div>
+  `).join("") || "받은 선물이 없어요 🙂";
+}
+function delGift(i){
+  const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+  l.splice(i,1);
+  localStorage.setItem("giftMsgs",JSON.stringify(l));
+  renderGift();
 }
 function prevGift(){if(giftPage>0){giftPage--;renderGift();}}
 function nextGift(){giftPage++;renderGift();}

@@ -119,6 +119,8 @@ body{
   border-radius:22px;
   padding:20px;
   position:relative;
+  max-height:80vh;
+  overflow-y:auto;
 }
 .close-x{
   position:absolute;
@@ -127,6 +129,54 @@ body{
   font-size:18px;
   cursor:pointer;
 }
+
+/* 공통 */
+.input-wrap{
+  display:flex;
+  gap:6px;
+}
+.text-input{
+  flex:1;
+  padding:12px;
+  border-radius:14px;
+  border:2px solid #ffb6d9;
+  font-size:16px;
+}
+.new-save-btn{
+  background:#e3f2fd;
+  border:2px solid #90caf9;
+  border-radius:16px;
+  padding:6px 14px;
+  font-size:16px;
+}
+.saved-item{
+  border-bottom:1px dashed #ccc;
+  padding:10px 0;
+}
+.saved-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.saved-date{font-size:12px;}
+.btn-del{
+  font-size:12px;
+  padding:4px 10px;
+  border:none;
+  border-radius:12px;
+  background:#ffd1e8;
+}
+.page-buttons{
+  display:flex;
+  justify-content:space-between;
+  margin-top:12px;
+}
+.check-wrap{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.checked{text-decoration:line-through;opacity:.6;}
 </style>
 </head>
 
@@ -147,62 +197,182 @@ body{
   <div class="banner-btn banner-gift" onclick="openGift()"></div>
 </div>
 
-<div class="modal" id="messageModal">
+<!-- ================= 모달들 ================= -->
+
+<!-- 응원 한마디 -->
+<div class="modal" id="oneLineModal">
   <div class="modal-box">
-    <div class="close-x" onclick="closeModal('messageModal')">✕</div>
-    <h2 style="text-align:center;font-size:20px;">☆ 힘내요 오늘 ☆</h2>
-    <div id="messageText" style="font-size:22px;text-align:center;margin-top:10px;"></div>
+    <div class="close-x" onclick="closeModal('oneLineModal')">✕</div>
+    <div class="input-wrap">
+      <input class="text-input" id="oneLineInput" placeholder="나에게 해주고 싶은 말">
+      <button class="new-save-btn" onclick="saveOneLine()">✔</button>
+    </div>
+    <div id="oneLineList"></div>
+    <div class="page-buttons">
+      <button onclick="prevLine()">이전</button>
+      <button onclick="nextLine()">다음</button>
+    </div>
+  </div>
+</div>
+
+<!-- 할 일 -->
+<div class="modal" id="challengeModal">
+  <div class="modal-box">
+    <div class="close-x" onclick="closeModal('challengeModal')">✕</div>
+    <div class="input-wrap">
+      <input class="text-input" id="challengeInput" placeholder="해야 할 일">
+      <button class="new-save-btn" onclick="saveChallenge()">✔</button>
+    </div>
+    <div id="challengeList"></div>
+    <div class="page-buttons">
+      <button onclick="prevChallenge()">이전</button>
+      <button onclick="nextChallenge()">다음</button>
+    </div>
+  </div>
+</div>
+
+<!-- 목표 -->
+<div class="modal" id="goalModal">
+  <div class="modal-box">
+    <div class="close-x" onclick="closeModal('goalModal')">✕</div>
+    <div class="input-wrap">
+      <input class="text-input" id="goalInput" placeholder="나의 목표">
+      <button class="new-save-btn" onclick="saveGoal()">✔</button>
+    </div>
+    <div id="goalList"></div>
+    <div class="page-buttons">
+      <button onclick="prevGoal()">이전</button>
+      <button onclick="nextGoal()">다음</button>
+    </div>
+  </div>
+</div>
+
+<!-- 선물 보관함 -->
+<div class="modal" id="giftModal">
+  <div class="modal-box">
+    <div class="close-x" onclick="closeModal('giftModal')">✕</div>
+    <div id="giftList"></div>
+    <div class="page-buttons">
+      <button onclick="prevGift()">이전</button>
+      <button onclick="nextGift()">다음</button>
+    </div>
   </div>
 </div>
 
 <script>
-const foodsData=[
-  {emoji:"🍰",name:"케이크"},
-  {emoji:"🍩",name:"도넛"},
-  {emoji:"🍪",name:"쿠키"},
-  {emoji:"🧁",name:"컵케이크"}
-];
+const PAGE=5;
+let linePage=0,chPage=0,goalPage=0,giftPage=0;
 
-const messages=[
- "오늘은 위기를 기회로 만드는 날 💪",
- "너무 잘하고 있어 ✨",
- "오늘의 너는 충분해 💗"
-];
-
+/* 공통 */
 function openModal(id){document.getElementById(id).style.display="flex";}
 function closeModal(id){document.getElementById(id).style.display="none";}
 
+/* 선물 */
+const foodsData=[{emoji:"🍰",name:"케이크"},{emoji:"🍩",name:"도넛"}];
+const messages=["오늘도 잘했어 💗","너는 충분해 🌸","조금 쉬어도 돼"];
+
 function renderFoods(){
   gems.innerHTML="";
-  foodsData.slice(0,2).forEach(obj=>{
+  foodsData.forEach(f=>{
     const d=document.createElement("div");
     d.className="food";
-    d.innerHTML=`<div class="gem">${obj.emoji}</div><div class="food-name">${obj.name}</div>`;
+    d.innerHTML=`<div class="gem">${f.emoji}</div><div class="food-name">${f.name}</div>`;
     d.onclick=()=>{
       const msg=messages[Math.floor(Math.random()*messages.length)];
-      messageText.textContent=msg;
-      openModal("messageModal");
+      const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+      list.unshift({text:msg,date:new Date().toLocaleString()});
+      localStorage.setItem("giftMsgs",JSON.stringify(list));
+      alert(msg);
     };
     gems.appendChild(d);
   });
 }
 
-function openOneLine(){
-  messageText.textContent="✏️ 오늘 나 자신에게 응원 한마디를 남겨보세요";
-  openModal("messageModal");
+/* 응원 */
+function openOneLine(){linePage=0;renderOneLine();openModal("oneLineModal");}
+function saveOneLine(){
+  if(!oneLineInput.value.trim())return;
+  const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
+  l.unshift({text:oneLineInput.value});
+  localStorage.setItem("oneLines",JSON.stringify(l));
+  oneLineInput.value="";
+  renderOneLine();
 }
-function openChallenge(){
-  messageText.textContent="💪 오늘 해야 할 일을 하나만 정해볼까요?";
-  openModal("messageModal");
+function renderOneLine(){
+  const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
+  oneLineList.innerHTML=l.slice(linePage*PAGE,(linePage+1)*PAGE)
+    .map(m=>`<div class="saved-item">${m.text}</div>`).join("");
 }
-function openGoal(){
-  messageText.textContent="🎯 나의 목표를 다시 떠올려 보세요";
-  openModal("messageModal");
+function prevLine(){if(linePage>0){linePage--;renderOneLine();}}
+function nextLine(){linePage++;renderOneLine();}
+
+/* 할일 */
+function openChallenge(){chPage=0;renderChallenge();openModal("challengeModal");}
+function saveChallenge(){
+  if(!challengeInput.value.trim())return;
+  const l=JSON.parse(localStorage.getItem("challenges")||"[]");
+  l.unshift({text:challengeInput.value,done:false});
+  localStorage.setItem("challenges",JSON.stringify(l));
+  challengeInput.value="";
+  renderChallenge();
 }
-function openGift(){
-  messageText.textContent="🎁 지금까지 받은 선물을 확인해 보세요";
-  openModal("messageModal");
+function renderChallenge(){
+  const l=JSON.parse(localStorage.getItem("challenges")||"[]");
+  challengeList.innerHTML=l.slice(chPage*PAGE,(chPage+1)*PAGE)
+    .map((m,i)=>`
+      <div class="check-wrap">
+        <input type="checkbox" ${m.done?"checked":""}
+        onclick="toggleChallenge(${i})">
+        <div class="${m.done?'checked':''}">${m.text}</div>
+      </div>`).join("");
 }
+function toggleChallenge(i){
+  const l=JSON.parse(localStorage.getItem("challenges")||"[]");
+  l[i].done=!l[i].done;
+  localStorage.setItem("challenges",JSON.stringify(l));
+  renderChallenge();
+}
+function prevChallenge(){if(chPage>0){chPage--;renderChallenge();}}
+function nextChallenge(){chPage++;renderChallenge();}
+
+/* 목표 */
+function openGoal(){goalPage=0;renderGoal();openModal("goalModal");}
+function saveGoal(){
+  if(!goalInput.value.trim())return;
+  const l=JSON.parse(localStorage.getItem("goals")||"[]");
+  l.unshift({text:goalInput.value,done:false});
+  localStorage.setItem("goals",JSON.stringify(l));
+  goalInput.value="";
+  renderGoal();
+}
+function renderGoal(){
+  const l=JSON.parse(localStorage.getItem("goals")||"[]");
+  goalList.innerHTML=l.slice(goalPage*PAGE,(goalPage+1)*PAGE)
+    .map((m,i)=>`
+      <div class="check-wrap">
+        <input type="checkbox" ${m.done?"checked":""}
+        onclick="toggleGoal(${i})">
+        <div class="${m.done?'checked':''}">${m.text}</div>
+      </div>`).join("");
+}
+function toggleGoal(i){
+  const l=JSON.parse(localStorage.getItem("goals")||"[]");
+  l[i].done=!l[i].done;
+  localStorage.setItem("goals",JSON.stringify(l));
+  renderGoal();
+}
+function prevGoal(){if(goalPage>0){goalPage--;renderGoal();}}
+function nextGoal(){goalPage++;renderGoal();}
+
+/* 선물 보관함 */
+function openGift(){giftPage=0;renderGift();openModal("giftModal");}
+function renderGift(){
+  const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
+  giftList.innerHTML=l.slice(giftPage*PAGE,(giftPage+1)*PAGE)
+    .map(m=>`<div class="saved-item">${m.text}<div class="saved-date">${m.date}</div></div>`).join("");
+}
+function prevGift(){if(giftPage>0){giftPage--;renderGift();}}
+function nextGift(){giftPage++;renderGift();}
 
 renderFoods();
 </script>

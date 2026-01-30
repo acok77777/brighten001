@@ -81,7 +81,7 @@ body{
   color:#444;
 }
 
-/* ===== 하단 배너 ===== */
+/* 배너 */
 .banner-wrap{
   width:92%;
   max-width:420px;
@@ -90,8 +90,6 @@ body{
   position:relative;
   margin:14px auto 6px;
 }
-
-/* 클릭 영역 */
 .banner-btn{
   position:absolute;
   left:14%;
@@ -100,9 +98,9 @@ body{
   cursor:pointer;
 }
 .banner-cheer{ top:16%; }
-.banner-todo{  top:32%; }
-.banner-goal{  top:48%; }
-.banner-gift{  top:64%; }
+.banner-todo{ top:32%; }
+.banner-goal{ top:48%; }
+.banner-gift{ top:64%; }
 
 /* 모달 */
 .modal{
@@ -121,10 +119,6 @@ body{
   border-radius:22px;
   padding:20px;
   position:relative;
-  max-height:80vh;
-  overflow-y:auto;
-  display:flex;
-  flex-direction:column;
 }
 .close-x{
   position:absolute;
@@ -132,72 +126,6 @@ body{
   right:14px;
   font-size:18px;
   cursor:pointer;
-}
-
-/* 공통 */
-.input-wrap{
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-.text-input{
-  flex:1;
-  padding:12px;
-  border-radius:14px;
-  border:2px solid #ffb6d9;
-  font-size:16px;
-}
-.new-save-btn{
-  background:#e3f2fd;
-  border:2px solid #90caf9;
-  border-radius:16px;
-  padding:5px 14px;
-  font-size:16px;
-  cursor:pointer;
-}
-.saved-item{
-  border-bottom:1px dashed #ccc;
-  padding:10px 0;
-}
-.saved-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-.saved-date{
-  font-size:13px;
-  font-weight:bold;
-}
-.btn-del{
-  font-size:12px;
-  padding:4px 10px;
-  border:none;
-  border-radius:12px;
-  background:#ffd1e8;
-  cursor:pointer;
-}
-.page-buttons{
-  display:flex;
-  justify-content:space-between;
-  margin-top:12px;
-}
-.small-nav{
-  font-size:13px;
-  padding:6px 14px;
-}
-.check-wrap{
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-.check-wrap input{
-  width:20px;
-  height:20px;
-  accent-color:#ff8fb1;
-}
-.checked{
-  text-decoration:line-through;
-  opacity:.6;
 }
 </style>
 </head>
@@ -212,15 +140,13 @@ body{
 <p class="subtitle">오늘의 선물을 클릭해 보세요</p>
 <div class="gems-container" id="gems"></div>
 
-<!-- 📌 배너 -->
 <div class="banner-wrap">
   <div class="banner-btn banner-cheer" onclick="openOneLine()"></div>
-  <div class="banner-btn banner-todo"  onclick="openChallenge()"></div>
-  <div class="banner-btn banner-goal"  onclick="openGoal()"></div>
-  <div class="banner-btn banner-gift"  onclick="openGift()"></div>
+  <div class="banner-btn banner-todo" onclick="openChallenge()"></div>
+  <div class="banner-btn banner-goal" onclick="openGoal()"></div>
+  <div class="banner-btn banner-gift" onclick="openGift()"></div>
 </div>
 
-<!-- 메시지 -->
 <div class="modal" id="messageModal">
   <div class="modal-box">
     <div class="close-x" onclick="closeModal('messageModal')">✕</div>
@@ -229,61 +155,54 @@ body{
   </div>
 </div>
 
-<!-- 이하 모달 (한문장 / 할일 / 목표 / 선물보관함) -->
-<!-- ⚠️ 요청대로 기존 로직 그대로 유지 -->
-
 <script>
 const foodsData=[
   {emoji:"🍰",name:"케이크"},
   {emoji:"🍩",name:"도넛"},
   {emoji:"🍪",name:"쿠키"},
-  {emoji:"🧁",name:"컵케이크"},
-  {emoji:"🍫",name:"초콜릿"},
-  {emoji:"🥐",name:"크루아상"},
-  {emoji:"🥞",name:"팬케이크"},
-  {emoji:"🧇",name:"와플"}
+  {emoji:"🧁",name:"컵케이크"}
 ];
 
 const messages=[
  "오늘은 위기를 기회로 만드는 날 💪",
- "너무 잘하고 있어, 계속 가보자 ✨",
- "오늘의 너는 누구보다 빛나 🌟",
- "할 수 있어! 이미 많이 해냈어 🙌",
- "조금 쉬어도 괜찮아, 너는 충분해 💗",
- "기적은 조용히 오고 있어 ✨",
- "오늘도 네 편은 바로 너야 😊"
+ "너무 잘하고 있어 ✨",
+ "오늘의 너는 충분해 💗"
 ];
-
-const PAGE=5;
-let giftPage=0;
 
 function openModal(id){document.getElementById(id).style.display="flex";}
 function closeModal(id){document.getElementById(id).style.display="none";}
 
 function renderFoods(){
   gems.innerHTML="";
-  [...foodsData].sort(()=>0.5-Math.random()).slice(0,2).forEach(obj=>{
+  foodsData.slice(0,2).forEach(obj=>{
     const d=document.createElement("div");
     d.className="food";
     d.innerHTML=`<div class="gem">${obj.emoji}</div><div class="food-name">${obj.name}</div>`;
     d.onclick=()=>{
-      if(d.classList.contains("used"))return;
       const msg=messages[Math.floor(Math.random()*messages.length)];
       messageText.textContent=msg;
       openModal("messageModal");
-      const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
-      list.unshift({text:msg,date:new Date().toLocaleString("ko-KR")});
-      localStorage.setItem("giftMsgs",JSON.stringify(list));
-      d.classList.add("used");
     };
     gems.appendChild(d);
   });
 }
 
-function openOneLine(){alert("한문장 팝업 연결됨");}
-function openChallenge(){alert("할일 팝업 연결됨");}
-function openGoal(){alert("목표 팝업 연결됨");}
-function openGift(){alert("선물보관함 팝업 연결됨");}
+function openOneLine(){
+  messageText.textContent="✏️ 오늘 나 자신에게 응원 한마디를 남겨보세요";
+  openModal("messageModal");
+}
+function openChallenge(){
+  messageText.textContent="💪 오늘 해야 할 일을 하나만 정해볼까요?";
+  openModal("messageModal");
+}
+function openGoal(){
+  messageText.textContent="🎯 나의 목표를 다시 떠올려 보세요";
+  openModal("messageModal");
+}
+function openGift(){
+  messageText.textContent="🎁 지금까지 받은 선물을 확인해 보세요";
+  openModal("messageModal");
+}
 
 renderFoods();
 </script>

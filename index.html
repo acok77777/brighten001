@@ -81,16 +81,15 @@ body{
   color:#444;
 }
 
-/* 이미지 버튼 (교체됨) */
+/* ⭐ 이미지 버튼 — 1/2 크기로 줄인 버전 */
 .menu-img{
-  width:100%;
-  max-width:360px;
+  width:180px;           /* ← 기존 360px → 180px (정확히 절반) */
   display:block;
-  margin:10px auto;
+  margin:12px auto;
   cursor:pointer;
 }
 
-/* 모달 & 공통 CSS */
+/* 박스 */
 .box-section{
   width:100%;
   max-width:440px;
@@ -98,6 +97,7 @@ body{
   text-align:center;
 }
 
+/* 모달 */
 .modal{
   display:none;
   position:fixed;
@@ -170,6 +170,7 @@ body{
   text-decoration:line-through;
   opacity:.6;
 }
+
 </style>
 </head>
 
@@ -181,11 +182,10 @@ body{
 </div>
 
 <p class="subtitle">오늘의 선물을 클릭해 보세요</p>
+
 <div class="gems-container" id="gems"></div>
 
-<!-- ========================= -->
-<!--   버튼 4개 → 이미지 버튼  -->
-<!-- ========================= -->
+<!-- 버튼 이미지 4개 -->
 <div class="box-section">
   <img src="banner-oneline.png" class="menu-img" onclick="openOneLine()">
   <img src="banner-challenge.png" class="menu-img" onclick="openChallenge()">
@@ -215,7 +215,7 @@ body{
   </div>
 </div>
 
-<!-- 한문장 -->
+<!-- 응원 한마디 -->
 <div class="modal" id="oneLineModal">
   <div class="modal-box">
     <div class="close-x" onclick="closeModal('oneLineModal')">✕</div>
@@ -368,7 +368,7 @@ function delGift(i){
   renderGift();
 }
 
-/* 한문장 */
+/* 응원 한마디 */
 function openOneLine(){linePage=0;renderOneLine();openModal("oneLineModal");}
 
 function saveOneLine(){

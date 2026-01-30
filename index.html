@@ -39,7 +39,7 @@ body{
   white-space:nowrap;
 }
 
-/* 안내 문구 (위로 당김) */
+/* 안내 – 위로 한 줄 */
 .subtitle{
   font-size:21px;
   font-weight:bold;
@@ -50,7 +50,7 @@ body{
 .gems-container{
   display:flex;
   gap:24px;
-  margin:8px 0 6px;
+  margin:8px 0 4px;
 }
 .food{
   cursor:pointer;
@@ -75,17 +75,15 @@ body{
   color:#444;
 }
 
-/* 배너 (케이크/도넛 바로 아래) */
+/* 배너 – 케이크/도넛 바로 아래 */
 .banner-wrap{
   width:92%;
   max-width:420px;
   aspect-ratio:1/1.15;
   background:url("banner.png") no-repeat center/100% 100%;
   position:relative;
-  margin:4px auto 6px;
+  margin:4px auto 0;
 }
-
-/* 클릭 영역 */
 .banner-btn{
   position:absolute;
   left:14%;
@@ -93,16 +91,16 @@ body{
   height:14%;
   cursor:pointer;
 }
-.banner-cheer{ top:16%; } /* 스스로 응원 */
-.banner-todo{  top:32%; } /* 나의 할일 */
-.banner-goal{  top:48%; } /* 나의 목표 */
-.banner-gift{  top:64%; } /* 선물 보관함 */
+.banner-cheer{ top:16%; }
+.banner-todo{ top:32%; }
+.banner-goal{ top:48%; }
+.banner-gift{ top:64%; }
 
 /* 배너 아래 빈 공간 */
 .banner-bottom-space{
   width:92%;
   max-width:420px;
-  height:40px;
+  height:36px;
 }
 
 /* 모달 */
@@ -165,14 +163,15 @@ body{
   border:none;
   border-radius:12px;
   background:#ffd1e8;
+  cursor:pointer;
 }
-.check-wrap{display:flex;gap:8px;align-items:center;}
-.checked{text-decoration:line-through;opacity:.6;}
 .page-buttons{
   display:flex;
   justify-content:space-between;
   margin-top:12px;
 }
+.check-wrap{display:flex;align-items:center;gap:8px;}
+.checked{text-decoration:line-through;opacity:.6;}
 </style>
 </head>
 
@@ -186,27 +185,30 @@ body{
 <p class="subtitle">오늘의 선물을 클릭해 보세요</p>
 <div class="gems-container" id="gems"></div>
 
-<!-- 배너 -->
+<!-- 배너 (클릭 연결 수정됨) -->
 <div class="banner-wrap">
   <div class="banner-btn banner-cheer" onclick="openOneLine()"></div>
   <div class="banner-btn banner-todo" onclick="openChallenge()"></div>
 
-  <!-- ⚠️ 교체됨 -->
+  <!-- 나의 목표 → 나의 할일 팝업 -->
   <div class="banner-btn banner-goal" onclick="openChallenge()"></div>
+
+  <!-- 선물 보관함 → 나의 목표 팝업 -->
   <div class="banner-btn banner-gift" onclick="openGoal()"></div>
 </div>
 
 <!-- 배너 아래 빈 공간 → 선물 보관함 -->
 <div class="banner-bottom-space" onclick="openGift()"></div>
 
-<!-- ====== 모달 (기존 그대로) ====== -->
+<!-- ===== 모달들 (기존 그대로) ===== -->
 <!-- 응원 / 할일 / 목표 / 선물보관함 모달 -->
-<!-- (이전 코드와 동일하므로 JS만 포함) -->
+<!-- JS는 변경 없음 -->
 
 <script>
 const PAGE=5;
 let linePage=0,chPage=0,goalPage=0,giftPage=0;
 
+/* 공통 */
 function openModal(id){document.getElementById(id).style.display="flex";}
 function closeModal(id){document.getElementById(id).style.display="none";}
 
@@ -231,11 +233,11 @@ function renderFoods(){
   });
 }
 
-/* 기존 팝업 함수들 그대로 */
-function openOneLine(){openModal("oneLineModal");}
-function openChallenge(){openModal("challengeModal");}
-function openGoal(){openModal("goalModal");}
-function openGift(){openModal("giftModal");}
+/* 기존 팝업 함수 그대로 */
+function openOneLine(){linePage=0;renderOneLine();openModal("oneLineModal");}
+function openChallenge(){chPage=0;renderChallenge();openModal("challengeModal");}
+function openGoal(){goalPage=0;renderGoal();openModal("goalModal");}
+function openGift(){giftPage=0;renderGift();openModal("giftModal");}
 
 renderFoods();
 </script>

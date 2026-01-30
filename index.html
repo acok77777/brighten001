@@ -81,68 +81,23 @@ body{
   color:#444;
 }
 
-/* 박스 */
+/* 이미지 버튼 (교체됨) */
+.menu-img{
+  width:100%;
+  max-width:360px;
+  display:block;
+  margin:10px auto;
+  cursor:pointer;
+}
+
+/* 모달 & 공통 CSS */
 .box-section{
-  background:#fff;
-  border:3px solid #ffb6d9;
-  border-radius:22px;
-  box-shadow:0 6px 18px rgba(255,182,217,.45);
   width:100%;
   max-width:440px;
-  padding:18px;
   margin-top:10px;
   text-align:center;
 }
 
-/* 기본 버튼 */
-.oval-btn{
-  background:#e3f2fd;
-  border:2px solid #90caf9;
-  border-radius:40px;
-  padding:14px 36px;
-  font-size:18px;
-  cursor:pointer;
-  margin:6px 0;
-  color:#1565c0;
-  font-weight:bold;
-  font-family:Dotum,'돋움',sans-serif;
-}
-
-/* 저장 버튼 */
-.new-save-btn{
-  background:#e3f2fd;
-  border:2px solid #90caf9;
-  border-radius:16px;
-  padding:5px 14px;
-  font-size:16px;
-  cursor:pointer;
-  flex-shrink:0;
-}
-
-/* 이전/다음 */
-.small-nav{
-  font-size:13px;
-  padding:6px 14px;
-}
-
-.input-wrap{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  width:100%;
-  flex-wrap:nowrap;
-}
-
-.text-input{
-  flex:1;
-  padding:12px;
-  border-radius:14px;
-  border:2px solid #ffb6d9;
-  font-size:16px;
-  min-width:0;
-}
-
-/* 모달 */
 .modal{
   display:none;
   position:fixed;
@@ -164,7 +119,6 @@ body{
   display:flex;
   flex-direction:column;
 }
-
 .close-x{
   position:absolute;
   top:12px;
@@ -173,14 +127,6 @@ body{
   cursor:pointer;
 }
 
-/* 모달 배너 이미지 */
-.modal-banner{
-  width:100%;
-  border-radius:18px;
-  margin-bottom:12px;
-}
-
-/* 리스트 */
 .saved-item{
   border-bottom:1px dashed #ccc;
   padding:10px 0;
@@ -210,7 +156,6 @@ body{
   margin-top:12px;
 }
 
-/* 체크박스 */
 .check-wrap{
   display:flex;
   align-items:center;
@@ -238,11 +183,14 @@ body{
 <p class="subtitle">오늘의 선물을 클릭해 보세요</p>
 <div class="gems-container" id="gems"></div>
 
+<!-- ========================= -->
+<!--   버튼 4개 → 이미지 버튼  -->
+<!-- ========================= -->
 <div class="box-section">
-  <button class="oval-btn" onclick="openOneLine()">스스로 응원 한마디 ✏️</button>
-  <button class="oval-btn" onclick="openChallenge()">나의 할일 💪</button>
-  <button class="oval-btn" onclick="openGoal()">나의 목표 🎯</button>
-  <button class="oval-btn" onclick="openGift()">선물 보관함 🎁</button>
+  <img src="banner-oneline.png" class="menu-img" onclick="openOneLine()">
+  <img src="banner-challenge.png" class="menu-img" onclick="openChallenge()">
+  <img src="banner-goal.png" class="menu-img" onclick="openGoal()">
+  <img src="banner-gift.png" class="menu-img" onclick="openGift()">
 </div>
 
 <!-- 메시지 모달 -->
@@ -258,15 +206,11 @@ body{
 <div class="modal" id="giftModal">
   <div class="modal-box">
     <div class="close-x" onclick="closeModal('giftModal')">✕</div>
-
-    <!-- ⭐ 이미지 배너 추가 -->
-    <img src="banner-gift.png" class="modal-banner">
-
     <div id="giftList"></div>
 
     <div class="page-buttons">
-      <button class="oval-btn small-nav" onclick="prevGift()">⬅ 이전</button>
-      <button class="oval-btn small-nav" onclick="nextGift()">다음 ➡</button>
+      <button class="btn-del" onclick="prevGift()">⬅ 이전</button>
+      <button class="btn-del" onclick="nextGift()">다음 ➡</button>
     </div>
   </div>
 </div>
@@ -276,19 +220,16 @@ body{
   <div class="modal-box">
     <div class="close-x" onclick="closeModal('oneLineModal')">✕</div>
 
-    <!-- ⭐ 이미지 배너 추가 -->
-    <img src="banner-oneline.png" class="modal-banner">
-
     <div class="input-wrap">
       <input class="text-input" id="oneLineInput" placeholder="오늘 나에게 해주고 싶은 말">
-      <button class="new-save-btn" onclick="saveOneLine()">✔</button>
+      <button class="btn-del" onclick="saveOneLine()">✔</button>
     </div>
 
     <div id="oneLineList"></div>
 
     <div class="page-buttons">
-      <button class="oval-btn small-nav" onclick="prevLine()">⬅ 이전</button>
-      <button class="oval-btn small-nav" onclick="nextLine()">다음 ➡</button>
+      <button class="btn-del" onclick="prevLine()">⬅ 이전</button>
+      <button class="btn-del" onclick="nextLine()">다음 ➡</button>
     </div>
   </div>
 </div>
@@ -298,19 +239,16 @@ body{
   <div class="modal-box">
     <div class="close-x" onclick="closeModal('challengeModal')">✕</div>
 
-    <!-- ⭐ 이미지 배너 추가 -->
-    <img src="banner-challenge.png" class="modal-banner">
-
     <div class="input-wrap">
       <input class="text-input" id="challengeInput" placeholder="해야 할 일을 적어주세요">
-      <button class="new-save-btn" onclick="saveChallenge()">✔</button>
+      <button class="btn-del" onclick="saveChallenge()">✔</button>
     </div>
 
     <div id="challengeList"></div>
 
     <div class="page-buttons">
-      <button class="oval-btn small-nav" onclick="prevChallenge()">⬅ 이전</button>
-      <button class="oval-btn small-nav" onclick="nextChallenge()">다음 ➡</button>
+      <button class="btn-del" onclick="prevChallenge()">⬅ 이전</button>
+      <button class="btn-del" onclick="nextChallenge()">다음 ➡</button>
     </div>
   </div>
 </div>
@@ -320,19 +258,16 @@ body{
   <div class="modal-box">
     <div class="close-x" onclick="closeModal('goalModal')">✕</div>
 
-    <!-- ⭐ 이미지 배너 추가 -->
-    <img src="banner-goal.png" class="modal-banner">
-
     <div class="input-wrap">
       <input class="text-input" id="goalInput" placeholder="나의 목표를 적어주세요">
-      <button class="new-save-btn" onclick="saveGoal()">✔</button>
+      <button class="btn-del" onclick="saveGoal()">✔</button>
     </div>
 
     <div id="goalList"></div>
 
     <div class="page-buttons">
-      <button class="oval-btn small-nav" onclick="prevGoal()">⬅ 이전</button>
-      <button class="oval-btn small-nav" onclick="nextGoal()">다음 ➡</button>
+      <button class="btn-del" onclick="prevGoal()">⬅ 이전</button>
+      <button class="btn-del" onclick="nextGoal()">다음 ➡</button>
     </div>
   </div>
 </div>

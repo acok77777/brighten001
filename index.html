@@ -86,7 +86,7 @@ body{
   text-align:center;
 }
 
-/* 기본 버튼 */
+/* 기존 버튼 */
 .oval-btn{
   background:#e3f2fd;
   border:2px solid #90caf9;
@@ -98,6 +98,14 @@ body{
   color:#1565c0;
   font-weight:bold;
   font-family:Dotum,'돋움',sans-serif;
+}
+
+/* 이미지 버튼 스타일 */
+.menu-img{
+  width:90%;
+  max-width:330px;
+  cursor:pointer;
+  margin:8px 0;
 }
 
 /* 저장 버튼 */
@@ -222,9 +230,12 @@ body{
 <p class="subtitle">오늘의 선물을 클릭해 보세요</p>
 <div class="gems-container" id="gems"></div>
 
-<!-- 💗 귀여운 아래 박스 -->
+<!-- 💗 귀여운 아래 박스 / 메뉴 이미지 적용 -->
 <div class="box-section">
-  <button class="oval-btn" onclick="openOneLine()">스스로 응원 한마디 ✏️</button>
+
+  <!-- ⬇️⬇️ "스스로 응원 한마디" → 이미지 버튼으로 교체됨 -->
+  <img src="banner-oneline.png" class="menu-img" onclick="openOneLine()">
+
   <button class="oval-btn" onclick="openChallenge()">나의 할일 💪</button>
   <button class="oval-btn" onclick="openGoal()">나의 목표 🎯</button>
   <button class="oval-btn" onclick="openGift()">선물 보관함 🎁</button>
@@ -290,7 +301,7 @@ body{
   </div>
 </div>
 
-<!-- 목표  -->
+<!-- 목표 -->
 <div class="modal" id="goalModal">
   <div class="modal-box">
     <div class="close-x" onclick="closeModal('goalModal')">✕</div>
@@ -340,7 +351,6 @@ let giftPage=0, linePage=0, chPage=0, goalPage=0;
 function openModal(id){document.getElementById(id).style.display="flex";}
 function closeModal(id){document.getElementById(id).style.display="none";}
 
-/* 선물 */
 function renderFoods(){
   gems.innerHTML="";
   [...foodsData].sort(()=>0.5-Math.random()).slice(0,2).forEach(obj=>{

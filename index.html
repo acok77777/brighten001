@@ -15,65 +15,28 @@ body{
   background:repeating-linear-gradient(
     45deg,#ffe4ec,#ffe4ec 20px,#ffd1e8 20px,#ffd1e8 40px
   );
-  min-height:100svh;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
+  min-height:100vh;
   padding:10px;
+  text-align:center;
 }
 
-/* 전체 메뉴 박스(배경 이미지) */
-.menu-wrapper{
-  width:92%;
-  max-width:420px;
-  position:relative;
-  margin-top:10px;
-}
-
-/* 비율 유지 + 배경 표시 */
-.menu-wrapper::before{
-  content:"";
-  display:block;
-  width:100%;
-  padding-top:59.45%; /* 220/370 비율 유지 */
-  background:url('menu-bg.png') no-repeat center/contain;
-}
-
-/* 메뉴 버튼 그리드 */
-.menu-grid{
-  position:absolute;
-  top:0; left:0;
-  width:100%; height:100%;
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:20px;
-  align-items:center;
-  justify-items:center;
-  padding:36px 20px; /* 버튼 위치 조절 */
-}
-
-/* 메뉴 버튼 이미지 */
-.menu-img{
-  width:185px;  /* 버튼 크기 키움 (가로) */
-  max-width:90%;
-  cursor:pointer;
-}
-
-.subtitle{
-  font-size:21px;
+/* 타이틀 */
+.main-title{
+  font-size:26px;
   font-weight:bold;
-  margin:10px 0;
+  margin:18px 0 12px;
 }
 
 /* 선물 */
 .gems-container{
   display:flex;
-  gap:24px;
-  margin:12px 0 16px;
+  gap:40px;
+  justify-content:center;
+  margin:10px 0 22px;
 }
 .food{
   cursor:pointer;
-  animation: float 3s ease-in-out infinite;
+  animation:float 3s ease-in-out infinite;
   text-align:center;
 }
 .food.used{
@@ -95,9 +58,45 @@ body{
   justify-content:center;
 }
 .food-name{
-  font-size:13px;
-  margin-top:4px;
-  color:#444;
+  margin-top:6px;
+  font-size:15px;
+}
+
+/* 메뉴 전체 박스 */
+.menu-wrapper{
+  width:92%;
+  max-width:420px;
+  margin:0 auto;
+  position:relative;
+}
+
+/* 새로 업로드한 menu-bg.png 비율에 맞춤 */
+.menu-wrapper::before{
+  content:"";
+  display:block;
+  width:100%;
+  padding-top:70%; /* ⭐ 세로 비율 맞춤 – 새 이미지 기반 */
+  background:url('menu-bg.png') no-repeat center/contain;
+}
+
+/* 메뉴 버튼 그리드 */
+.menu-grid{
+  position:absolute;
+  top:0; left:0;
+  width:100%; height:100%;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:18px;
+  align-items:center;
+  justify-items:center;
+  padding:28px 20px;
+}
+
+/* 메뉴 버튼 이미지 */
+.menu-img{
+  width:170px;
+  cursor:pointer;
+  user-select:none;
 }
 
 /* 모달 공통 */
@@ -105,64 +104,102 @@ body{
   display:none;
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.6);
+  background:rgba(0,0,0,.55);
   justify-content:center;
   align-items:center;
   z-index:9999;
 }
 .modal-box{
-  background:#fff;
+  background:white;
   width:92%;
   max-width:420px;
+  padding:22px;
   border-radius:22px;
-  padding:20px;
-  position:relative;
   max-height:80vh;
   overflow-y:auto;
-  display:flex;
-  flex-direction:column;
+  position:relative;
 }
 .close-x{
   position:absolute;
+  right:12px;
   top:12px;
-  right:14px;
-  font-size:18px;
+  font-size:20px;
   cursor:pointer;
 }
 
-.input-wrap{display:flex;gap:6px;align-items:center;}
+.input-wrap{
+  display:flex;
+  gap:6px;
+  margin-bottom:10px;
+}
 .text-input{
-  flex:1;padding:12px;border-radius:14px;border:2px solid #ffb6d9;font-size:16px;
+  flex:1;
+  padding:12px;
+  border-radius:14px;
+  border:2px solid #ffb6d9;
+  font-size:16px;
 }
 .new-save-btn{
-  background:#e3f2fd;border:2px solid #90caf9;border-radius:16px;padding:5px 14px;font-size:16px;cursor:pointer;
+  padding:6px 14px;
+  background:#e3f2fd;
+  border:2px solid #90caf9;
+  border-radius:14px;
+  cursor:pointer;
 }
 
-.saved-item{border-bottom:1px dashed #ccc;padding:10px 0;}
-.saved-row{display:flex;align-items:center;justify-content:space-between;}
-.saved-date{font-size:13px;font-weight:bold;}
+.saved-item{
+  border-bottom:1px dashed #aaa;
+  padding:10px 0;
+  text-align:left;
+}
+.saved-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.saved-date{
+  font-size:13px;
+  font-weight:bold;
+}
 .btn-del{
-  font-size:12px;padding:4px 10px;border:none;border-radius:12px;background:#ffd1e8;cursor:pointer;
+  background:#ffd1e8;
+  border:none;
+  padding:4px 10px;
+  border-radius:12px;
+  cursor:pointer;
+  font-size:12px;
 }
-
-.check-wrap{display:flex;align-items:center;gap:8px;}
-.check-wrap input{width:20px;height:20px;accent-color:#ff8fb1;}
-.checked{text-decoration:line-through;opacity:.6;}
 
 .page-buttons{
   display:flex;
   justify-content:space-between;
   margin-top:12px;
 }
+.small-nav{
+  padding:6px 12px;
+  border-radius:18px;
+  background:#e3f2fd;
+  border:2px solid #90caf9;
+  cursor:pointer;
+}
+.check-wrap{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.checked{text-decoration:line-through;opacity:.6;}
 </style>
 </head>
 
 <body>
 
-<p class="subtitle">오늘의 선물을 클릭해 보세요</p>
+<!-- 타이틀 -->
+<p class="main-title">오늘의 선물을 클릭해 보세요</p>
+
+<!-- 랜덤 선물 -->
 <div class="gems-container" id="gems"></div>
 
-<!-- ❀ 메뉴 영역 (배경 + 4 버튼) -->
+<!-- 메뉴 배경 + 버튼 -->
 <div class="menu-wrapper">
   <div class="menu-grid">
     <img src="banner-oneline.png" class="menu-img" onclick="openOneLine()">
@@ -172,20 +209,82 @@ body{
   </div>
 </div>
 
+<!-- 모달들 (기능 동일) -->
+<div class="modal" id="oneLineModal">
+  <div class="modal-box">
+    <div class="close-x" onclick="closeModal('oneLineModal')">✕</div>
 
+    <div class="input-wrap">
+      <input class="text-input" id="oneLineInput" placeholder="오늘 나에게 해주고 싶은 말">
+      <button class="new-save-btn" onclick="saveOneLine()">✔</button>
+    </div>
 
-<!-- 🟣 이후 모달 스크립트는 그대로 유지 -->
+    <div id="oneLineList"></div>
+
+    <div class="page-buttons">
+      <button class="small-nav" onclick="prevLine()">⬅ 이전</button>
+      <button class="small-nav" onclick="nextLine()">다음 ➡</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="challengeModal">
+  <div class="modal-box">
+    <div class="close-x" onclick="closeModal('challengeModal')">✕</div>
+
+    <div class="input-wrap">
+      <input class="text-input" id="challengeInput" placeholder="해야 할 일을 적어주세요">
+      <button class="new-save-btn" onclick="saveChallenge()">✔</button>
+    </div>
+
+    <div id="challengeList"></div>
+
+    <div class="page-buttons">
+      <button class="small-nav" onclick="prevChallenge()">⬅ 이전</button>
+      <button class="small-nav" onclick="nextChallenge()">다음 ➡</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="goalModal">
+  <div class="modal-box">
+    <div class="close-x" onclick="closeModal('goalModal')">✕</div>
+
+    <div class="input-wrap">
+      <input class="text-input" id="goalInput" placeholder="나의 목표를 적어주세요">
+      <button class="new-save-btn" onclick="saveGoal()">✔</button>
+    </div>
+
+    <div id="goalList"></div>
+
+    <div class="page-buttons">
+      <button class="small-nav" onclick="prevGoal()">⬅ 이전</button>
+      <button class="small-nav" onclick="nextGoal()">다음 ➡</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="giftModal">
+  <div class="modal-box">
+    <div class="close-x" onclick="closeModal('giftModal')">✕</div>
+    <div id="giftList"></div>
+
+    <div class="page-buttons">
+      <button class="small-nav" onclick="prevGift()">⬅ 이전</button>
+      <button class="small-nav" onclick="nextGift()">다음 ➡</button>
+    </div>
+  </div>
+</div>
+
 <script>
-/* 음식 데이터 */
-const foodsData=[
+function openModal(id){document.getElementById(id).style.display="flex";}
+function closeModal(id){document.getElementById(id).style.display="none";}
+
+const foods=[
+  {emoji:"🍫",name:"초콜릿"},
+  {emoji:"🧇",name:"와플"},
   {emoji:"🍰",name:"케이크"},
   {emoji:"🍩",name:"도넛"},
-  {emoji:"🍪",name:"쿠키"},
-  {emoji:"🧁",name:"컵케이크"},
-  {emoji:"🍫",name:"초콜릿"},
-  {emoji:"🥐",name:"크루아상"},
-  {emoji:"🥞",name:"팬케이크"},
-  {emoji:"🧇",name:"와플"}
 ];
 
 const messages=[
@@ -193,36 +292,28 @@ const messages=[
  "너무 잘하고 있어, 계속 가보자 ✨",
  "오늘의 너는 누구보다 빛나 🌟",
  "할 수 있어! 이미 많이 해냈어 🙌",
- "조금 쉬어도 괜찮아, 너는 충분해 💗",
- "기적은 조용히 오고 있어 ✨",
- "오늘도 네 편은 바로 너야 😊"
+ "조금 쉬어도 괜찮아, 너는 충분해 💗"
 ];
 
-function openModal(id){document.getElementById(id).style.display="flex";}
-function closeModal(id){document.getElementById(id).style.display="none";}
-
 function renderFoods(){
-  gems.innerHTML="";
-  [...foodsData].sort(()=>0.5-Math.random()).slice(0,2).forEach(obj=>{
+  const g=document.getElementById("gems");
+  g.innerHTML="";
+  [...foods].sort(()=>Math.random()-0.5).slice(0,2).forEach(obj=>{
     const d=document.createElement("div");
     d.className="food";
     d.innerHTML=`<div class="gem">${obj.emoji}</div><div class="food-name">${obj.name}</div>`;
-
     d.onclick=()=>{
       if(d.classList.contains("used")) return;
       const msg=messages[Math.floor(Math.random()*messages.length)];
       alert(msg);
-
       const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
       list.unshift({text:msg,date:new Date().toLocaleString("ko-KR")});
       localStorage.setItem("giftMsgs",JSON.stringify(list));
       d.classList.add("used");
     };
-
-    gems.appendChild(d);
+    g.appendChild(d);
   });
 }
-
 renderFoods();
 </script>
 

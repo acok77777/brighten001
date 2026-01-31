@@ -1,4 +1,4 @@
-제발 아래 코드 그대로 써주고 / <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -228,6 +228,13 @@ body{
   <button class="oval-btn" onclick="openChallenge()">나의 할 일🌸</button>
   <button class="oval-btn" onclick="openGoal()">나의 목표 🌻</button>
   <button class="oval-btn" onclick="openGift()">선물 보관함 🎁</button>
+</div>
+
+<!-- 📤📥 백업 / 복원 버튼 -->
+<div style="margin-top:14px; text-align:center;">
+  <button class="oval-btn" onclick="backupData()">백업하기 📤</button>
+  <button class="oval-btn" onclick="document.getElementById('restoreFile').click()">복원하기 📥</button>
+  <input type="file" id="restoreFile" accept="application/json" style="display:none" onchange="restoreData(event)">
 </div>
 
 <!-- 메시지 모달 -->
@@ -546,10 +553,54 @@ function nextGoal(){
   if(goalPage < Math.ceil(l.length/PAGE)-1){goalPage++; renderGoal();}
 }
 
+/* 📤 백업 기능 */
+function backupData() {
+  const data = {
+    giftMsgs: JSON.parse(localStorage.getItem("giftMsgs") || "[]"),
+    oneLines: JSON.parse(localStorage.getItem("oneLines") || "[]"),
+    challenges: JSON.parse(localStorage.getItem("challenges") || "[]"),
+    goals: JSON.parse(localStorage.getItem("goals") || "[]")
+  };
+
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "힘내요오늘_백업.json";
+  a.click();
+  URL.revokeObjectURL(url);
+
+  alert("📤 백업 파일이 다운로드되었습니다!");
+}
+
+/* 📥 복원 기능 */
+function restoreData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+
+      if (data.giftMsgs) localStorage.setItem("giftMsgs", JSON.stringify(data.giftMsgs));
+      if (data.oneLines) localStorage.setItem("oneLines", JSON.stringify(data.oneLines));
+      if (data.challenges) localStorage.setItem("challenges", JSON.stringify(data.challenges));
+      if (data.goals) localStorage.setItem("goals", JSON.stringify(data.goals));
+
+      alert("📥 복원이 완료되었습니다!\n페이지를 새로고침해주세요 😊");
+    } catch (err) {
+      alert("⚠️ 복원 실패: JSON 파일 형식 오류가 있습니다.");
+    }
+  };
+  reader.readAsText(file);
+}
+
 /* 초기 실행 */
 renderFoods();
 
 </script>
 
 </body>
-</html>                                                                                                                     추가좀 할게 / 핸드폰 바꾸면 백업하는 기능 좀 집어넣어줘 / 전체 코드좀 줘 
+</html>

@@ -73,7 +73,7 @@ body{
   color:#444;
 }
 
-/* 💗 귀여운 박스 */
+/* 아래 박스 */
 .box-section{
   background:linear-gradient(135deg, #fff7fb, #ffe3f3);
   border:3px solid #ffb6d9;
@@ -111,7 +111,6 @@ body{
   flex-shrink:0;
 }
 
-/* 이전/다음 */
 .small-nav{
   font-size:13px;
   padding:6px 14px;
@@ -165,7 +164,6 @@ body{
   cursor:pointer;
 }
 
-/* 리스트 */
 .saved-item{
   border-bottom:1px dashed #ccc;
   padding:10px 0;
@@ -195,7 +193,6 @@ body{
   margin-top:12px;
 }
 
-/* 체크박스 */
 .check-wrap{
   display:flex;
   align-items:center;
@@ -210,6 +207,27 @@ body{
   text-decoration:line-through;
   opacity:.6;
 }
+
+.backup-box{
+  margin-top:18px;
+  padding:15px;
+  border-radius:18px;
+  background:#fff0fa;
+  border:2px solid #ffb6d9;
+  text-align:center;
+}
+
+.backup-btn{
+  margin:6px;
+  padding:10px 22px;
+  border-radius:20px;
+  border:2px solid #ff8fb1;
+  background:#ffe6f2;
+  color:#c2185b;
+  cursor:pointer;
+  font-size:15px;
+  font-weight:bold;
+}
 </style>
 </head>
 
@@ -222,20 +240,20 @@ body{
 <p class="subtitle">오늘의 응원 선물을 클릭해 보세요</p>
 <div class="gems-container" id="gems"></div>
 
-<!-- 💗 귀여운 아래 박스 -->
+<!-- 아래 메뉴 -->
 <div class="box-section">
   <button class="oval-btn" onclick="openOneLine()">응원 한마디🌷</button>
   <button class="oval-btn" onclick="openChallenge()">나의 할 일🌸</button>
   <button class="oval-btn" onclick="openGoal()">나의 목표 🌻</button>
   <button class="oval-btn" onclick="openGift()">선물 보관함 🎁</button>
+
+  <!-- 백업/복원 UI -->
+  <div class="backup-box">
+    <button class="backup-btn" onclick="backupData()">📤 백업하기</button>
+    <button class="backup-btn" onclick="restoreData()">📥 복원하기</button>
+  </div>
 </div>
 
-<!-- 📤📥 백업 / 복원 버튼 -->
-<div style="margin-top:14px; text-align:center;">
-  <button class="oval-btn" onclick="backupData()">백업하기 📤</button>
-  <button class="oval-btn" onclick="document.getElementById('restoreFile').click()">복원하기 📥</button>
-  <input type="file" id="restoreFile" accept="application/json" style="display:none" onchange="restoreData(event)">
-</div>
 
 <!-- 메시지 모달 -->
 <div class="modal" id="messageModal">
@@ -316,9 +334,41 @@ body{
   </div>
 </div>
 
-<script>
 
-/* 이모티콘 + 이름 */
+
+
+<!-- ▼ Firebase + 전체 기능 스크립트 ---------------------------------------------------------------- -->
+<script type="module">
+
+/* -------------------------------
+   Firebase SDK
+-------------------------------- */
+import { initializeApp } 
+  from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc }
+  from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyApHGxucZtGJB7fyVorZKo4-afnfAeJVBQ",
+  authDomain: "today-app-9779c.firebaseapp.com",
+  projectId: "today-app-9779c",
+  storageBucket: "today-app-9779c.firebasestorage.app",
+  messagingSenderId: "144061724744",
+  appId: "1:144061724744:web:237f9de04b44861bac007d",
+  measurementId: "G-X3T8TF3TQ4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const PAGE=5;
+let giftPage=0, linePage=0, chPage=0, goalPage=0;
+
+/* UI 기본 기능 */
+function openModal(id){document.getElementById(id).style.display="flex";}
+function closeModal(id){document.getElementById(id).style.display="none";}
+
+/* 선물 이모티콘 */
 const foodsData=[
   {emoji:"🍰",name:"케이크"},
   {emoji:"🍩",name:"도넛"},
@@ -340,14 +390,6 @@ const messages=[
  "오늘도 네 편은 바로 너야 😊"
 ];
 
-const PAGE=5;
-
-let giftPage=0, linePage=0, chPage=0, goalPage=0;
-
-function openModal(id){document.getElementById(id).style.display="flex";}
-function closeModal(id){document.getElementById(id).style.display="none";}
-
-/* 선물 */
 function renderFoods(){
   gems.innerHTML="";
   [...foodsData].sort(()=>0.5-Math.random()).slice(0,2).forEach(obj=>{
@@ -364,7 +406,6 @@ function renderFoods(){
 
       const msg=messages[Math.floor(Math.random()*messages.length)];
       messageText.textContent = msg;
-
       openModal("messageModal");
 
       const list=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
@@ -379,12 +420,7 @@ function renderFoods(){
 }
 
 /* 선물 보관함 */
-function openGift(){
-  giftPage=0;
-  renderGift();
-  openModal("giftModal");
-}
-
+function openGift(){giftPage=0; renderGift(); openModal("giftModal");}
 function renderGift(){
   const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
   const s=l.slice(giftPage*PAGE,(giftPage+1)*PAGE);
@@ -399,7 +435,6 @@ function renderGift(){
     </div>
   `).join("") || "저장된 메시지가 없어요 🙂";
 }
-
 function prevGift(){if(giftPage>0){giftPage--; renderGift();}}
 function nextGift(){
   const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
@@ -412,8 +447,8 @@ function delGift(i){
   renderGift();
 }
 
-/* 한문장 */
-function openOneLine(){linePage=0;renderOneLine();openModal("oneLineModal");}
+/* 응원 한마디 */
+function openOneLine(){linePage=0; renderOneLine(); openModal("oneLineModal");}
 
 function saveOneLine(){
   if(!oneLineInput.value.trim()) return;
@@ -452,7 +487,7 @@ function delLine(i){
 }
 
 /* 할 일 */
-function openChallenge(){chPage=0;renderChallenge();openModal("challengeModal");}
+function openChallenge(){chPage=0; renderChallenge(); openModal("challengeModal");}
 
 function saveChallenge(){
   if(!challengeInput.value.trim()) return;
@@ -504,7 +539,7 @@ function nextChallenge(){
 }
 
 /* 목표 */
-function openGoal(){goalPage=0;renderGoal();openModal("goalModal");}
+function openGoal(){goalPage=0; renderGoal(); openModal("goalModal");}
 
 function saveGoal(){
   if(!goalInput.value.trim()) return;
@@ -553,54 +588,54 @@ function nextGoal(){
   if(goalPage < Math.ceil(l.length/PAGE)-1){goalPage++; renderGoal();}
 }
 
-/* 📤 백업 기능 */
-function backupData() {
-  const data = {
+
+/* -------------------------------
+   📤 Firestore 백업하기
+-------------------------------- */
+window.backupData = async function () {
+  const backup = {
     giftMsgs: JSON.parse(localStorage.getItem("giftMsgs") || "[]"),
     oneLines: JSON.parse(localStorage.getItem("oneLines") || "[]"),
     challenges: JSON.parse(localStorage.getItem("challenges") || "[]"),
     goals: JSON.parse(localStorage.getItem("goals") || "[]")
   };
 
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
+  const userKey = "backup-user-001"; 
 
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "힘내요오늘_백업.json";
-  a.click();
-  URL.revokeObjectURL(url);
+  await setDoc(doc(db, "backups", userKey), backup);
 
-  alert("📤 백업 파일이 다운로드되었습니다!");
-}
+  alert("백업 완료! 😊");
+};
 
-/* 📥 복원 기능 */
-function restoreData(event) {
-  const file = event.target.files[0];
-  if (!file) return;
+/* -------------------------------
+   📥 Firestore 복원하기
+-------------------------------- */
+window.restoreData = async function () {
+  const userKey = "backup-user-001";
 
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const data = JSON.parse(e.target.result);
+  const docSnap = await getDoc(doc(db, "backups", userKey));
 
-      if (data.giftMsgs) localStorage.setItem("giftMsgs", JSON.stringify(data.giftMsgs));
-      if (data.oneLines) localStorage.setItem("oneLines", JSON.stringify(data.oneLines));
-      if (data.challenges) localStorage.setItem("challenges", JSON.stringify(data.challenges));
-      if (data.goals) localStorage.setItem("goals", JSON.stringify(data.goals));
+  if (docSnap.exists()) {
+    const data = docSnap.data();
 
-      alert("📥 복원이 완료되었습니다!\n페이지를 새로고침해주세요 😊");
-    } catch (err) {
-      alert("⚠️ 복원 실패: JSON 파일 형식 오류가 있습니다.");
-    }
-  };
-  reader.readAsText(file);
-}
+    localStorage.setItem("giftMsgs", JSON.stringify(data.giftMsgs || []));
+    localStorage.setItem("oneLines", JSON.stringify(data.oneLines || []));
+    localStorage.setItem("challenges", JSON.stringify(data.challenges || []));
+    localStorage.setItem("goals", JSON.stringify(data.goals || []));
+
+    alert("복원 완료! 🎉 새 휴대폰에서도 그대로 사용할 수 있어요!");
+    location.reload();
+  } else {
+    alert("백업 데이터가 없습니다 😢");
+  }
+};
+
 
 /* 초기 실행 */
 renderFoods();
 
 </script>
+<!-- ▲ Firebase + 전체 기능 스크립트 END ----------------------------- -->
 
 </body>
 </html>

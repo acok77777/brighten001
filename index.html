@@ -223,8 +223,9 @@ body{
 import { initializeApp }
   from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
 
-import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged }
-  from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+import { 
+  getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged 
+} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
 
 import { 
   getFirestore, doc, setDoc, getDoc 
@@ -262,19 +263,27 @@ googleLoginBtn.onclick = async () => {
 };
 
 /* --------------------------------------------------------
-   로그인 상태 감지
+   로그인 상태 감지 + 자동 로그인 유지
 -------------------------------------------------------- */
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
   if (user) {
     currentUserUID = user.uid;
 
-    googleLoginBtn.style.display = "none";     // 로그인 버튼 숨김
-    backupButtons.style.display = "block";     // 백업 & 복원 버튼 표시
+    googleLoginBtn.style.display = "none";
+    backupButtons.style.display = "block";
+
+    // ⭐ 로그인한 사용자 정보 표시
+    userName.textContent = user.displayName;
+    userPhoto.src = user.photoURL;
+    userInfoBox.style.display = "flex";
+
+    // ⭐ 앱 실행 시 자동 백업
+    await autoBackup();
   }
 });
 
 /* --------------------------------------------------------
-   ⭐ 자동 백업 데이터 읽기 함수
+   로컬 데이터 읽기
 -------------------------------------------------------- */
 function loadLocalData() {
   return {
@@ -286,7 +295,19 @@ function loadLocalData() {
 }
 
 /* --------------------------------------------------------
-   💾 Firestore로 사용자별 백업
+   💾 자동 백업 기능(앱 실행 시 실행)
+-------------------------------------------------------- */
+async function autoBackup() {
+  if (!currentUserUID) return;
+
+  const backup = loadLocalData();
+
+  await setDoc(doc(db, "backups", currentUserUID), backup);
+  console.log("자동 백업 완료");
+}
+
+/* --------------------------------------------------------
+   💾 백업 버튼 (수동)
 -------------------------------------------------------- */
 window.backupData = async function () {
   if (!currentUserUID) return alert("로그인 후 이용해 주세요!");
@@ -299,7 +320,7 @@ window.backupData = async function () {
 };
 
 /* --------------------------------------------------------
-   🔄 Firestore에서 사용자별 복원
+   🔄 복원하기
 -------------------------------------------------------- */
 window.restoreData = async function () {
   if (!currentUserUID) return alert("로그인 후 이용해 주세요!");
@@ -322,7 +343,7 @@ window.restoreData = async function () {
 };
 
 /* --------------------------------------------------------
-   ▼ 아래는 기존 기능 (선물 랜덤 출력 등)
+   기존 renderFoods 등 기존 기능 그대로
 -------------------------------------------------------- */
 function openModal(id){document.getElementById(id).style.display="flex";}
 function closeModal(id){document.getElementById(id).style.display="none";}
@@ -376,6 +397,7 @@ function renderFoods(){
 }
 
 renderFoods();
+
 </script>
 </body>
 </html>

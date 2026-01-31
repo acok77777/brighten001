@@ -22,7 +22,6 @@ body{
   padding:10px;
 }
 
-/* 타이틀 */
 .title-lace{
   position:relative;
   width:92%;
@@ -31,7 +30,6 @@ body{
 }
 .title-lace img{width:100%;}
 
-/* 안내 */
 .subtitle{
   font-size:21px;
   font-weight:bold;
@@ -73,9 +71,9 @@ body{
   color:#444;
 }
 
-/* 아래 박스 */
+/* 박스 영역 */
 .box-section{
-  background:linear-gradient(135deg, #fff7fb, #ffe3f3);
+  background:linear-gradient(135deg,#fff7fb,#ffe3f3);
   border:3px solid #ffb6d9;
   border-radius:28px;
   box-shadow:0 4px 14px rgba(255,182,217,0.55);
@@ -85,8 +83,6 @@ body{
   margin-top:14px;
   text-align:center;
 }
-
-/* 기본 버튼 */
 .oval-btn{
   background:#e3f2fd;
   border:2px solid #90caf9;
@@ -100,40 +96,48 @@ body{
   font-family:Dotum,'돋움',sans-serif;
 }
 
-/* 저장 버튼 */
-.new-save-btn{
-  background:#e3f2fd;
-  border:2px solid #90caf9;
-  border-radius:16px;
-  padding:5px 14px;
-  font-size:16px;
-  cursor:pointer;
-  flex-shrink:0;
-}
-
-.small-nav{
-  font-size:13px;
-  padding:6px 14px;
-}
-
-.input-wrap{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  width:100%;
-  flex-wrap:nowrap;
-}
-
-.text-input{
-  flex:1;
-  padding:12px;
-  border-radius:14px;
+/* 백업/복원 박스 */
+.backup-box{
+  margin-top:18px;
+  padding:15px;
+  border-radius:18px;
+  background:#fff0fa;
   border:2px solid #ffb6d9;
-  font-size:16px;
-  min-width:0;
+  text-align:center;
 }
 
-/* 모달 */
+/* 구글 로그인 공식 버튼 */
+.google-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #dadce0;
+  border-radius: 25px;
+  padding: 10px 20px;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  color: #3c4043;
+}
+.google-btn img{
+  width:20px;
+  height:20px;
+}
+
+/* 백업/복원 버튼 */
+.backup-btn{
+  margin:6px;
+  padding:10px 26px;
+  border-radius:20px;
+  border:2px solid #ff8fb1;
+  background:#ffe6f2;
+  color:#c2185b;
+  cursor:pointer;
+  font-size:16px;
+  font-weight:bold;
+}
+
 .modal{
   display:none;
   position:fixed;
@@ -155,7 +159,6 @@ body{
   display:flex;
   flex-direction:column;
 }
-
 .close-x{
   position:absolute;
   top:12px;
@@ -163,21 +166,9 @@ body{
   font-size:18px;
   cursor:pointer;
 }
-
-.saved-item{
-  border-bottom:1px dashed #ccc;
-  padding:10px 0;
-}
-.saved-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-.saved-date{
-  font-size:13px;
-  font-weight:bold;
-}
-
+.saved-item{border-bottom:1px dashed #ccc;padding:10px 0;}
+.saved-row{display:flex;align-items:center;justify-content:space-between;}
+.saved-date{font-size:13px;font-weight:bold;}
 .btn-del{
   font-size:12px;
   padding:4px 10px;
@@ -186,54 +177,11 @@ body{
   background:#ffd1e8;
   cursor:pointer;
 }
+.page-buttons{display:flex;justify-content:space-between;margin-top:12px;}
 
-.page-buttons{
-  display:flex;
-  justify-content:space-between;
-  margin-top:12px;
-}
-
-.check-wrap{
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-.check-wrap input{
-  width:20px;
-  height:20px;
-  accent-color:#ff8fb1;
-}
-.checked{
-  text-decoration:line-through;
-  opacity:.6;
-}
-
-/* 귀여운 백업버튼 */
-.backup-box{
-  margin-top:18px;
-  padding:15px;
-  border-radius:18px;
-  background:#fff0fa;
-  border:2px solid #ffb6d9;
-  text-align:center;
-}
-
-.backup-btn{
-  margin:6px;
-  padding:12px 26px;
-  border-radius:26px;
-  border:2px solid #ff8fb1;
-  background:#ffe6f2;
-  color:#c2185b;
-  cursor:pointer;
-  font-size:17px;
-  font-weight:bold;
-  box-shadow:0 3px 8px rgba(255,150,190,0.4);
-  transition:transform .15s;
-}
-.backup-btn:active{
-  transform:scale(0.92);
-}
+.check-wrap{display:flex;align-items:center;gap:8px;}
+.check-wrap input{width:20px;height:20px;accent-color:#ff8fb1;}
+.checked{text-decoration:line-through;opacity:.6;}
 </style>
 </head>
 
@@ -246,110 +194,45 @@ body{
 <p class="subtitle">오늘의 응원 선물을 클릭해 보세요</p>
 <div class="gems-container" id="gems"></div>
 
-<!-- 아래 메뉴 -->
+<!-- 메뉴 -->
 <div class="box-section">
   <button class="oval-btn" onclick="openOneLine()">응원 한마디🌷</button>
   <button class="oval-btn" onclick="openChallenge()">나의 할 일🌸</button>
   <button class="oval-btn" onclick="openGoal()">나의 목표 🌻</button>
   <button class="oval-btn" onclick="openGift()">선물 보관함 🎁</button>
 
-  <!-- 귀여운 백업/복원 UI -->
   <div class="backup-box">
-    <button class="backup-btn" onclick="backupData()">💾 백업하기</button>
-    <button class="backup-btn" onclick="restoreData()">🔄 복원하기</button>
+      <!-- ▼ 구글 로그인 버튼 (로그인 안 했을 때만 보임) -->
+      <button id="googleLoginBtn" class="google-btn">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg">
+        Google 로그인
+      </button>
+
+      <!-- ▼ 로그인 후 나타나는 백업/복원 버튼 -->
+      <div id="backupButtons" style="display:none;">
+        <button class="backup-btn" onclick="backupData()">💾 백업하기</button>
+        <button class="backup-btn" onclick="restoreData()">🔄 복원하기</button>
+      </div>
   </div>
 </div>
-
-
-<!-- 메시지 모달 -->
-<div class="modal" id="messageModal">
-  <div class="modal-box">
-    <div class="close-x" onclick="closeModal('messageModal')">✕</div>
-    <h2 style="text-align:center; font-size:20px; margin-bottom:12px;">☆ 힘내요 오늘 ☆</h2>
-    <div id="messageText" style="font-size:22px;text-align:center; margin-top:10px;"></div>
-  </div>
-</div>
-
-<!-- 선물 보관함 -->
-<div class="modal" id="giftModal">
-  <div class="modal-box">
-    <div class="close-x" onclick="closeModal('giftModal')">✕</div>
-    <div id="giftList"></div>
-
-    <div class="page-buttons">
-      <button class="oval-btn small-nav" onclick="prevGift()">⬅ 이전</button>
-      <button class="oval-btn small-nav" onclick="nextGift()">다음 ➡</button>
-    </div>
-  </div>
-</div>
-
-<!-- 한문장 -->
-<div class="modal" id="oneLineModal">
-  <div class="modal-box">
-    <div class="close-x" onclick="closeModal('oneLineModal')">✕</div>
-
-    <div class="input-wrap">
-      <input class="text-input" id="oneLineInput" placeholder="오늘 나에게 해주고 싶은 말">
-      <button class="new-save-btn" onclick="saveOneLine()">✔</button>
-    </div>
-
-    <div id="oneLineList"></div>
-
-    <div class="page-buttons">
-      <button class="oval-btn small-nav" onclick="prevLine()">⬅ 이전</button>
-      <button class="oval-btn small-nav" onclick="nextLine()">다음 ➡</button>
-    </div>
-  </div>
-</div>
-
-<!-- 할일 -->
-<div class="modal" id="challengeModal">
-  <div class="modal-box">
-    <div class="close-x" onclick="closeModal('challengeModal')">✕</div>
-
-    <div class="input-wrap">
-      <input class="text-input" id="challengeInput" placeholder="해야 할 일을 적어주세요">
-      <button class="new-save-btn" onclick="saveChallenge()">✔</button>
-    </div>
-
-    <div id="challengeList"></div>
-
-    <div class="page-buttons">
-      <button class="oval-btn small-nav" onclick="prevChallenge()">⬅ 이전</button>
-      <button class="oval-btn small-nav" onclick="nextChallenge()">다음 ➡</button>
-    </div>
-  </div>
-</div>
-
-<!-- 목표 -->
-<div class="modal" id="goalModal">
-  <div class="modal-box">
-    <div class="close-x" onclick="closeModal('goalModal')">✕</div>
-
-    <div class="input-wrap">
-      <input class="text-input" id="goalInput" placeholder="나의 목표를 적어주세요">
-      <button class="new-save-btn" onclick="saveGoal()">✔</button>
-    </div>
-
-    <div id="goalList"></div>
-
-    <div class="page-buttons">
-      <button class="oval-btn small-nav" onclick="prevGoal()">⬅ 이전</button>
-      <button class="oval-btn small-nav" onclick="nextGoal()">다음 ➡</button>
-    </div>
-  </div>
-</div>
-<!-- ▼ Firebase + 전체 기능 스크립트 -------------------------------------------- -->
+<!-- ▼ Firebase + Google 로그인 + 자동 백업/복원 스크립트 ---------------------------- -->
 <script type="module">
-
-/* -------------------------------
-   Firebase SDK
--------------------------------- */
-import { initializeApp } 
+/* --------------------------------------------------------
+   Firebase SDK Import
+-------------------------------------------------------- */
+import { initializeApp }
   from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getFirestore, doc, setDoc, getDoc }
-  from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+
+import { 
+  getFirestore, doc, setDoc, getDoc 
+} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+/* --------------------------------------------------------
+   Firebase 설정
+-------------------------------------------------------- */
 const firebaseConfig = {
   apiKey: "AIzaSyApHGxucZtGJB7fyVorZKo4-afnfAeJVBQ",
   authDomain: "today-app-9779c.firebaseapp.com",
@@ -361,16 +244,89 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const db = getFirestore(app);
 
-const PAGE=5;
-let giftPage=0, linePage=0, chPage=0, goalPage=0;
+let currentUserUID = null;
 
-/* UI 기본 기능 */
+/* --------------------------------------------------------
+   Google 로그인 버튼 클릭
+-------------------------------------------------------- */
+googleLoginBtn.onclick = async () => {
+  const provider = new GoogleAuthProvider();
+  try {
+    await signInWithPopup(auth, provider);
+  } catch (e) {
+    alert("로그인 실패 😢");
+  }
+};
+
+/* --------------------------------------------------------
+   로그인 상태 감지
+-------------------------------------------------------- */
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    currentUserUID = user.uid;
+
+    googleLoginBtn.style.display = "none";     // 로그인 버튼 숨김
+    backupButtons.style.display = "block";     // 백업 & 복원 버튼 표시
+  }
+});
+
+/* --------------------------------------------------------
+   ⭐ 자동 백업 데이터 읽기 함수
+-------------------------------------------------------- */
+function loadLocalData() {
+  return {
+    giftMsgs: JSON.parse(localStorage.getItem("giftMsgs") || "[]"),
+    oneLines: JSON.parse(localStorage.getItem("oneLines") || "[]"),
+    challenges: JSON.parse(localStorage.getItem("challenges") || "[]"),
+    goals: JSON.parse(localStorage.getItem("goals") || "[]")
+  };
+}
+
+/* --------------------------------------------------------
+   💾 Firestore로 사용자별 백업
+-------------------------------------------------------- */
+window.backupData = async function () {
+  if (!currentUserUID) return alert("로그인 후 이용해 주세요!");
+
+  const backup = loadLocalData();
+
+  await setDoc(doc(db, "backups", currentUserUID), backup);
+
+  alert("백업 완료! 😊");
+};
+
+/* --------------------------------------------------------
+   🔄 Firestore에서 사용자별 복원
+-------------------------------------------------------- */
+window.restoreData = async function () {
+  if (!currentUserUID) return alert("로그인 후 이용해 주세요!");
+
+  const docSnap = await getDoc(doc(db, "backups", currentUserUID));
+
+  if (docSnap.exists()) {
+    const data = docSnap.data();
+
+    localStorage.setItem("giftMsgs", JSON.stringify(data.giftMsgs || []));
+    localStorage.setItem("oneLines", JSON.stringify(data.oneLines || []));
+    localStorage.setItem("challenges", JSON.stringify(data.challenges || []));
+    localStorage.setItem("goals", JSON.stringify(data.goals || []));
+
+    alert("복원 완료! 🎉");
+    location.reload();
+  } else {
+    alert("백업 데이터가 없습니다 😢");
+  }
+};
+
+/* --------------------------------------------------------
+   ▼ 아래는 기존 기능 (선물 랜덤 출력 등)
+-------------------------------------------------------- */
 function openModal(id){document.getElementById(id).style.display="flex";}
 function closeModal(id){document.getElementById(id).style.display="none";}
 
-/* 이모티콘 + 이름 */
 const foodsData=[
   {emoji:"🍰",name:"케이크"},
   {emoji:"🍩",name:"도넛"},
@@ -392,7 +348,6 @@ const messages=[
  "오늘도 네 편은 바로 너야 😊"
 ];
 
-/* 선물 */
 function renderFoods(){
   gems.innerHTML="";
   [...foodsData].sort(()=>0.5-Math.random()).slice(0,2).forEach(obj=>{
@@ -406,7 +361,6 @@ function renderFoods(){
 
     d.onclick=()=>{
       if(d.classList.contains("used")) return;
-
       const msg=messages[Math.floor(Math.random()*messages.length)];
       messageText.textContent = msg;
       openModal("messageModal");
@@ -417,231 +371,11 @@ function renderFoods(){
 
       d.classList.add("used");
     };
-
     gems.appendChild(d);
   });
 }
 
-/* 선물 보관함 */
-function openGift(){giftPage=0; renderGift(); openModal("giftModal");}
-function renderGift(){
-  const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
-  const s=l.slice(giftPage*PAGE,(giftPage+1)*PAGE);
-
-  giftList.innerHTML=s.map((m,i)=>`
-    <div class="saved-item">
-      <div class="saved-row">
-        <div class="saved-date">${m.date}</div>
-        <button class="btn-del" onclick="delGift(${giftPage*PAGE+i})">삭제</button>
-      </div>
-      <div>${m.text}</div>
-    </div>
-  `).join("") || "저장된 메시지가 없어요 🙂";
-}
-function prevGift(){if(giftPage>0){giftPage--; renderGift();}}
-function nextGift(){
-  const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
-  if(giftPage < Math.ceil(l.length/PAGE)-1){giftPage++; renderGift();}
-}
-function delGift(i){
-  const l=JSON.parse(localStorage.getItem("giftMsgs")||"[]");
-  l.splice(i,1);
-  localStorage.setItem("giftMsgs",JSON.stringify(l));
-  renderGift();
-}
-
-/* 응원 한마디 */
-function openOneLine(){linePage=0; renderOneLine(); openModal("oneLineModal");}
-
-function saveOneLine(){
-  if(!oneLineInput.value.trim()) return;
-  const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
-  l.unshift({text:oneLineInput.value,date:new Date().toLocaleString("ko-KR")});
-  localStorage.setItem("oneLines",JSON.stringify(l));
-  oneLineInput.value="";
-  renderOneLine();
-}
-
-function renderOneLine(){
-  const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
-  const s=l.slice(linePage*PAGE,(linePage+1)*PAGE);
-
-  oneLineList.innerHTML=s.map((m,i)=>`
-    <div class="saved-item">
-      <div class="saved-row">
-        <div class="saved-date">${m.date}</div>
-        <button class="btn-del" onclick="delLine(${linePage*PAGE+i})">삭제</button>
-      </div>
-      <div>${m.text}</div>
-    </div>
-  `).join("") || "기록이 없어요 🙂";
-}
-
-function prevLine(){if(linePage>0){linePage--; renderOneLine();}}
-function nextLine(){
-  const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
-  if(linePage < Math.ceil(l.length/PAGE)-1){linePage++; renderOneLine();}
-}
-function delLine(i){
-  const l=JSON.parse(localStorage.getItem("oneLines")||"[]");
-  l.splice(i,1);
-  localStorage.setItem("oneLines",JSON.stringify(l));
-  renderOneLine();
-}
-
-/* 할 일 */
-function openChallenge(){chPage=0; renderChallenge(); openModal("challengeModal");}
-
-function saveChallenge(){
-  if(!challengeInput.value.trim()) return;
-
-  const l=JSON.parse(localStorage.getItem("challenges")||"[]");
-  l.unshift({text:challengeInput.value,done:false,date:new Date().toLocaleString("ko-KR")});
-  localStorage.setItem("challenges",JSON.stringify(l));
-
-  challengeInput.value="";
-  renderChallenge();
-}
-
-function renderChallenge(){
-  const l=JSON.parse(localStorage.getItem("challenges")||"[]");
-  const s=l.slice(chPage*PAGE,(chPage+1)*PAGE);
-
-  challengeList.innerHTML=s.map((m,i)=>`
-    <div class="saved-item">
-      <div class="saved-row">
-        <div class='check-wrap'>
-          <input type="checkbox" ${m.done?"checked":""} onclick="toggleChallenge(${chPage*PAGE+i})">
-          <div class="${m.done?"checked":""}">${m.text}</div>
-        </div>
-        <button class="btn-del" onclick="delChallenge(${chPage*PAGE+i})">삭제</button>
-      </div>
-      <div class="saved-date">${m.date}</div>
-    </div>
-  `).join("") || "할 일이 없어요 🙂";
-}
-
-function toggleChallenge(i){
-  const l=JSON.parse(localStorage.getItem("challenges")||"[]");
-  l[i].done=!l[i].done;
-  localStorage.setItem("challenges",JSON.stringify(l));
-  renderChallenge();
-}
-
-function delChallenge(i){
-  const l=JSON.parse(localStorage.getItem("challenges")||"[]");
-  l.splice(i,1);
-  localStorage.setItem("challenges",JSON.stringify(l));
-  renderChallenge();
-}
-
-function prevChallenge(){if(chPage>0){chPage--; renderChallenge();}}
-function nextChallenge(){
-  const l=JSON.parse(localStorage.getItem("challenges")||"[]");
-  if(chPage < Math.ceil(l.length/PAGE)-1){chPage++; renderChallenge();}
-}
-
-/* 목표 */
-function openGoal(){goalPage=0; renderGoal(); openModal("goalModal");}
-
-function saveGoal(){
-  if(!goalInput.value.trim()) return;
-  const l=JSON.parse(localStorage.getItem("goals")||"[]");
-  l.unshift({text:goalInput.value,done:false,date:new Date().toLocaleString("ko-KR")});
-  localStorage.setItem("goals",JSON.stringify(l));
-  goalInput.value="";
-  renderGoal();
-}
-
-function renderGoal(){
-  const l=JSON.parse(localStorage.getItem("goals")||"[]");
-  const s=l.slice(goalPage*PAGE,(goalPage+1)*PAGE);
-
-  goalList.innerHTML=s.map((m,i)=>`
-    <div class="saved-item">
-      <div class="saved-row">
-        <div class="check-wrap">
-          <input type="checkbox" ${m.done?"checked":""} onclick="toggleGoal(${goalPage*PAGE+i})">
-          <div class="${m.done?"checked":""}">${m.text}</div>
-        </div>
-        <button class="btn-del" onclick="delGoal(${goalPage*PAGE+i})">삭제</button>
-      </div>
-      <div class="saved-date">${m.date}</div>
-    </div>
-  `).join("") || "목표가 없어요 🙂";
-}
-
-function toggleGoal(i){
-  const l=JSON.parse(localStorage.getItem("goals")||"[]");
-  l[i].done=!l[i].done;
-  localStorage.setItem("goals",JSON.stringify(l));
-  renderGoal();
-}
-
-function delGoal(i){
-  const l=JSON.parse(localStorage.getItem("goals")||"[]");
-  l.splice(i,1);
-  localStorage.setItem("goals",JSON.stringify(l));
-  renderGoal();
-}
-
-function prevGoal(){if(goalPage>0){goalPage--; renderGoal();}}
-function nextGoal(){
-  const l=JSON.parse(localStorage.getItem("goals")||"[]");
-  if(goalPage < Math.ceil(l.length/PAGE)-1){goalPage++; renderGoal();}
-}
-
-
-/* -------------------------------
-   📤 Firestore 백업하기
--------------------------------- */
-window.backupData = async function () {
-
-  const backup = {
-    giftMsgs: JSON.parse(localStorage.getItem("giftMsgs") || "[]"),
-    oneLines: JSON.parse(localStorage.getItem("oneLines") || "[]"),
-    challenges: JSON.parse(localStorage.getItem("challenges") || "[]"),
-    goals: JSON.parse(localStorage.getItem("goals") || "[]")
-  };
-
-  const userKey = "backup-user-001";  
-
-  await setDoc(doc(db, "backups", userKey), backup);
-
-  alert("💾 백업이 완료되었습니다!\n새 휴대폰에서도 복원할 수 있어요 😊");
-};
-
-
-/* -------------------------------
-   📥 Firestore 복원하기
--------------------------------- */
-window.restoreData = async function () {
-
-  const userKey = "backup-user-001";
-
-  const docSnap = await getDoc(doc(db, "backups", userKey));
-
-  if (docSnap.exists()) {
-    const data = docSnap.data();
-
-    localStorage.setItem("giftMsgs", JSON.stringify(data.giftMsgs || []));
-    localStorage.setItem("oneLines", JSON.stringify(data.oneLines || []));
-    localStorage.setItem("challenges", JSON.stringify(data.challenges || []));
-    localStorage.setItem("goals", JSON.stringify(data.goals || []));
-
-    alert("🔄 복원이 완료되었습니다!\n데이터가 모두 불러와졌어요 🎉");
-    location.reload();
-  } else {
-    alert("❗ 백업 데이터가 없습니다.");
-  }
-};
-
-
-/* 초기 실행 */
 renderFoods();
-
 </script>
-<!-- ▲ Firebase + 전체 기능 스크립트 END -------------------------------- -->
-
 </body>
 </html>

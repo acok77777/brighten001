@@ -208,6 +208,7 @@ body{
   opacity:.6;
 }
 
+/* 귀여운 백업버튼 */
 .backup-box{
   margin-top:18px;
   padding:15px;
@@ -219,14 +220,19 @@ body{
 
 .backup-btn{
   margin:6px;
-  padding:10px 22px;
-  border-radius:20px;
+  padding:12px 26px;
+  border-radius:26px;
   border:2px solid #ff8fb1;
   background:#ffe6f2;
   color:#c2185b;
   cursor:pointer;
-  font-size:15px;
+  font-size:17px;
   font-weight:bold;
+  box-shadow:0 3px 8px rgba(255,150,190,0.4);
+  transition:transform .15s;
+}
+.backup-btn:active{
+  transform:scale(0.92);
 }
 </style>
 </head>
@@ -247,10 +253,10 @@ body{
   <button class="oval-btn" onclick="openGoal()">나의 목표 🌻</button>
   <button class="oval-btn" onclick="openGift()">선물 보관함 🎁</button>
 
-  <!-- 백업/복원 UI -->
+  <!-- 귀여운 백업/복원 UI -->
   <div class="backup-box">
-    <button class="backup-btn" onclick="backupData()">📤 백업하기</button>
-    <button class="backup-btn" onclick="restoreData()">📥 복원하기</button>
+    <button class="backup-btn" onclick="backupData()">💾 백업하기</button>
+    <button class="backup-btn" onclick="restoreData()">🔄 복원하기</button>
   </div>
 </div>
 
@@ -333,11 +339,7 @@ body{
     </div>
   </div>
 </div>
-
-
-
-
-<!-- ▼ Firebase + 전체 기능 스크립트 ---------------------------------------------------------------- -->
+<!-- ▼ Firebase + 전체 기능 스크립트 -------------------------------------------- -->
 <script type="module">
 
 /* -------------------------------
@@ -368,7 +370,7 @@ let giftPage=0, linePage=0, chPage=0, goalPage=0;
 function openModal(id){document.getElementById(id).style.display="flex";}
 function closeModal(id){document.getElementById(id).style.display="none";}
 
-/* 선물 이모티콘 */
+/* 이모티콘 + 이름 */
 const foodsData=[
   {emoji:"🍰",name:"케이크"},
   {emoji:"🍩",name:"도넛"},
@@ -390,6 +392,7 @@ const messages=[
  "오늘도 네 편은 바로 너야 😊"
 ];
 
+/* 선물 */
 function renderFoods(){
   gems.innerHTML="";
   [...foodsData].sort(()=>0.5-Math.random()).slice(0,2).forEach(obj=>{
@@ -593,6 +596,7 @@ function nextGoal(){
    📤 Firestore 백업하기
 -------------------------------- */
 window.backupData = async function () {
+
   const backup = {
     giftMsgs: JSON.parse(localStorage.getItem("giftMsgs") || "[]"),
     oneLines: JSON.parse(localStorage.getItem("oneLines") || "[]"),
@@ -600,17 +604,19 @@ window.backupData = async function () {
     goals: JSON.parse(localStorage.getItem("goals") || "[]")
   };
 
-  const userKey = "backup-user-001"; 
+  const userKey = "backup-user-001";  
 
   await setDoc(doc(db, "backups", userKey), backup);
 
-  alert("백업 완료! 😊");
+  alert("💾 백업이 완료되었습니다!\n새 휴대폰에서도 복원할 수 있어요 😊");
 };
+
 
 /* -------------------------------
    📥 Firestore 복원하기
 -------------------------------- */
 window.restoreData = async function () {
+
   const userKey = "backup-user-001";
 
   const docSnap = await getDoc(doc(db, "backups", userKey));
@@ -623,10 +629,10 @@ window.restoreData = async function () {
     localStorage.setItem("challenges", JSON.stringify(data.challenges || []));
     localStorage.setItem("goals", JSON.stringify(data.goals || []));
 
-    alert("복원 완료! 🎉 새 휴대폰에서도 그대로 사용할 수 있어요!");
+    alert("🔄 복원이 완료되었습니다!\n데이터가 모두 불러와졌어요 🎉");
     location.reload();
   } else {
-    alert("백업 데이터가 없습니다 😢");
+    alert("❗ 백업 데이터가 없습니다.");
   }
 };
 
@@ -635,7 +641,7 @@ window.restoreData = async function () {
 renderFoods();
 
 </script>
-<!-- ▲ Firebase + 전체 기능 스크립트 END ----------------------------- -->
+<!-- ▲ Firebase + 전체 기능 스크립트 END -------------------------------- -->
 
 </body>
 </html>
